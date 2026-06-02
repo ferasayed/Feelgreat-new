@@ -89,6 +89,14 @@ function HeroSection() {
 
   return (
     <section className="gradient-hero min-h-[90vh] flex items-center pt-16 relative overflow-hidden">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/video-frame-1-oCZyqZXsoLcyL8x7i8feU2.webp"
+          alt=""
+          className="w-full h-full object-cover opacity-20"
+        />
+      </div>
       {/* Background decoration */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 start-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl"></div>
@@ -140,15 +148,33 @@ function ProductsSection() {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t("products.subtitle")}</p>
         </div>
 
+        {/* Product Images Showcase */}
+        <div className="flex justify-center mb-12">
+          <div className="relative">
+            <img
+              src="/manus-storage/feel-great-pack_e23c806d.jpg"
+              alt="Feel Great Pack - Unimate + Balance"
+              className="w-64 md:w-80 rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Unimate Card */}
           <Card className="gradient-card border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
             <div className="h-3 bg-gradient-to-r from-green-500 to-emerald-600"></div>
             <CardContent className="p-8">
-              <div className="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center mb-6">
-                <Zap className="w-8 h-8 text-green-600" />
+              <div className="flex items-center gap-4 mb-6">
+                <img
+                  src="/manus-storage/unimate-fierce_2bc02a56.jpg"
+                  alt="Unimate"
+                  className="w-24 h-24 object-contain rounded-xl"
+                />
+                <div>
+                  <h3 className="text-2xl font-bold">{t("products.unimate.title")}</h3>
+                  <p className="text-sm text-green-600 font-medium">Energy | Performance | Attitude</p>
+                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-3">{t("products.unimate.title")}</h3>
               <p className="text-muted-foreground mb-6 leading-relaxed">{t("products.unimate.desc")}</p>
               <ul className="space-y-3">
                 {["b1", "b2", "b3", "b4"].map(key => (
@@ -167,10 +193,17 @@ function ProductsSection() {
           <Card className="gradient-card border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden">
             <div className="h-3 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
             <CardContent className="p-8">
-              <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-6">
-                <Heart className="w-8 h-8 text-blue-600" />
+              <div className="flex items-center gap-4 mb-6">
+                <img
+                  src="/manus-storage/balance-product_5da255cc.jpg"
+                  alt="Balance"
+                  className="w-24 h-24 object-contain rounded-xl"
+                />
+                <div>
+                  <h3 className="text-2xl font-bold">{t("products.balance.title")}</h3>
+                  <p className="text-sm text-blue-600 font-medium">Fiber | Metabolism | Wellness</p>
+                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-3">{t("products.balance.title")}</h3>
               <p className="text-muted-foreground mb-6 leading-relaxed">{t("products.balance.desc")}</p>
               <ul className="space-y-3">
                 {["b1", "b2", "b3", "b4"].map(key => (
@@ -422,6 +455,181 @@ function RegistrationForm() {
   );
 }
 
+function MediaSection() {
+  const { t, lang } = useLanguage();
+
+  const audioSrc = lang === "ar" 
+    ? "/manus-storage/feel-great-arabic-pitch_74bf40c9.wav"
+    : "/manus-storage/feel-great-english-pitch_d355da1d.wav";
+
+  const mediaLabels: Record<string, { videoTitle: string; videoDesc: string; audioTitle: string; audioDesc: string; }> = {
+    ar: { videoTitle: "شاهد قصة Feel Great", videoDesc: "اكتشف كيف يمكن لبرنامج Feel Great أن يغير حياتك الصحية ويفتح لك أبواب الدخل", audioTitle: "استمع للعرض التقديمي", audioDesc: "استمع لشرح مفصل عن البرنامج وفرصة العمل" },
+    en: { videoTitle: "Watch the Feel Great Story", videoDesc: "Discover how Feel Great can transform your health and open doors to income", audioTitle: "Listen to the Presentation", audioDesc: "Hear a detailed explanation of the program and business opportunity" },
+    fr: { videoTitle: "Regardez l'histoire Feel Great", videoDesc: "Découvrez comment Feel Great peut transformer votre santé et ouvrir des portes au revenu", audioTitle: "Écoutez la présentation", audioDesc: "Écoutez une explication détaillée du programme et de l'opportunité" },
+    es: { videoTitle: "Mira la historia de Feel Great", videoDesc: "Descubre cómo Feel Great puede transformar tu salud y abrir puertas al ingreso", audioTitle: "Escucha la presentación", audioDesc: "Escucha una explicación detallada del programa y la oportunidad" },
+    de: { videoTitle: "Sehen Sie die Feel Great Geschichte", videoDesc: "Entdecken Sie, wie Feel Great Ihre Gesundheit verändern und Einkommenstüren öffnen kann", audioTitle: "Hören Sie die Präsentation", audioDesc: "Hören Sie eine detaillierte Erklärung des Programms und der Geschäftsmöglichkeit" },
+    tr: { videoTitle: "Feel Great Hikayesini İzleyin", videoDesc: "Feel Great'in sağlığınızı nasıl dönüştürebileceğini ve gelir kapılarını nasıl açabileceğini keşfedin", audioTitle: "Sunumu Dinleyin", audioDesc: "Program ve iş fırsatı hakkında ayrıntılı bir açıklama dinleyin" },
+  };
+
+  const labels = mediaLabels[lang] || mediaLabels.en;
+
+  return (
+    <section id="media" className="py-24 bg-white">
+      <div className="container">
+        <div className="max-w-5xl mx-auto">
+          {/* Video Section */}
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{labels.videoTitle}</h2>
+              <p className="text-muted-foreground">{labels.videoDesc}</p>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-2xl">
+              <video
+                controls
+                className="w-full aspect-video bg-black"
+                poster="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/video-frame-1-oCZyqZXsoLcyL8x7i8feU2.webp"
+              >
+                <source src="/manus-storage/feel-great-promo-full_b58cdd1b.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
+          {/* Audio Section */}
+          <div className="bg-gradient-to-br from-primary/5 to-green-50 rounded-2xl p-8 md:p-12">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-foreground mb-3">{labels.audioTitle}</h3>
+                <p className="text-muted-foreground mb-6">{labels.audioDesc}</p>
+                <audio controls className="w-full">
+                  <source src={audioSrc} type="audio/wav" />
+                </audio>
+              </div>
+              <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <svg className="w-16 h-16 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ShareSection() {
+  const { lang } = useLanguage();
+  const shareUrl = "https://ufeelgreat.com/c/GBP556";
+
+  const shareLabels: Record<string, { title: string; desc: string; whatsapp: string; telegram: string; twitter: string; facebook: string; copy: string; copied: string; }> = {
+    ar: { title: "شارك الفرصة مع أصدقائك", desc: "ساعد الآخرين على اكتشاف برنامج Feel Great وابنِ شبكتك", whatsapp: "واتساب", telegram: "تيليجرام", twitter: "تويتر", facebook: "فيسبوك", copy: "نسخ الرابط", copied: "تم النسخ!" },
+    en: { title: "Share the Opportunity", desc: "Help others discover Feel Great and grow your network", whatsapp: "WhatsApp", telegram: "Telegram", twitter: "Twitter", facebook: "Facebook", copy: "Copy Link", copied: "Copied!" },
+    fr: { title: "Partagez l'opportunité", desc: "Aidez les autres à découvrir Feel Great et développez votre réseau", whatsapp: "WhatsApp", telegram: "Telegram", twitter: "Twitter", facebook: "Facebook", copy: "Copier le lien", copied: "Copié!" },
+    es: { title: "Comparte la oportunidad", desc: "Ayuda a otros a descubrir Feel Great y haz crecer tu red", whatsapp: "WhatsApp", telegram: "Telegram", twitter: "Twitter", facebook: "Facebook", copy: "Copiar enlace", copied: "¡Copiado!" },
+    de: { title: "Teile die Chance", desc: "Hilf anderen, Feel Great zu entdecken und baue dein Netzwerk auf", whatsapp: "WhatsApp", telegram: "Telegram", twitter: "Twitter", facebook: "Facebook", copy: "Link kopieren", copied: "Kopiert!" },
+    tr: { title: "Fırsatı Paylaşın", desc: "Başkalarının Feel Great'i keşfetmesine yardımcı olun ve ağınızı büyütün", whatsapp: "WhatsApp", telegram: "Telegram", twitter: "Twitter", facebook: "Facebook", copy: "Linki kopyala", copied: "Kopyalandı!" },
+  };
+
+  const labels = shareLabels[lang] || shareLabels.en;
+  const [copied, setCopied] = useState(false);
+
+  const shareMessages: Record<string, string> = {
+    ar: "اكتشف برنامج Feel Great من يونيسيتي - صحة أفضل ودخل إضافي! 🌟",
+    en: "Discover the Feel Great program by Unicity - Better health and extra income! 🌟",
+    fr: "Découvrez le programme Feel Great de Unicity - Meilleure santé et revenu supplémentaire! 🌟",
+    es: "¡Descubre el programa Feel Great de Unicity - Mejor salud e ingresos extra! 🌟",
+    de: "Entdecken Sie das Feel Great Programm von Unicity - Bessere Gesundheit und Zusatzeinkommen! 🌟",
+    tr: "Unicity'nin Feel Great programını keşfedin - Daha iyi sağlık ve ek gelir! 🌟",
+  };
+
+  const msg = encodeURIComponent(shareMessages[lang] || shareMessages.en);
+  const encodedUrl = encodeURIComponent(shareUrl);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <section className="py-16 bg-gradient-to-br from-primary/5 to-green-50">
+      <div className="container">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">{labels.title}</h2>
+          <p className="text-muted-foreground mb-8">{labels.desc}</p>
+          {/* Downloadable Social Media Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/social-card-ar-8oskWWSerZR8mLGL6HhDXd.png" download className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/social-card-ar-bjUJiGgudz4Xb45hbro54E.webp" alt="Social Card Arabic" className="w-full aspect-square object-cover" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-white font-medium text-sm">{lang === 'ar' ? 'تحميل البطاقة' : 'Download Card'}</span>
+              </div>
+            </a>
+            <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/social-card-en-By7sWjN6VXmBPkGDkjUPYe.png" download className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/social-card-en-S5yj7BFqzv4UGE88SMHA5R.webp" alt="Social Card English" className="w-full aspect-square object-cover" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-white font-medium text-sm">{lang === 'ar' ? 'تحميل البطاقة' : 'Download Card'}</span>
+              </div>
+            </a>
+            <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/social-story-card-LvBYeMDCc52QNNcawFtRMM.png" download className="group relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/social-story-card-TQ9XfmSHf5CU2naFwCjFJS.webp" alt="Story Card" className="w-full aspect-square object-cover" />
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-white font-medium text-sm">{lang === 'ar' ? 'تحميل الستوري' : 'Download Story'}</span>
+              </div>
+            </a>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href={`https://wa.me/?text=${msg}%20${encodedUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] text-white font-medium hover:opacity-90 transition-opacity"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              {labels.whatsapp}
+            </a>
+            <a
+              href={`https://t.me/share/url?url=${encodedUrl}&text=${msg}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#0088cc] text-white font-medium hover:opacity-90 transition-opacity"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+              {labels.telegram}
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?text=${msg}&url=${encodedUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1DA1F2] text-white font-medium hover:opacity-90 transition-opacity"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+              {labels.twitter}
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1877F2] text-white font-medium hover:opacity-90 transition-opacity"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              {labels.facebook}
+            </a>
+            <button
+              onClick={handleCopy}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-foreground text-white font-medium hover:opacity-90 transition-opacity"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+              {copied ? labels.copied : labels.copy}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   const { t } = useLanguage();
 
@@ -444,7 +652,9 @@ export default function Home() {
       <HowItWorksSection />
       <OpportunitySection />
       <TestimonialsSection />
+      <MediaSection />
       <RegistrationForm />
+      <ShareSection />
       <Footer />
       <ChatWidget />
     </div>

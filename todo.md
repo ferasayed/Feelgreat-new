@@ -23,3 +23,11 @@
 - [x] RTL/LTR automatic direction switching based on language
 - [x] Chatbot responds in visitor's selected language
 - [x] Use Bahij TheSansArabic font for Arabic text across the site
+- [x] Add real product images (Unimate + Balance) to the website
+- [x] Update chatbot knowledge base with detailed product info from PDF files
+- [x] Create persuasive audio content for visitor engagement
+- [x] Create promotional video content (3 clips concatenated)
+- [x] Enhance organic recruitment strategy with compelling media content
+- [x] Add shareable social media content cards/assets for organic distribution
+- [x] Add share/referral CTA buttons for social media sharing
+- [x] Add video/audio section to the landing page
