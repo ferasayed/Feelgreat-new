@@ -1,0 +1,25 @@
+# Project TODO
+
+- [x] Database schema: leads table (name, email, phone, country, created_at, source)
+- [x] Database schema: chat_conversations table (visitor_id, messages, interest_level, created_at)
+- [x] Backend: Lead registration API endpoint
+- [x] Backend: AI chatbot endpoint with Feel Great knowledge base
+- [x] Backend: Owner notifications on new lead registration
+- [x] Backend: Owner notifications on high-interest chatbot conversations
+- [x] Backend: Dashboard stats API (total leads, conversations, high-interest count)
+- [x] Frontend: Arabic RTL landing page with premium design
+- [x] Frontend: Hero section with Feel Great branding and CTA
+- [x] Frontend: Product description section (Unimate + Balance)
+- [x] Frontend: How it works section
+- [x] Frontend: Business opportunity section (Unicity model)
+- [x] Frontend: Testimonials and success stories section
+- [x] Frontend: Lead registration form (name, email, phone, country)
+- [x] Frontend: AI chatbot widget (Arabic, persuasive, handles objections)
+- [x] Frontend: CTA button linking to https://ufeelgreat.com/c/GBP556
+- [x] Frontend: Owner dashboard with lead records and chat analytics
+- [x] Vitest: Unit tests for key backend procedures
+- [x] Multi-language system: i18n support (Arabic, English, French, Spanish, German, Turkish)
+- [x] Language switcher component in header
+- [x] RTL/LTR automatic direction switching based on language
+- [x] Chatbot responds in visitor's selected language
+- [x] Use Bahij TheSansArabic font for Arabic text across the site

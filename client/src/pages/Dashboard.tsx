@@ -1,0 +1,281 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Users, MessageCircle, TrendingUp, AlertTriangle, ArrowLeft, ShieldAlert } from "lucide-react";
+import { getLoginUrl } from "@/const";
+
+export default function Dashboard() {
+  const { user, loading, isAuthenticated } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="p-8 text-center">
+            <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Access Restricted</h2>
+            <p className="text-muted-foreground mb-6">You need to log in as an admin to access the dashboard.</p>
+            <a href={getLoginUrl()}>
+              <Button className="w-full">Login</Button>
+            </a>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (user?.role !== "admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="p-8 text-center">
+            <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Admin Only</h2>
+            <p className="text-muted-foreground mb-6">This dashboard is restricted to administrators only.</p>
+            <a href="/">
+              <Button variant="outline" className="w-full">Back to Home</Button>
+            </a>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return <DashboardContent />;
+}
+
+function DashboardContent() {
+  const { data: stats, isLoading: statsLoading, error: statsError } = trpc.dashboard.stats.useQuery();
+  const { data: leadsData, isLoading: leadsLoading, error: leadsError } = trpc.leads.list.useQuery();
+  const { data: conversations, isLoading: convsLoading, error: convsError } = trpc.dashboard.conversations.useQuery();
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-white sticky top-0 z-40">
+        <div className="container flex items-center justify-between h-16">
+          <div className="flex items-center gap-4">
+            <a href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm">Back to site</span>
+            </a>
+            <div className="h-6 w-px bg-border"></div>
+            <h1 className="text-lg font-bold">Partner Dashboard</h1>
+          </div>
+          <Badge variant="outline" className="text-primary border-primary">Admin</Badge>
+        </div>
+      </header>
+
+      <main className="container py-8">
+        {/* Stats Cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Leads</p>
+                  <p className="text-3xl font-bold">{statsLoading ? "..." : stats?.totalLeads ?? 0}</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Conversations</p>
+                  <p className="text-3xl font-bold">{statsLoading ? "..." : stats?.totalConversations ?? 0}</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">High Interest</p>
+                  <p className="text-3xl font-bold text-green-600">{statsLoading ? "..." : stats?.highInterestConversations ?? 0}</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Medium Interest</p>
+                  <p className="text-3xl font-bold text-amber-600">{statsLoading ? "..." : stats?.mediumInterestConversations ?? 0}</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-amber-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Error state */}
+        {(statsError || leadsError || convsError) && (
+          <Card className="mb-6 border-red-200 bg-red-50">
+            <CardContent className="p-4">
+              <p className="text-sm text-red-700">
+                Error loading data. Please ensure you have admin access. {statsError?.message || leadsError?.message || convsError?.message}
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Tabs */}
+        <Tabs defaultValue="leads" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="leads">Registered Leads</TabsTrigger>
+            <TabsTrigger value="conversations">Chat Conversations</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="leads">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Registered Partners ({leadsData?.total ?? 0})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {leadsLoading ? (
+                  <p className="text-center py-8 text-muted-foreground">Loading...</p>
+                ) : !leadsData?.leads?.length ? (
+                  <p className="text-center py-8 text-muted-foreground">No leads registered yet.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Email</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Country</TableHead>
+                          <TableHead>Source</TableHead>
+                          <TableHead>Date</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {leadsData.leads.map(lead => (
+                          <TableRow key={lead.id}>
+                            <TableCell className="font-medium">{lead.fullName}</TableCell>
+                            <TableCell>{lead.email}</TableCell>
+                            <TableCell>{lead.phone}</TableCell>
+                            <TableCell>{lead.country}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{lead.source}</Badge>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground text-sm">
+                              {new Date(lead.createdAt).toLocaleDateString()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="conversations">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5" />
+                  Chat Conversations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {convsLoading ? (
+                  <p className="text-center py-8 text-muted-foreground">Loading...</p>
+                ) : !conversations?.length ? (
+                  <p className="text-center py-8 text-muted-foreground">No conversations yet.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Visitor ID</TableHead>
+                          <TableHead>Messages</TableHead>
+                          <TableHead>Interest Level</TableHead>
+                          <TableHead>High Interest</TableHead>
+                          <TableHead>Owner Notified</TableHead>
+                          <TableHead>Last Updated</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {conversations.map(conv => (
+                          <TableRow key={conv.id}>
+                            <TableCell className="font-mono text-xs">{conv.visitorId.slice(0, 16)}...</TableCell>
+                            <TableCell>{conv.messageCount}</TableCell>
+                            <TableCell>
+                              <Badge className={
+                                conv.interestLevel === "high" ? "bg-green-100 text-green-700" :
+                                conv.interestLevel === "medium" ? "bg-amber-100 text-amber-700" :
+                                "bg-gray-100 text-gray-700"
+                              }>
+                                {conv.interestLevel}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {conv.isHighInterest ? (
+                                <Badge className="bg-green-100 text-green-700">Yes</Badge>
+                              ) : (
+                                <span className="text-muted-foreground">No</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {conv.ownerNotified ? (
+                                <Badge className="bg-blue-100 text-blue-700">Sent</Badge>
+                              ) : (
+                                <span className="text-muted-foreground">Pending</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground text-sm">
+                              {new Date(conv.updatedAt).toLocaleDateString()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+}
