@@ -14,39 +14,39 @@
 }
 
 @theme inline {
-  /* Premium Trust-Building Palette: White + Calm Blue + Natural Green + Light Beige + Soft Gold */
-  --color-background: oklch(0.99 0.003 90);  /* warm white with hint of beige */
-  --color-foreground: oklch(0.18 0.02 250);  /* deep navy for text */
-  --color-card: oklch(1 0 0);  /* pure white cards */
+  /* Premium Platform Palette: White + Health Blue + Luxury Gold + Calm Beige */
+  --color-background: oklch(0.99 0.003 90);
+  --color-foreground: oklch(0.18 0.02 250);
+  --color-card: oklch(1 0 0);
   --color-card-foreground: oklch(0.18 0.02 250);
   --color-popover: oklch(1 0 0);
   --color-popover-foreground: oklch(0.18 0.02 250);
-  --color-primary: oklch(0.52 0.14 155);  /* natural green - Unicity brand */
+  --color-primary: oklch(0.45 0.12 240);  /* health blue */
   --color-primary-foreground: oklch(0.99 0.002 90);
-  --color-secondary: oklch(0.96 0.01 90);  /* light beige */
+  --color-secondary: oklch(0.96 0.015 85);  /* warm beige */
   --color-secondary-foreground: oklch(0.25 0.02 250);
-  --color-muted: oklch(0.96 0.008 90);  /* soft beige muted */
+  --color-muted: oklch(0.96 0.008 90);
   --color-muted-foreground: oklch(0.5 0.015 250);
-  --color-accent: oklch(0.62 0.12 230);  /* calm blue accent */
-  --color-accent-foreground: oklch(0.99 0.002 90);
+  --color-accent: oklch(0.72 0.14 80);  /* luxury gold */
+  --color-accent-foreground: oklch(0.18 0.02 250);
   --color-destructive: oklch(0.55 0.2 25);
   --color-destructive-foreground: oklch(0.99 0.002 90);
-  --color-border: oklch(0.92 0.01 90);  /* subtle warm border */
+  --color-border: oklch(0.92 0.01 90);
   --color-input: oklch(0.92 0.01 90);
-  --color-ring: oklch(0.52 0.14 155);  /* green focus ring */
-  --color-chart-1: oklch(0.52 0.14 155);  /* green */
-  --color-chart-2: oklch(0.62 0.12 230);  /* calm blue */
-  --color-chart-3: oklch(0.72 0.12 80);   /* soft gold */
+  --color-ring: oklch(0.45 0.12 240);
+  --color-chart-1: oklch(0.45 0.12 240);  /* blue */
+  --color-chart-2: oklch(0.72 0.14 80);   /* gold */
+  --color-chart-3: oklch(0.52 0.14 155);  /* green */
   --color-chart-4: oklch(0.58 0.1 180);   /* teal */
   --color-chart-5: oklch(0.6 0.15 30);    /* warm coral */
   --color-sidebar: oklch(0.97 0.005 90);
   --color-sidebar-foreground: oklch(0.18 0.02 250);
-  --color-sidebar-primary: oklch(0.52 0.14 155);
+  --color-sidebar-primary: oklch(0.45 0.12 240);
   --color-sidebar-primary-foreground: oklch(0.99 0.002 90);
   --color-sidebar-accent: oklch(0.94 0.01 90);
   --color-sidebar-accent-foreground: oklch(0.25 0.02 250);
   --color-sidebar-border: oklch(0.92 0.01 90);
-  --color-sidebar-ring: oklch(0.52 0.14 155);
+  --color-sidebar-ring: oklch(0.45 0.12 240);
   --radius: 0.75rem;
   --font-sans: 'Bahij TheSansArabic', 'Inter', system-ui, sans-serif;
 }
@@ -84,22 +84,30 @@
   }
 }
 
-/* Premium gradient backgrounds - Trust-Building Palette */
+/* Premium gradient backgrounds */
 .gradient-hero {
-  background: linear-gradient(135deg, oklch(0.18 0.04 250) 0%, oklch(0.14 0.03 200) 50%, oklch(0.12 0.04 155) 100%);
+  background: linear-gradient(135deg, oklch(0.15 0.04 250) 0%, oklch(0.12 0.05 240) 40%, oklch(0.10 0.03 200) 100%);
 }
 
 .gradient-section {
-  background: linear-gradient(180deg, oklch(0.97 0.008 90 / 0.5) 0%, oklch(0.99 0.003 90) 100%);
+  background: linear-gradient(180deg, oklch(0.97 0.008 85 / 0.5) 0%, oklch(0.99 0.003 90) 100%);
 }
 
 .gradient-card {
-  background: linear-gradient(145deg, oklch(1 0 0) 0%, oklch(0.98 0.008 90 / 0.3) 100%);
+  background: linear-gradient(145deg, oklch(1 0 0) 0%, oklch(0.98 0.01 85 / 0.3) 100%);
+}
+
+.gradient-gold {
+  background: linear-gradient(135deg, oklch(0.72 0.14 80) 0%, oklch(0.78 0.12 70) 100%);
+}
+
+.gradient-blue {
+  background: linear-gradient(135deg, oklch(0.45 0.12 240) 0%, oklch(0.50 0.14 230) 100%);
 }
 
 .glass-effect {
   backdrop-filter: blur(12px);
-  background: oklch(1 0 0 / 0.85);
+  background: oklch(1 0 0 / 0.92);
   border: 1px solid oklch(0.92 0.01 90 / 0.5);
   box-shadow: 0 1px 3px oklch(0.5 0.02 250 / 0.08);
 }
@@ -116,8 +124,18 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px oklch(0.52 0.14 155 / 0.3); }
-  50% { box-shadow: 0 0 40px oklch(0.52 0.14 155 / 0.6); }
+  0%, 100% { box-shadow: 0 0 20px oklch(0.45 0.12 240 / 0.3); }
+  50% { box-shadow: 0 0 40px oklch(0.45 0.12 240 / 0.6); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .animate-float {
@@ -133,8 +151,35 @@
   animation: pulse-glow 3s ease-in-out infinite;
 }
 
+.animate-count-up {
+  animation: countUp 0.8s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, oklch(0.72 0.14 80 / 0.3), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
 /* Staggered animations */
 .stagger-1 { animation-delay: 0.1s; }
 .stagger-2 { animation-delay: 0.2s; }
 .stagger-3 { animation-delay: 0.3s; }
 .stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* Premium text gradient */
+.text-gradient-gold {
+  background: linear-gradient(135deg, oklch(0.72 0.14 80), oklch(0.80 0.10 70));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, oklch(0.45 0.12 240), oklch(0.55 0.14 230));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

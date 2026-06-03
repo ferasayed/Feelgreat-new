@@ -8,6 +8,9 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import FAQ from "./pages/FAQ";
+import Partner from "./pages/Partner";
+import Founder from "./pages/Founder";
+import Blog from "./pages/Blog";
 
 function Router() {
   return (
@@ -15,6 +18,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/faq"} component={FAQ} />
+      <Route path={"/partner"} component={Partner} />
+      <Route path={"/founder"} component={Founder} />
+      <Route path={"/blog"} component={Blog} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
