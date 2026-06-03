@@ -92,7 +92,7 @@ function HeroSection() {
       {/* Background image */}
       <div className="absolute inset-0">
         <img
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/video-frame-1-oCZyqZXsoLcyL8x7i8feU2.webp"
+          src="/manus-storage/feel-great-lifestyle_12567109.png"
           alt=""
           className="w-full h-full object-cover opacity-20"
         />
@@ -152,7 +152,7 @@ function ProductsSection() {
         <div className="flex justify-center mb-12">
           <div className="relative">
             <img
-              src="/manus-storage/feel-great-pack_e23c806d.jpg"
+              src="/manus-storage/feel-great-system_b22dc6e2.png"
               alt="Feel Great Pack - Unimate + Balance"
               className="w-64 md:w-80 rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-500"
             />
@@ -166,7 +166,7 @@ function ProductsSection() {
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
                 <img
-                  src="/manus-storage/unimate-fierce_2bc02a56.jpg"
+                  src="/manus-storage/unimate-product_114e327e.png"
                   alt="Unimate"
                   className="w-24 h-24 object-contain rounded-xl"
                 />
@@ -195,7 +195,7 @@ function ProductsSection() {
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
                 <img
-                  src="/manus-storage/balance-product_5da255cc.jpg"
+                  src="/manus-storage/balance-product_fe20e626.png"
                   alt="Balance"
                   className="w-24 h-24 object-contain rounded-xl"
                 />
@@ -255,6 +255,14 @@ function HowItWorksSection() {
               <p className="text-muted-foreground leading-relaxed">{t(`how.${step.key}.desc`)}</p>
             </div>
           ))}
+        </div>
+
+        {/* Product Gallery */}
+        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          <img src="/manus-storage/unimate-lemon_b9f09b3b.png" alt="Unimate Lemon" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/balance-citrus_f55fc2cd.png" alt="Balance Citrus" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/unimate-green_5db4f161.png" alt="Unimate Green" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/products-together_0d310693.png" alt="Feel Great Products" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
         </div>
       </div>
     </section>
@@ -487,7 +495,7 @@ function MediaSection() {
               <video
                 controls
                 className="w-full aspect-video bg-black"
-                poster="https://d2xsxph8kpxj0f.cloudfront.net/310419663029164169/KMmJgS8DJyxaj36byhCKeJ/video-frame-1-oCZyqZXsoLcyL8x7i8feU2.webp"
+                poster="/manus-storage/feel-great-display_2cf28e12.png"
               >
                 <source src="/manus-storage/feel-great-promo-full_b58cdd1b.mp4" type="video/mp4" />
               </video>

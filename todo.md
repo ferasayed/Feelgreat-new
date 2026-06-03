@@ -31,3 +31,6 @@
 - [x] Add shareable social media content cards/assets for organic distribution
 - [x] Add share/referral CTA buttons for social media sharing
 - [x] Add video/audio section to the landing page
+- [x] Replace generated product images with real original product photos from user
+- [x] Update chatbot knowledge base with objection handling content from PDF
+- [x] Upload all real product images to webdev storage
