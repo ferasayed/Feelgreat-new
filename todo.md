@@ -53,13 +53,17 @@
 - [x] Implement basic SEO (meta tags, Open Graph, keywords)
 - [x] Add canonical URL and sitemap.xml
 - [x] Add Schema Markup: FAQ JSON-LD structured data in FAQ page
-- [ ] Create health condition pillar pages (future enhancement)
 - [x] Improve CRO: sticky CTA bar, multiple CTAs throughout the page
 - [x] Add real success stories section with health transformation stories
-- [ ] Add customer reviews/ratings system (future enhancement)
 - [x] Redesign UX for trust-building in first 5 seconds
 - [x] Mobile-first responsive optimization
-- [ ] Add 90-day journey roadmap section (future enhancement)
-- [ ] Add lead magnet for email collection (future enhancement)
+
+- [x] Fix deployment blocker: remove canonical link href="/" that caused Vite EISDIR build error
+
+## Future Enhancements (Optional)
+- [ ] Create health condition pillar pages (diabetes, insulin resistance, fatty liver, IBS, obesity, PCOS, cholesterol, hypertension)
+- [ ] Add customer reviews/ratings system
+- [ ] Add 90-day journey roadmap section
+- [ ] Add lead magnet for email collection
 - [x] Wire heartbeat cron job activation via dashboard button (manual)
 - [x] Add Google Drive success stories link to chatbot for condition-specific story sharing
