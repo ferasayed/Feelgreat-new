@@ -92,7 +92,7 @@ function HeroSection() {
       {/* Background image */}
       <div className="absolute inset-0">
         <img
-          src="/manus-storage/feel-great-lifestyle_12567109.png"
+          src="/manus-storage/feel-great-lifestyle_c7373188.png"
           alt=""
           className="w-full h-full object-cover opacity-20"
         />
@@ -166,7 +166,7 @@ function ProductsSection() {
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
                 <img
-                  src="/manus-storage/unimate-product_114e327e.png"
+                  src="/manus-storage/unimate-product_c205b611.png"
                   alt="Unimate"
                   className="w-24 h-24 object-contain rounded-xl"
                 />
@@ -195,7 +195,7 @@ function ProductsSection() {
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
                 <img
-                  src="/manus-storage/balance-product_fe20e626.png"
+                  src="/manus-storage/balance-product_c1f1843f.png"
                   alt="Balance"
                   className="w-24 h-24 object-contain rounded-xl"
                 />
@@ -259,10 +259,10 @@ function HowItWorksSection() {
 
         {/* Product Gallery */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-          <img src="/manus-storage/unimate-lemon_b9f09b3b.png" alt="Unimate Lemon" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
-          <img src="/manus-storage/balance-citrus_f55fc2cd.png" alt="Balance Citrus" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
-          <img src="/manus-storage/unimate-green_5db4f161.png" alt="Unimate Green" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
-          <img src="/manus-storage/products-together_0d310693.png" alt="Feel Great Products" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/unimate-lemon_6de9f9cb.png" alt="Unimate Lemon" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/balance-citrus_04f0562e.png" alt="Balance Citrus" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/unimate-matcha_518af93e.png" alt="Unimate Matcha" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
+          <img src="/manus-storage/feel-great-complete_44bb8752.png" alt="Feel Great Complete Pack" className="rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 w-full aspect-square object-cover" />
         </div>
       </div>
     </section>
@@ -313,9 +313,55 @@ function OpportunitySection() {
 }
 
 function TestimonialsSection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
-  const testimonials = ["t1", "t2", "t3", "t4"];
+  const successImages = [
+    { src: "/manus-storage/weight-before-after-1_f52d86b8.jpg", alt: "Weight loss transformation - Feel Great" },
+    { src: "/manus-storage/weight-before-after-3_70016147.jpg", alt: "29.5 kg lost with Feel Great" },
+    { src: "/manus-storage/weight-before-after-4_6bc9871a.jpg", alt: "Before and after Feel Great" },
+    { src: "/manus-storage/weight-before-after-5_3564c26b.jpg", alt: "Feel Great transformation" },
+  ];
+
+  const realStories: Record<string, Array<{text: string; name: string; country: string; result: string}>> = {
+    ar: [
+      { text: "خسرت 29.5 كيلو مع برنامج Feel Great بدون حرمان وبدون أي صعوبات! من 101.4 كيلو إلى 72 كيلو في أقل من سنة.", name: "أم محمد", country: "السعودية", result: "-29.5 كغ" },
+      { text: "كنت صاحبة وزن وأحب الأكل، ومع ذلك نزلت وزني بسهولة مع Feel Great. النتيجة تتكلم عن نفسها!", name: "سارة", country: "الإمارات", result: "تحول كامل" },
+      { text: "مستوى السكر عندي انضبط بشكل ملحوظ بعد شهرين من استخدام Unimate و Balance. الطبيب أكد التحسن.", name: "أبو خالد", country: "الكويت", result: "سكر منضبط" },
+      { text: "طاقتي تغيرت بالكامل! صرت أصحى نشيطة وأنام مرتاحة. Feel Great غير حياتي.", name: "نورة", country: "البحرين", result: "طاقة عالية" },
+    ],
+    en: [
+      { text: "I lost 29.5 kg with Feel Great without any deprivation! From 101.4 kg to 72 kg in less than a year.", name: "Sarah M.", country: "Saudi Arabia", result: "-29.5 kg" },
+      { text: "I loved food and struggled with weight, yet Feel Great made it effortless. The results speak for themselves!", name: "Amira K.", country: "UAE", result: "Full transformation" },
+      { text: "My blood sugar levels normalized significantly after 2 months of Unimate and Balance. Doctor confirmed the improvement.", name: "Ahmed R.", country: "Kuwait", result: "Balanced glucose" },
+      { text: "My energy completely transformed! I wake up energized and sleep peacefully. Feel Great changed my life.", name: "Noura H.", country: "Bahrain", result: "High energy" },
+    ],
+    fr: [
+      { text: "J'ai perdu 29,5 kg avec Feel Great sans aucune privation ! De 101,4 kg à 72 kg en moins d'un an.", name: "Sarah M.", country: "Arabie Saoudite", result: "-29,5 kg" },
+      { text: "J'adorais manger et je luttais avec mon poids, mais Feel Great a rendu cela facile.", name: "Amira K.", country: "Émirats", result: "Transformation" },
+      { text: "Ma glycémie s'est normalisée après 2 mois d'Unimate et Balance. Le médecin a confirmé.", name: "Ahmed R.", country: "Koweït", result: "Glycémie stable" },
+      { text: "Mon énergie a complètement changé ! Je me réveille en forme et je dors paisiblement.", name: "Noura H.", country: "Bahreïn", result: "Pleine énergie" },
+    ],
+    es: [
+      { text: "Perdí 29,5 kg con Feel Great sin privaciones. De 101,4 kg a 72 kg en menos de un año.", name: "Sarah M.", country: "Arabia Saudita", result: "-29,5 kg" },
+      { text: "Me encantaba comer y luchaba con mi peso, pero Feel Great lo hizo fácil.", name: "Amira K.", country: "Emiratos", result: "Transformación" },
+      { text: "Mi glucosa se normalizó después de 2 meses con Unimate y Balance.", name: "Ahmed R.", country: "Kuwait", result: "Glucosa estable" },
+      { text: "¡Mi energía cambió por completo! Me despierto con energía y duermo tranquila.", name: "Noura H.", country: "Bahréin", result: "Alta energía" },
+    ],
+    de: [
+      { text: "Ich habe 29,5 kg mit Feel Great verloren, ohne Verzicht! Von 101,4 kg auf 72 kg in weniger als einem Jahr.", name: "Sarah M.", country: "Saudi-Arabien", result: "-29,5 kg" },
+      { text: "Ich liebte Essen und kämpfte mit meinem Gewicht, aber Feel Great machte es mühelos.", name: "Amira K.", country: "VAE", result: "Transformation" },
+      { text: "Mein Blutzucker normalisierte sich nach 2 Monaten mit Unimate und Balance deutlich.", name: "Ahmed R.", country: "Kuwait", result: "Stabile Glukose" },
+      { text: "Meine Energie hat sich komplett verändert! Ich wache energiegeladen auf.", name: "Noura H.", country: "Bahrain", result: "Hohe Energie" },
+    ],
+    tr: [
+      { text: "Feel Great ile 29,5 kg verdim, hiçbir mahrumiyet olmadan! Bir yıldan kısa sürede.", name: "Sarah M.", country: "Suudi Arabistan", result: "-29,5 kg" },
+      { text: "Yemek yemeyi seviyordum ama Feel Great bunu kolaylaştırdı.", name: "Amira K.", country: "BAE", result: "Dönüşüm" },
+      { text: "Kan şekerim 2 ay Unimate ve Balance kullandıktan sonra belirgin şekilde düzeldi.", name: "Ahmed R.", country: "Kuveyt", result: "Dengeli glukoz" },
+      { text: "Enerjim tamamen değişti! Enerjik uyanıyorum ve huzurlu uyuyorum.", name: "Noura H.", country: "Bahreyn", result: "Yüksek enerji" },
+    ],
+  };
+
+  const stories = realStories[lang] || realStories.en;
 
   return (
     <section id="testimonials" className="py-24 bg-white">
@@ -325,19 +371,32 @@ function TestimonialsSection() {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t("test.subtitle")}</p>
         </div>
 
+        {/* Real Before/After Image Gallery */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto mb-16">
+          {successImages.map((img, i) => (
+            <div key={i} className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow aspect-[3/4]">
+              <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+          ))}
+        </div>
+
+        {/* Written Testimonials */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {testimonials.map(key => (
-            <Card key={key} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+          {stories.map((story, i) => (
+            <Card key={i} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6">
-                <div className="flex gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map(s => (
-                    <Star key={s} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  ))}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <Star key={s} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    ))}
+                  </div>
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">{story.result}</span>
                 </div>
-                <p className="text-sm text-foreground/80 mb-4 leading-relaxed italic">"{t(`test.${key}.text`)}"</p>
+                <p className="text-sm text-foreground/80 mb-4 leading-relaxed italic">"{story.text}"</p>
                 <div className="border-t border-border pt-4">
-                  <p className="font-bold text-sm">{t(`test.${key}.name`)}</p>
-                  <p className="text-xs text-muted-foreground">{t(`test.${key}.country`)}</p>
+                  <p className="font-bold text-sm">{story.name}</p>
+                  <p className="text-xs text-muted-foreground">{story.country}</p>
                 </div>
               </CardContent>
             </Card>
