@@ -98,3 +98,42 @@ Any statement express or implied that conveys:
 6. Focus on product benefits (health) not income claims
 7. Can mention "opportunity" but not specific earnings
 8. Must include disclaimer that individual results vary
+
+## Return & Refund Policy (Official)
+
+### Promise: "Feel Great in 60 days or your money back!"
+
+### Key Details:
+- 100% money-back satisfaction guarantee for non-Distributor purchasers on Feel Great
+- Timeframe: Within 60 days after purchase (or 90 days for Balance, Bios Life Slim, Bios Life S)
+- Process: Written request + signed letter stating reason + return unused portions + container
+- Must provide statement confirming full refund received
+- Guarantee applies to Customers ONLY (not extended to Distributors)
+- Products sold without warranty of any kind
+- Unicity not liable for any direct/indirect/consequential damages
+- If refund not received within 30 days of written request, contact: dc_mena@unicity.com
+- Distributors may return products per Policies & Procedures on the Site
+
+### Arabic Version Key Points:
+- ضمان استرداد 100% لمن قاموا بشراء منتجات Feel Great من غير الموزعين
+- خلال 60 يوماً بعد الشراء (أو 90 يوماً لبالانس، بايو سليم، بايو س)
+- يجب تزويد يونيسيتي برسالة موقعة توضح سبب عدم الرضا وإعادة جميع الأجزاء غير المستخدمة
+- هذا الضمان على العملاء فقط ولا يشمل موزعي يونيسيتي
+- للتواصل: dc_mena@unicity.com
+
+## Unicity Member Terms and Conditions (Effective March 1, 2024)
+
+### Key Terms:
+1. **Member Conduct**: Must comply with all applicable laws. Cannot claim products treat/prevent diseases. Products for personal consumption only, may NOT be resold.
+2. **Product Credit**: Members receive product credit from their orders and referrals. Max US$30/year in credit. To earn beyond $30, must sign up as Distributor. Credit has no monetary value except for Unicity purchases. Credit cannot be transferred. Expires if unused within 1 year. Contact: info.mena@unicity.com
+3. **Product Returns**: Return within 90 days for any reason. Must send unused product in original packaging with signed letter. Refund issued to original payment form, less any credit earned.
+4. **Organization Placement**: Members placed based on referring Distributor/Member. Organization change requests to info.mena@unicity.com
+5. **Termination**: Members can terminate anytime by emailing dc_mena@unicity.com. Unicity may terminate for non-compliance.
+6. **Terms of Use & Privacy**: www.unicity.com/usa/terms-of-use/ and www.unicity.com/usa/privacy-policy/
+7. **Changes to Terms**: Unicity may amend at any time, binding 30 days after notice.
+8. **E-mail Copy**: Available from info.mena@unicity.com
+
+### Contact Information:
+- Customer Service: info.mena@unicity.com
+- Compliance: dc_mena@unicity.com
+- Office: https://office.unicity.com

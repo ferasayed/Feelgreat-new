@@ -36,3 +36,5 @@
 - [x] Upload all real product images to webdev storage
 - [x] Integrate Unicity compliance guidelines (FTC/social media policies) into chatbot behavior
 - [x] Add company profile facts to chatbot knowledge base
+- [x] Add return & refund policy to chatbot knowledge base (60-day guarantee, process, contacts)
+- [x] Add membership terms and conditions to chatbot knowledge base (free membership, credit system, termination)
