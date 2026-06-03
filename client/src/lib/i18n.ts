@@ -25,6 +25,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.opportunity": "فرصة العمل",
     "nav.testimonials": "قصص النجاح",
     "nav.register": "سجّل الآن",
+    "nav.faq": "الأسئلة الشائعة",
     "nav.dashboard": "لوحة التحكم",
 
     // Hero
@@ -128,6 +129,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.opportunity": "Opportunity",
     "nav.testimonials": "Success Stories",
     "nav.register": "Register Now",
+    "nav.faq": "FAQ",
     "nav.dashboard": "Dashboard",
 
     "hero.title": "Feel Great with Feel Great",
@@ -222,6 +224,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.opportunity": "Opportunité",
     "nav.testimonials": "Témoignages",
     "nav.register": "S'inscrire",
+    "nav.faq": "Questions fréquentes",
     "nav.dashboard": "Tableau de bord",
 
     "hero.title": "Sentez-vous bien avec Feel Great",
@@ -316,6 +319,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.opportunity": "Oportunidad",
     "nav.testimonials": "Testimonios",
     "nav.register": "Regístrate",
+    "nav.faq": "Preguntas frecuentes",
     "nav.dashboard": "Panel",
 
     "hero.title": "Siéntete genial con Feel Great",
@@ -410,6 +414,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.opportunity": "Geschäftsmöglichkeit",
     "nav.testimonials": "Erfolgsgeschichten",
     "nav.register": "Jetzt registrieren",
+    "nav.faq": "Häufige Fragen",
     "nav.dashboard": "Dashboard",
 
     "hero.title": "Fühle dich großartig mit Feel Great",
@@ -504,6 +509,7 @@ export const translations: Record<Language, Record<string, string>> = {
     "nav.opportunity": "İş Fırsatı",
     "nav.testimonials": "Başarı Hikayeleri",
     "nav.register": "Şimdi Kaydol",
+    "nav.faq": "Sık Sorulan Sorular",
     "nav.dashboard": "Kontrol Paneli",
 
     "hero.title": "Feel Great ile Harika Hisset",

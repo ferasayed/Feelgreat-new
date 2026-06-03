@@ -57,6 +57,7 @@ function Navbar() {
           <a href="#how" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{t("nav.opportunity")}</a>
           <a href="#testimonials" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{t("nav.testimonials")}</a>
           <a href="#register" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{t("nav.register")}</a>
+          <a href="/faq" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{t("nav.faq")}</a>
         </div>
 
         <div className="flex items-center gap-3">
@@ -81,6 +82,7 @@ function Navbar() {
           <a href="#how" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{t("nav.opportunity")}</a>
           <a href="#testimonials" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{t("nav.testimonials")}</a>
           <a href="#register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{t("nav.register")}</a>
+          <a href="/faq" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{t("nav.faq")}</a>
         </div>
       )}
     </nav>
