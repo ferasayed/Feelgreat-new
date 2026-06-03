@@ -111,13 +111,14 @@ function Navbar() {
 function HeroSection() {
   const { lang } = useLanguage();
 
-  const content: Record<string, { title: string; subtitle: string[]; cta1: string; cta2: string; cta3: string }> = {
+  const content: Record<string, { title: string; subtitle: string[]; cta1: string; cta2: string; cta3: string; cta4: string }> = {
     ar: {
       title: "استثمر في صحتك اليوم… وابنِ تأثيرك ودخلك غداً",
       subtitle: ["الصحة المستدامة", "بناء الدخل", "تطوير الذات", "العمل من أي مكان", "مجتمع عالمي"],
       cta1: "ابدأ رحلتك الصحية",
       cta2: "اكتشف فرصة الشراكة",
       cta3: "احجز مكالمة تعريفية",
+      cta4: "الأسئلة الشائعة",
     },
     en: {
       title: "Invest in Your Health Today… Build Your Impact & Income Tomorrow",
@@ -125,6 +126,7 @@ function HeroSection() {
       cta1: "Start Your Health Journey",
       cta2: "Discover Partnership",
       cta3: "Book a Discovery Call",
+      cta4: "FAQ",
     },
     fr: {
       title: "Investissez dans votre santé aujourd'hui… Construisez votre impact et vos revenus demain",
@@ -132,6 +134,7 @@ function HeroSection() {
       cta1: "Commencez votre parcours santé",
       cta2: "Découvrez le partenariat",
       cta3: "Réservez un appel",
+      cta4: "FAQ",
     },
     es: {
       title: "Invierte en tu salud hoy… Construye tu impacto e ingresos mañana",
@@ -139,6 +142,7 @@ function HeroSection() {
       cta1: "Comienza tu viaje de salud",
       cta2: "Descubre la asociación",
       cta3: "Reserva una llamada",
+      cta4: "Preguntas Frecuentes",
     },
     de: {
       title: "Investiere heute in deine Gesundheit… Baue morgen deinen Einfluss und dein Einkommen auf",
@@ -146,6 +150,7 @@ function HeroSection() {
       cta1: "Starte deine Gesundheitsreise",
       cta2: "Entdecke die Partnerschaft",
       cta3: "Buche ein Gespräch",
+      cta4: "Häufige Fragen",
     },
     tr: {
       title: "Bugün sağlığınıza yatırım yapın… Yarın etkinizi ve gelirinizi inşa edin",
@@ -153,6 +158,7 @@ function HeroSection() {
       cta1: "Sağlık yolculuğunuza başlayın",
       cta2: "Ortaklığı keşfedin",
       cta3: "Tanışma görüşmesi ayırtın",
+      cta4: "SSS",
     },
   };
 
@@ -206,6 +212,11 @@ function HeroSection() {
               <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-green-400/50 text-green-300 hover:bg-green-500/10 bg-transparent w-full sm:w-auto">
                 <Phone className="w-5 h-5 me-2" />
                 {c.cta3}
+              </Button>
+            </a>
+            <a href="/faq">
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-white/20 text-white/80 hover:bg-white/10 bg-transparent w-full sm:w-auto">
+                {c.cta4}
               </Button>
             </a>
           </div>
