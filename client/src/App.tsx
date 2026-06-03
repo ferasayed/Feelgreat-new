@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -6,24 +7,39 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
-import FAQ from "./pages/FAQ";
-import Partner from "./pages/Partner";
-import Founder from "./pages/Founder";
-import Blog from "./pages/Blog";
+
+// Lazy-loaded routes for code splitting
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Partner = lazy(() => import("./pages/Partner"));
+const Founder = lazy(() => import("./pages/Founder"));
+const Blog = lazy(() => import("./pages/Blog"));
+
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      </div>
+    </div>
+  );
+}
 
 function Router() {
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/dashboard"} component={Dashboard} />
-      <Route path={"/faq"} component={FAQ} />
-      <Route path={"/partner"} component={Partner} />
-      <Route path={"/founder"} component={Founder} />
-      <Route path={"/blog"} component={Blog} />
-      <Route path={"/404"} component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+    <Suspense fallback={<PageLoader />}>
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/dashboard"} component={Dashboard} />
+        <Route path={"/faq"} component={FAQ} />
+        <Route path={"/partner"} component={Partner} />
+        <Route path={"/founder"} component={Founder} />
+        <Route path={"/blog"} component={Blog} />
+        <Route path={"/404"} component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 

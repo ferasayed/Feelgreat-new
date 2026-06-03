@@ -100,6 +100,86 @@ function IncomeCalculator() {
   );
 }
 
+function HealthROICalculator() {
+  const { lang } = useLanguage();
+  const [monthlyHealthSpend, setMonthlyHealthSpend] = useState(200);
+  const [yearsNeglect, setYearsNeglect] = useState(5);
+
+  // Cost of neglect: medical bills, lost productivity, reduced quality of life
+  const avgMedicalCostPerYear = 3000; // average chronic disease cost
+  const productivityLossPerYear = 5000; // lost income from poor health
+  const neglectCost = yearsNeglect * (avgMedicalCostPerYear + productivityLossPerYear);
+  const preventionCost = monthlyHealthSpend * 12 * yearsNeglect;
+  const savings = neglectCost - preventionCost;
+  const roi = preventionCost > 0 ? ((neglectCost - preventionCost) / preventionCost * 100).toFixed(0) : "0";
+
+  const labels: Record<string, Record<string, string>> = {
+    ar: { title: "حاسبة العائد على الاستثمار الصحي", subtitle: "قارن بين تكلفة الإهمال وقيمة الوقاية", spend: "إنفاقك الشهري على صحتك", years: "عدد السنوات", neglectCost: "تكلفة إهمال الصحة", preventionCost: "تكلفة الوقاية", savings: "ما ستوفره", roi: "العائد على الاستثمار", note: "* تشمل تكلفة الإهمال: الفواتير الطبية، فقدان الإنتاجية، وتراجع جودة الحياة" },
+    en: { title: "Health ROI Calculator", subtitle: "Compare the cost of neglect vs. the value of prevention", spend: "Your Monthly Health Spend", years: "Number of Years", neglectCost: "Cost of Health Neglect", preventionCost: "Prevention Investment", savings: "Your Savings", roi: "Return on Investment", note: "* Neglect costs include: medical bills, lost productivity, and reduced quality of life" },
+    fr: { title: "Calculateur de ROI Santé", subtitle: "Comparez le coût de la négligence vs. la prévention", spend: "Dépenses Mensuelles Santé", years: "Nombre d'Années", neglectCost: "Coût de la Négligence", preventionCost: "Investissement Prévention", savings: "Vos Économies", roi: "Retour sur Investissement", note: "* Les coûts de négligence incluent: factures médicales, perte de productivité" },
+    es: { title: "Calculadora de ROI de Salud", subtitle: "Compara el costo de la negligencia vs. la prevención", spend: "Gasto Mensual en Salud", years: "Número de Años", neglectCost: "Costo de la Negligencia", preventionCost: "Inversión en Prevención", savings: "Tus Ahorros", roi: "Retorno de Inversión", note: "* Los costos de negligencia incluyen: facturas médicas, pérdida de productividad" },
+    de: { title: "Gesundheits-ROI-Rechner", subtitle: "Vergleichen Sie die Kosten der Vernachlässigung vs. Prävention", spend: "Monatliche Gesundheitsausgaben", years: "Anzahl der Jahre", neglectCost: "Kosten der Vernachlässigung", preventionCost: "Präventionsinvestition", savings: "Ihre Ersparnisse", roi: "Rendite", note: "* Vernachlässigungskosten umfassen: Arztrechnungen, Produktivitätsverlust" },
+    tr: { title: "Sağlık ROI Hesaplayıcı", subtitle: "İhmal maliyetini önleme değeriyle karşılaştırın", spend: "Aylık Sağlık Harcamanız", years: "Yıl Sayısı", neglectCost: "İhmal Maliyeti", preventionCost: "Önleme Yatırımı", savings: "Tasarrufunuz", roi: "Yatırım Getirisi", note: "* İhmal maliyetleri: tıbbi faturalar, üretkenlik kaybı" },
+  };
+  const l = labels[lang] || labels.en;
+
+  return (
+    <section className="py-24 bg-white">
+      <div className="container">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium mb-4">
+              <Heart className="w-4 h-4" />
+              Health ROI
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{l.title}</h2>
+            <p className="text-muted-foreground">{l.subtitle}</p>
+          </div>
+
+          <Card className="border-0 shadow-2xl">
+            <CardContent className="p-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-3">{l.spend}: <span className="text-primary font-bold">${monthlyHealthSpend}</span></label>
+                    <input type="range" min="50" max="500" step="10" value={monthlyHealthSpend} onChange={e => setMonthlyHealthSpend(Number(e.target.value))} className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-3">{l.years}: <span className="text-primary font-bold">{yearsNeglect}</span></label>
+                    <input type="range" min="1" max="20" value={yearsNeglect} onChange={e => setYearsNeglect(Number(e.target.value))} className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer accent-primary" />
+                  </div>
+                </div>
+
+                <div className="space-y-4 bg-red-50 rounded-2xl p-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">{l.neglectCost}</span>
+                    <span className="font-bold text-red-600">${neglectCost.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">{l.preventionCost}</span>
+                    <span className="font-bold text-green-600">${preventionCost.toLocaleString()}</span>
+                  </div>
+                  <div className="border-t border-border pt-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold">{l.savings}</span>
+                      <span className="text-xl font-bold text-green-600">${savings.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold">{l.roi}</span>
+                      <span className="text-2xl font-bold text-gradient-gold">{roi}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-6 text-center">{l.note}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Partner() {
   const { lang } = useLanguage();
 
@@ -194,6 +274,9 @@ export default function Partner() {
 
       {/* Income Calculator */}
       <IncomeCalculator />
+
+      {/* Health ROI Calculator */}
+      <HealthROICalculator />
 
       {/* CTA */}
       <section className="py-16 gradient-hero text-white text-center">
