@@ -34,3 +34,5 @@
 - [x] Replace generated product images with real original product photos from user
 - [x] Update chatbot knowledge base with objection handling content from PDF
 - [x] Upload all real product images to webdev storage
+- [x] Integrate Unicity compliance guidelines (FTC/social media policies) into chatbot behavior
+- [x] Add company profile facts to chatbot knowledge base
