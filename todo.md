@@ -38,3 +38,10 @@
 - [x] Add company profile facts to chatbot knowledge base
 - [x] Add return & refund policy to chatbot knowledge base (60-day guarantee, process, contacts)
 - [x] Add membership terms and conditions to chatbot knowledge base (free membership, credit system, termination)
+- [x] Create standalone FAQ page with common questions for SEO
+- [x] Build automatic follow-up system for leads who haven't completed registration
+- [x] Guide user to set custom domain (feelfree.manus.space) from Settings > Domains
+- [x] Analyze and integrate Product Claims guidelines into chatbot
+- [x] Analyze and integrate Social Stories sharing guidelines into chatbot
+- [x] Add SEO meta tags and FAQ structured data (JSON-LD) to FAQ page
+- [x] Implement follow-up delivery via owner notification with lead contact details

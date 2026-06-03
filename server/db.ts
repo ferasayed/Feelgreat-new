@@ -1,4 +1,4 @@
-import { eq, desc, sql, count } from "drizzle-orm";
+import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -204,4 +204,54 @@ export async function markConversationNotified(visitorId: string): Promise<void>
   await db.update(chatConversations)
     .set({ ownerNotified: true })
     .where(eq(chatConversations.visitorId, visitorId));
+}
+
+// ===== FOLLOW-UP SYSTEM =====
+
+export async function getPendingFollowUpLeads(): Promise<Lead[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Get leads that are pending and either never followed up or last follow-up was > 24h ago
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  
+  const result = await db.select().from(leads)
+    .where(
+      and(
+        eq(leads.followUpStatus, "pending"),
+        or(
+          isNull(leads.lastFollowUpAt),
+          lte(leads.lastFollowUpAt, oneDayAgo)
+        )
+      )
+    )
+    .orderBy(desc(leads.createdAt))
+    .limit(50);
+
+  return result;
+}
+
+export async function markLeadFollowedUp(leadId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  const existing = await db.select().from(leads).where(eq(leads.id, leadId)).limit(1);
+  if (existing.length === 0) return;
+
+  await db.update(leads)
+    .set({
+      followUpCount: (existing[0].followUpCount ?? 0) + 1,
+      lastFollowUpAt: new Date(),
+      followUpStatus: (existing[0].followUpCount ?? 0) >= 2 ? "lost" : "contacted",
+    })
+    .where(eq(leads.id, leadId));
+}
+
+export async function updateLeadStatus(leadId: number, status: "pending" | "contacted" | "converted" | "lost"): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.update(leads)
+    .set({ followUpStatus: status })
+    .where(eq(leads.id, leadId));
 }

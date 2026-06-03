@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, MessageCircle, TrendingUp, AlertTriangle, ArrowLeft, ShieldAlert } from "lucide-react";
 import { getLoginUrl } from "@/const";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -57,6 +58,32 @@ export default function Dashboard() {
   }
 
   return <DashboardContent />;
+}
+
+function ScheduleButton() {
+  const setupSchedule = trpc.schedule.setup.useMutation({
+    onSuccess: () => {
+      toast.success("Follow-up schedule activated!");
+    },
+    onError: (err) => {
+      if (err.message.includes("409") || err.message.includes("CONFLICT")) {
+        toast.info("Follow-up schedule is already active.");
+      } else {
+        toast.error("Failed to activate: " + err.message);
+      }
+    },
+  });
+
+  return (
+    <Button
+      onClick={() => setupSchedule.mutate()}
+      disabled={setupSchedule.isPending}
+      size="sm"
+      className="shrink-0"
+    >
+      {setupSchedule.isPending ? "Activating..." : "Activate"}
+    </Button>
+  );
 }
 
 function DashboardContent() {
@@ -153,6 +180,21 @@ function DashboardContent() {
         )}
 
         {/* Tabs */}
+        {/* Follow-Up Automation Card */}
+        <Card className="mb-8 border-primary/20 bg-primary/5">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-lg mb-1">🔄 Auto Follow-Up System</h3>
+                <p className="text-sm text-muted-foreground">
+                  Automatically follows up with pending leads daily at 9:00 AM UTC. Sends personalized reminders and notifies you of results.
+                </p>
+              </div>
+              <ScheduleButton />
+            </div>
+          </CardContent>
+        </Card>
+
         <Tabs defaultValue="leads" className="space-y-4">
           <TabsList>
             <TabsTrigger value="leads">Registered Leads</TabsTrigger>
@@ -182,6 +224,7 @@ function DashboardContent() {
                           <TableHead>Phone</TableHead>
                           <TableHead>Country</TableHead>
                           <TableHead>Source</TableHead>
+                          <TableHead>Follow-Up</TableHead>
                           <TableHead>Date</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -194,6 +237,15 @@ function DashboardContent() {
                             <TableCell>{lead.country}</TableCell>
                             <TableCell>
                               <Badge variant="outline">{lead.source}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={lead.followUpStatus === "converted" ? "default" : lead.followUpStatus === "contacted" ? "secondary" : lead.followUpStatus === "lost" ? "destructive" : "outline"}
+                                className={lead.followUpStatus === "converted" ? "bg-green-100 text-green-700" : ""}
+                              >
+                                {lead.followUpStatus ?? "pending"}
+                                {lead.followUpCount > 0 && ` (#${lead.followUpCount})`}
+                              </Badge>
                             </TableCell>
                             <TableCell className="text-muted-foreground text-sm">
                               {new Date(lead.createdAt).toLocaleDateString()}

@@ -29,6 +29,9 @@ export const leads = mysqlTable("leads", {
   country: varchar("country", { length: 100 }).notNull(),
   source: varchar("source", { length: 50 }).default("form").notNull(),
   notes: text("notes"),
+  followUpStatus: mysqlEnum("followUpStatus", ["pending", "contacted", "converted", "lost"]).default("pending").notNull(),
+  followUpCount: int("followUpCount").default(0).notNull(),
+  lastFollowUpAt: timestamp("lastFollowUpAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 

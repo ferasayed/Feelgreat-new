@@ -639,11 +639,19 @@ function ShareSection() {
 }
 
 function Footer() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <footer className="py-8 bg-foreground text-white/60">
       <div className="container text-center">
+        <div className="mb-4 flex justify-center gap-6 text-sm">
+          <a href="/faq" className="hover:text-white transition-colors">
+            {lang === "ar" ? "الأسئلة الشائعة" : lang === "fr" ? "FAQ" : lang === "es" ? "Preguntas Frecuentes" : lang === "de" ? "FAQ" : lang === "tr" ? "SSS" : "FAQ"}
+          </a>
+          <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+            {lang === "ar" ? "سجّل الآن" : "Register"}
+          </a>
+        </div>
         <p className="text-sm mb-2">© 2024 Feel Great Partner. {t("footer.rights")}</p>
         <p className="text-xs">{t("footer.disclaimer")}</p>
       </div>

@@ -4,7 +4,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus } from "./db";
+import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
 
@@ -150,6 +151,23 @@ Your role:
 - 50+ scientific studies, 400+ products, 800+ employees
 - Make Life Better Foundation: charity in 50+ countries
 
+=== PRODUCT CLAIMS COMPLIANCE (CRITICAL) ===
+- NEVER use words: cure, treat, prevent, heal, fix, remedy, therapeutic, prescription
+- ONLY use approved structure/function claims: "supports", "helps maintain", "promotes"
+- Approved claims for Unimate: "supports mental clarity", "helps maintain focus", "promotes healthy energy levels"
+- Approved claims for Balance: "supports healthy glucose levels already in normal range", "helps maintain cholesterol levels already in normal range", "promotes satiety"
+- NEVER reference specific diseases (cancer, diabetes, heart disease) as things the product treats
+- If asked about disease treatment: "Our products support overall wellness. For specific medical conditions, please consult your healthcare provider."
+- NEVER make before/after weight claims with specific numbers unless from official Unicity materials
+
+=== SOCIAL STORIES SHARING GUIDANCE ===
+- When advising new partners on how to share: encourage sharing their personal journey as it unfolds
+- Suggest asking customers: "How was your first day?", "What are you noticing after 2 weeks?"
+- Recommend mixing short posts (under 120 chars) with longer storytelling posts
+- Encourage getting permission before sharing customer screenshots
+- Advise focusing on the person's "why" - emotional stories are most powerful
+- Recommend Instagram Story Highlights for longer availability of testimonials
+
 === GUIDELINES ===
 - ALWAYS respond in the same language the user writes in
 - Be enthusiastic but honest - never make medical claims (use "supports", "helps", "promotes")
@@ -158,7 +176,7 @@ Your role:
 - Always end with a question or call to action
 - Use emojis sparingly for warmth
 - When ready to join, provide: https://ufeelgreat.com/c/GBP556
-- Emphasize: free membership, no risk (90-day guarantee), opportunity to build a business
+- Emphasize: free membership, no risk (60-day guarantee for customers), opportunity to build a business
 - For health questions, recommend consulting a doctor while highlighting product safety
 - When discussing business: mention it requires work, dedication, and time - but the support system and tools make it achievable`;
 
@@ -225,6 +243,17 @@ export const appRouter = router({
       ]);
       return { leads: leadsList, total };
     }),
+
+    // Admin: update lead follow-up status
+    updateStatus: adminProcedure
+      .input(z.object({
+        leadId: z.number(),
+        status: z.enum(["pending", "contacted", "converted", "lost"]),
+      }))
+      .mutation(async ({ input }) => {
+        await updateLeadStatus(input.leadId, input.status);
+        return { success: true };
+      }),
   }),
 
   // AI Chatbot
@@ -324,6 +353,29 @@ export const appRouter = router({
 
     conversations: adminProcedure.query(async () => {
       return getAllConversations();
+    }),
+  }),
+
+  // Schedule management (admin only)
+  schedule: router({
+    setup: adminProcedure.mutation(async ({ ctx }) => {
+      // Create the daily follow-up cron job (runs every 24h at 9:00 UTC)
+      const result = await createHeartbeatJob(
+        {
+          name: "daily-followup",
+          cron: "0 0 9 * * *",
+          path: "/api/scheduled/followUp",
+          method: "POST",
+          description: "Daily follow-up for pending leads who haven't completed registration",
+        },
+        "" // empty string = project owner session
+      );
+      return { success: true, taskUid: result.taskUid, nextExecution: result.nextExecutionAt };
+    }),
+
+    list: adminProcedure.query(async () => {
+      const jobs = await listHeartbeatJobs("");
+      return jobs;
     }),
   }),
 });

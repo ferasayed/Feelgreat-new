@@ -137,3 +137,65 @@ Any statement express or implied that conveys:
 - Customer Service: info.mena@unicity.com
 - Compliance: dc_mena@unicity.com
 - Office: https://office.unicity.com
+
+## Product Claims Compliance (CRITICAL - September 24, 2024 Announcement)
+
+### FINAL WARNING from Unicity MENA Region:
+- Under NO circumstances should any claims imply curative, medicinal, or therapeutic benefits
+- ESPECIALLY PROHIBITED terms: "Cure", "Treat", "Kill", or "Prevent" in relation to Cancer or any disease
+- Such violations = SEVERE infringements → immediate termination of distributorship
+- Must remove all related content immediately if in violation
+- Compliance grace period ended September 30, 2024
+- Failure to adhere = suspension proceedings immediately
+
+### Prohibited Post Examples (NEVER use language like):
+- "Killing cancer cells"
+- "Cured of cancer"
+- "Fight against diabetes"
+- "Resetting the body"
+- "Controlling immune imbalance"
+- Any claim about curing/treating specific diseases
+
+### CHATBOT MUST:
+- NEVER claim products cure, treat, kill, or prevent any disease
+- Use ONLY approved language: "supports", "helps", "promotes", "may assist"
+- For health conditions: ALWAYS recommend consulting a doctor
+- Focus on general wellness benefits, NOT disease treatment
+
+## Sharing Social Stories Guidelines (Official Tips)
+
+### Key Principles:
+1. **Storytelling is critical** - Stories build personality and create connection with audience
+2. **Be a Visual Storyteller** - Use 3, 6, or 9 separate images/videos to create a complete story
+3. **Borrow Someone's Story** - If you don't have your own success story yet, share someone else's (creates third-party credibility, like Amazon reviews)
+4. **Get stories in writing or video** for easy social media sharing
+
+### Benefits of Sharing Others' Stories:
+- Creates third-party credibility
+- People want proof it works for someone like them
+- Shows what final results look like
+- Can share while still pursuing your own journey
+
+### Share Your Story as It Unfolds:
+- Don't wait until you've achieved results - share the journey
+- Benefits: encourages accountability, shows authenticity, creates camaraderie, creates anticipation
+- Use language like "join me", "ask me what I'm doing"
+- Be honest and straightforward
+
+### Gather Stories from Customers/Downline:
+- Regularly check in with customers via text/message
+- Ask questions to understand where they are in their journey
+- Get permission to share screenshots of conversations
+- Capture the person's "why" - the more emotional, the more powerful
+- Consider adding Story Highlights on Instagram for longer availability
+
+### Ask the Right Questions:
+- "How was your first day using the product?"
+- "You've been at it for three days. How are you feeling?"
+- "You are two weeks in. Congrats! What are you noticing?"
+
+### Choose the Right Length:
+- Short posts (under 120 characters) get more engagement
+- But longer posts with "See More" can tell more captivating stories
+- Mix both: small tidbits + longer stories with an arc
+- Don't shy away from sharing challenges and how they were overcome
