@@ -14,39 +14,40 @@
 }
 
 @theme inline {
-  --color-background: oklch(0.99 0.002 240);
-  --color-foreground: oklch(0.15 0.02 260);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.15 0.02 260);
+  /* Premium Trust-Building Palette: White + Calm Blue + Natural Green + Light Beige + Soft Gold */
+  --color-background: oklch(0.99 0.003 90);  /* warm white with hint of beige */
+  --color-foreground: oklch(0.18 0.02 250);  /* deep navy for text */
+  --color-card: oklch(1 0 0);  /* pure white cards */
+  --color-card-foreground: oklch(0.18 0.02 250);
   --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.15 0.02 260);
-  --color-primary: oklch(0.55 0.18 160);
-  --color-primary-foreground: oklch(0.99 0.002 240);
-  --color-secondary: oklch(0.95 0.01 240);
-  --color-secondary-foreground: oklch(0.25 0.02 260);
-  --color-muted: oklch(0.95 0.01 240);
-  --color-muted-foreground: oklch(0.5 0.02 260);
-  --color-accent: oklch(0.55 0.18 160);
-  --color-accent-foreground: oklch(0.99 0.002 240);
+  --color-popover-foreground: oklch(0.18 0.02 250);
+  --color-primary: oklch(0.52 0.14 155);  /* natural green - Unicity brand */
+  --color-primary-foreground: oklch(0.99 0.002 90);
+  --color-secondary: oklch(0.96 0.01 90);  /* light beige */
+  --color-secondary-foreground: oklch(0.25 0.02 250);
+  --color-muted: oklch(0.96 0.008 90);  /* soft beige muted */
+  --color-muted-foreground: oklch(0.5 0.015 250);
+  --color-accent: oklch(0.62 0.12 230);  /* calm blue accent */
+  --color-accent-foreground: oklch(0.99 0.002 90);
   --color-destructive: oklch(0.55 0.2 25);
-  --color-destructive-foreground: oklch(0.99 0.002 240);
-  --color-border: oklch(0.9 0.01 240);
-  --color-input: oklch(0.9 0.01 240);
-  --color-ring: oklch(0.55 0.18 160);
-  --color-chart-1: oklch(0.55 0.18 160);
-  --color-chart-2: oklch(0.6 0.15 200);
-  --color-chart-3: oklch(0.65 0.12 280);
-  --color-chart-4: oklch(0.7 0.14 60);
-  --color-chart-5: oklch(0.6 0.2 30);
-  --color-sidebar: oklch(0.98 0.005 240);
-  --color-sidebar-foreground: oklch(0.15 0.02 260);
-  --color-sidebar-primary: oklch(0.55 0.18 160);
-  --color-sidebar-primary-foreground: oklch(0.99 0.002 240);
-  --color-sidebar-accent: oklch(0.93 0.01 240);
-  --color-sidebar-accent-foreground: oklch(0.25 0.02 260);
-  --color-sidebar-border: oklch(0.9 0.01 240);
-  --color-sidebar-ring: oklch(0.55 0.18 160);
-  --radius: 0.625rem;
+  --color-destructive-foreground: oklch(0.99 0.002 90);
+  --color-border: oklch(0.92 0.01 90);  /* subtle warm border */
+  --color-input: oklch(0.92 0.01 90);
+  --color-ring: oklch(0.52 0.14 155);  /* green focus ring */
+  --color-chart-1: oklch(0.52 0.14 155);  /* green */
+  --color-chart-2: oklch(0.62 0.12 230);  /* calm blue */
+  --color-chart-3: oklch(0.72 0.12 80);   /* soft gold */
+  --color-chart-4: oklch(0.58 0.1 180);   /* teal */
+  --color-chart-5: oklch(0.6 0.15 30);    /* warm coral */
+  --color-sidebar: oklch(0.97 0.005 90);
+  --color-sidebar-foreground: oklch(0.18 0.02 250);
+  --color-sidebar-primary: oklch(0.52 0.14 155);
+  --color-sidebar-primary-foreground: oklch(0.99 0.002 90);
+  --color-sidebar-accent: oklch(0.94 0.01 90);
+  --color-sidebar-accent-foreground: oklch(0.25 0.02 250);
+  --color-sidebar-border: oklch(0.92 0.01 90);
+  --color-sidebar-ring: oklch(0.52 0.14 155);
+  --radius: 0.75rem;
   --font-sans: 'Bahij TheSansArabic', 'Inter', system-ui, sans-serif;
 }
 
@@ -83,23 +84,24 @@
   }
 }
 
-/* Premium gradient backgrounds */
+/* Premium gradient backgrounds - Trust-Building Palette */
 .gradient-hero {
-  background: linear-gradient(135deg, oklch(0.2 0.05 160) 0%, oklch(0.15 0.04 200) 50%, oklch(0.12 0.03 260) 100%);
+  background: linear-gradient(135deg, oklch(0.18 0.04 250) 0%, oklch(0.14 0.03 200) 50%, oklch(0.12 0.04 155) 100%);
 }
 
 .gradient-section {
-  background: linear-gradient(180deg, oklch(0.97 0.005 160 / 0.3) 0%, oklch(0.99 0.002 240) 100%);
+  background: linear-gradient(180deg, oklch(0.97 0.008 90 / 0.5) 0%, oklch(0.99 0.003 90) 100%);
 }
 
 .gradient-card {
-  background: linear-gradient(145deg, oklch(1 0 0) 0%, oklch(0.98 0.005 160 / 0.2) 100%);
+  background: linear-gradient(145deg, oklch(1 0 0) 0%, oklch(0.98 0.008 90 / 0.3) 100%);
 }
 
 .glass-effect {
   backdrop-filter: blur(12px);
-  background: oklch(1 0 0 / 0.8);
-  border: 1px solid oklch(0.9 0.01 240 / 0.5);
+  background: oklch(1 0 0 / 0.85);
+  border: 1px solid oklch(0.92 0.01 90 / 0.5);
+  box-shadow: 0 1px 3px oklch(0.5 0.02 250 / 0.08);
 }
 
 /* Animations */
@@ -114,8 +116,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px oklch(0.55 0.18 160 / 0.3); }
-  50% { box-shadow: 0 0 40px oklch(0.55 0.18 160 / 0.6); }
+  0%, 100% { box-shadow: 0 0 20px oklch(0.52 0.14 155 / 0.3); }
+  50% { box-shadow: 0 0 40px oklch(0.52 0.14 155 / 0.6); }
 }
 
 .animate-float {

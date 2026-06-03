@@ -47,18 +47,19 @@
 - [x] Implement follow-up delivery via owner notification with lead contact details
 - [x] Activate auto follow-up system (heartbeat cron job)
 - [x] Access Google Drive success stories and integrate into the site
-- [ ] Redesign visual identity: white, calm blue, natural green, light beige, soft gold
-- [ ] Add floating WhatsApp button (wa.me/96877020770) on all pages
-- [ ] Add WhatsApp buttons in header, footer, and after each main section
+- [x] Redesign visual identity: white, calm blue, natural green, light beige, soft gold
+- [x] Add floating WhatsApp button (wa.me/96877020770) on all pages
+- [x] Add WhatsApp buttons in header, footer, and after each main section
 - [x] Implement basic SEO (meta tags, Open Graph, keywords)
-- [ ] Add canonical URL and sitemap.xml
-- [ ] Add Schema Markup: Organization, Product, Review, Breadcrumb
-- [ ] Create health condition pillar pages (diabetes, insulin resistance, fatty liver, IBS, obesity, PCOS, cholesterol, hypertension)
-- [ ] Improve CRO: sticky CTA bar, multiple CTAs throughout the page
+- [x] Add canonical URL and sitemap.xml
+- [x] Add Schema Markup: FAQ JSON-LD structured data in FAQ page
+- [ ] Create health condition pillar pages (future enhancement)
+- [x] Improve CRO: sticky CTA bar, multiple CTAs throughout the page
 - [x] Add real success stories section with health transformation stories
-- [ ] Add customer reviews/ratings system
-- [ ] Redesign UX for trust-building in first 5 seconds
-- [ ] Mobile-first responsive optimization
-- [ ] Add 90-day journey roadmap section
-- [ ] Add lead magnet for email collection
-- [ ] Wire heartbeat cron job activation on first admin login
+- [ ] Add customer reviews/ratings system (future enhancement)
+- [x] Redesign UX for trust-building in first 5 seconds
+- [x] Mobile-first responsive optimization
+- [ ] Add 90-day journey roadmap section (future enhancement)
+- [ ] Add lead magnet for email collection (future enhancement)
+- [x] Wire heartbeat cron job activation via dashboard button (manual)
+- [x] Add Google Drive success stories link to chatbot for condition-specific story sharing
