@@ -16,6 +16,8 @@ const Founder = lazy(() => import("./pages/Founder"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const HealthConditionsList = lazy(() => import("./pages/HealthConditions").then(m => ({ default: m.HealthConditionsList })));
+const PillarPagesList = lazy(() => import("./pages/PillarPage").then(m => ({ default: m.PillarPagesList })));
+const PillarPageDetail = lazy(() => import("./pages/PillarPage").then(m => ({ default: m.PillarPageDetail })));
 const HealthConditionDetail = lazy(() => import("./pages/HealthConditions").then(m => ({ default: m.HealthConditionDetail })));
 
 function PageLoader() {
@@ -41,6 +43,8 @@ function Router() {
         <Route path={"/blog"} component={Blog} />
         <Route path={"/blog/:slug"} component={BlogArticle} />
         <Route path={"/health"} component={HealthConditionsList} />
+        <Route path={"/topics"} component={PillarPagesList} />
+        <Route path={"/topics/:slug"} component={PillarPageDetail} />
         <Route path={"/health/:slug"} component={HealthConditionDetail} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
