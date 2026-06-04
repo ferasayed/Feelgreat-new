@@ -45,6 +45,38 @@ async function startServer() {
   app.post("/api/scheduled/followUpSequence", followUpSequenceHandler);
   app.post("/api/scheduled/generateArticle", generateArticleHandler);
 
+  // IP-based geolocation endpoint for auto language detection
+  app.get("/api/geo", async (req, res) => {
+    try {
+      // Try to get real IP from headers (behind proxy)
+      const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
+        || (req.headers["x-real-ip"] as string)
+        || req.socket.remoteAddress
+        || "";
+      
+      // Skip for localhost/private IPs
+      const isPrivate = ip === "127.0.0.1" || ip === "::1" || ip.startsWith("192.168.") || ip.startsWith("10.") || ip.startsWith("172.");
+      if (isPrivate) {
+        return res.json({ countryCode: null, detected: false });
+      }
+
+      // Use ip-api.com (free, no key needed, 45 req/min limit)
+      const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,countryCode`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      const data = await response.json();
+      
+      if (data.status === "success") {
+        res.json({ countryCode: data.countryCode, detected: true });
+      } else {
+        res.json({ countryCode: null, detected: false });
+      }
+    } catch {
+      // Fail silently - browser language will be used as fallback
+      res.json({ countryCode: null, detected: false });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

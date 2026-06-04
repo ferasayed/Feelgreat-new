@@ -1,11 +1,11 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useMemo } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, Router as WouterRouter } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { LanguageProvider } from "./contexts/LanguageContext";
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
 import Home from "./pages/Home";
 
 // Lazy-loaded routes for code splitting
@@ -33,6 +33,7 @@ const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const SuccessStoryDetail = lazy(() => import("./pages/SuccessStories").then(m => ({ default: m.SuccessStoryDetail })));
 const HealthCalculators = lazy(() => import("./pages/HealthCalculators"));
 import ExitIntentPopup from "./components/ExitIntentPopup";
+import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
   return (
@@ -45,7 +46,7 @@ function PageLoader() {
   );
 }
 
-function Router() {
+function AppRoutes() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Switch>
@@ -80,6 +81,19 @@ function Router() {
   );
 }
 
+function LanguageRouter() {
+  const { lang } = useLanguage();
+
+  // Set wouter base to the language prefix (empty for English)
+  const base = useMemo(() => (lang === "en" ? "" : `/${lang}`), [lang]);
+
+  return (
+    <WouterRouter base={base}>
+      <AppRoutes />
+    </WouterRouter>
+  );
+}
+
 function App() {
   return (
     <ErrorBoundary>
@@ -87,7 +101,8 @@ function App() {
         <LanguageProvider>
           <TooltipProvider>
             <Toaster />
-            <Router />
+            <HreflangTags />
+            <LanguageRouter />
             <ExitIntentPopup />
           </TooltipProvider>
         </LanguageProvider>
