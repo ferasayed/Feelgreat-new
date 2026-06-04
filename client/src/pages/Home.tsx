@@ -231,6 +231,21 @@ function HeroSection() {
               </Button>
             </a>
           </div>
+
+          {/* Audio Introduction */}
+          <div className="mt-10 animate-fade-in-up stagger-4">
+            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+              <Play className="w-5 h-5 text-amber-400" />
+              <span className="text-white/80 text-sm">
+                {lang === 'ar' ? 'استمع لرسالة فراس' : 'Listen to Feras\'s Message'}
+              </span>
+              <audio
+                controls
+                className="h-8 max-w-[200px] sm:max-w-[280px]"
+                src={lang === 'ar' ? '/manus-storage/feras-intro-ar_62a1c58b.wav' : '/manus-storage/feras-intro-en_adcbb476.wav'}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>

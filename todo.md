@@ -281,3 +281,10 @@
 - [x] Review all pages for friction reduction (StickyCTA redesigned)
 - [x] Improve CTA visibility (Primary: Book Consultation, Secondary: Take Assessment, Tertiary: WhatsApp)
 - [x] Increase trust signals across all pages (Shield icon, amber accent, trust messaging)
+
+## Additional Improvements
+- [x] Generate Arabic AI voice recording of Feras intro message
+- [x] Generate English AI voice recording of Feras intro message
+- [x] Integrate audio player into the website (hero section with language-aware switching)
+- [x] Create Free Health Calculators page (BMI, Insulin Resistance Score, Metabolic Age) at /calculators
+- [x] Add Exit-Intent Popup with "7 Hidden Signs of Insulin Resistance" lead magnet

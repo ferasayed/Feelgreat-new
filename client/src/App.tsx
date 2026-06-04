@@ -31,6 +31,8 @@ const Reviews = lazy(() => import("./pages/Reviews"));
 const JourneyRoadmap = lazy(() => import("./pages/JourneyRoadmap"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const SuccessStoryDetail = lazy(() => import("./pages/SuccessStories").then(m => ({ default: m.SuccessStoryDetail })));
+const HealthCalculators = lazy(() => import("./pages/HealthCalculators"));
+import ExitIntentPopup from "./components/ExitIntentPopup";
 
 function PageLoader() {
   return (
@@ -70,6 +72,7 @@ function Router() {
         <Route path={"/90-day-journey"} component={JourneyRoadmap} />
         <Route path={"/success-stories"} component={SuccessStories} />
         <Route path={"/success-stories/:id"} component={SuccessStoryDetail} />
+        <Route path={"/calculators"} component={HealthCalculators} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
@@ -85,6 +88,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            <ExitIntentPopup />
           </TooltipProvider>
         </LanguageProvider>
       </ThemeProvider>
