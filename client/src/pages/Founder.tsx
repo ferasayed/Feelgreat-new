@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -5,6 +6,17 @@ import { Award, Globe, Users, TrendingUp, Phone, MapPin, Heart, Star } from "luc
 
 export default function Founder() {
   const { lang } = useLanguage();
+
+  useEffect(() => {
+    document.title = lang === 'ar' ? 'فراس العايد | أخصائي تغذية علاجية وسلوكية | Presidential Sapphire' : 'Feras Alayed | Therapeutic & Behavioral Nutrition Specialist | Presidential Sapphire';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', lang === 'ar' ? 'تعرف على فراس العايد - أخصائي تغذية علاجية وسلوكية، Presidential Sapphire في يونيسيتي. خبرة دولية في الصحة المستدامة.' : 'Meet Feras Alayed - Therapeutic & Behavioral Nutrition Specialist, Presidential Sapphire at Unicity International. International expertise in sustainable health.');
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://feelgreat.us.com/founder');
+    if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
+    return () => { document.querySelector('link[rel="canonical"]')?.remove(); };
+  }, [lang]);
 
   const content: Record<string, { title: string; subtitle: string; bio: string[]; achievements: Array<{ label: string; value: string }>; philosophy: string; philosophyTitle: string; cta: string }> = {
     ar: {

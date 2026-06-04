@@ -1,3 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: /sitemap.xml
+Disallow: /dashboard
+Disallow: /api/
+
+Sitemap: https://feelgreat.us.com/sitemap.xml

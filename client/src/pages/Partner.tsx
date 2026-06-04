@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -182,6 +182,17 @@ function HealthROICalculator() {
 
 export default function Partner() {
   const { lang } = useLanguage();
+
+  useEffect(() => {
+    document.title = lang === 'ar' ? 'كن شريكاً في Feel Great | فرصة شراكة حقيقية' : 'Become a Feel Great Partner | Real Partnership Opportunity';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', lang === 'ar' ? 'اكتشف كيف تصبح شريكاً في Feel Great وتبني دخلاً إضافياً مستداماً مع يونيسيتي. 5 خطوات بسيطة لبدء رحلتك.' : 'Discover how to become a Feel Great partner and build sustainable additional income with Unicity. 5 simple steps to start your journey.');
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://feelgreat.us.com/partner');
+    if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
+    return () => { document.querySelector('link[rel="canonical"]')?.remove(); };
+  }, [lang]);
 
   const steps: Record<string, Array<{ num: string; title: string; desc: string }>> = {
     ar: [

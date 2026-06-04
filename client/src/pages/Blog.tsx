@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,6 +23,17 @@ export default function Blog() {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useEffect(() => {
+    document.title = isAr ? 'المدونة | Feel Great - مقالات الصحة المستدامة' : 'Blog | Feel Great - Sustainable Health Articles';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', isAr ? 'مقالات علمية عن الصحة المستدامة، مقاومة الإنسولين، صحة الأمعاء، إنقاص الوزن، والتغذية السلوكية. بقلم فراس العايد.' : 'Science-backed articles on sustainable health, insulin resistance, gut health, weight loss, and behavioral nutrition. By Feras Alayed.');
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://feelgreat.us.com/blog');
+    if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
+    return () => { document.querySelector('link[rel="canonical"]')?.remove(); };
+  }, [isAr]);
 
   const { data, isLoading } = trpc.blog.list.useQuery({ limit: 50 });
 

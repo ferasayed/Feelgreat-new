@@ -1045,6 +1045,15 @@ function StickyCTA() {
 
 function SchemaMarkup() {
   useEffect(() => {
+    // Set page title and meta description
+    document.title = "Feel Great - Invest in Your Health, Build Your Future | Sustainable Health & Partnership";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', 'Feel Great by Feras Alayed - A science-backed sustainable health system. Invest in your health today and build your impact & income tomorrow with Unicity International.');
+    const metaCanonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    metaCanonical.setAttribute('rel', 'canonical');
+    metaCanonical.setAttribute('href', 'https://feelgreat.us.com/');
+    if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(metaCanonical);
+
     // Organization Schema
     const orgSchema = {
       "@context": "https://schema.org",

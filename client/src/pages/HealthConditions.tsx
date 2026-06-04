@@ -161,6 +161,17 @@ export function HealthConditionsList() {
   const isAr = lang === "ar";
   const BackArrow = isAr ? ArrowRight : ArrowLeft;
 
+  useEffect(() => {
+    document.title = isAr ? 'الحالات الصحية | Feel Great - دليلك للصحة المستدامة' : 'Health Conditions | Feel Great - Your Guide to Sustainable Health';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', isAr ? 'تعرف على كيف يدعم نظام Feel Great صحتك في مواجهة مقاومة الإنسولين، السكري، الكبد الدهني، والسمنة.' : 'Learn how the Feel Great system supports your health against insulin resistance, diabetes, fatty liver, obesity, and more.');
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://feelgreat.us.com/health');
+    if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
+    return () => { document.querySelector('link[rel="canonical"]')?.remove(); };
+  }, [isAr]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -246,6 +257,15 @@ export function HealthConditionDetail() {
         },
       };
 
+      // Meta description
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', isAr ? condition.descAr : condition.descEn);
+      // Canonical
+      const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      canonical.setAttribute('href', `https://feelgreat.us.com/health/${condition.slug}`);
+      if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
+
       const el = document.createElement("script");
       el.id = "condition-schema";
       el.type = "application/ld+json";
@@ -254,6 +274,7 @@ export function HealthConditionDetail() {
 
       return () => {
         document.getElementById("condition-schema")?.remove();
+        document.querySelector('link[rel="canonical"]')?.remove();
       };
     }
   }, [condition, isAr]);

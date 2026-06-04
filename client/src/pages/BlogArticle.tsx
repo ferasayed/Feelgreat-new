@@ -51,6 +51,12 @@ export default function BlogArticle() {
         timeRequired: `PT${article.readTimeMinutes}M`,
       };
 
+      // Add canonical URL
+      const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      canonical.setAttribute('href', `https://feelgreat.us.com/blog/${article.slug}`);
+      if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
+
       const scriptEl = document.createElement("script");
       scriptEl.id = "article-schema";
       scriptEl.type = "application/ld+json";
@@ -80,6 +86,7 @@ export default function BlogArticle() {
         if (el) el.remove();
         const faqEl = document.getElementById("faq-schema");
         if (faqEl) faqEl.remove();
+        document.querySelector('link[rel="canonical"]')?.remove();
       };
     }
   }, [article, isAr]);

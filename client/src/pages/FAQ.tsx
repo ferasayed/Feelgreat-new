@@ -271,6 +271,10 @@ export default function FAQ() {
     metaDesc.setAttribute('name', 'description');
     metaDesc.setAttribute('content', description);
     if (!document.querySelector('meta[name="description"]')) document.head.appendChild(metaDesc);
+    const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://feelgreat.us.com/faq');
+    if (!document.querySelector('link[rel="canonical"]')) document.head.appendChild(canonical);
 
     // FAQ JSON-LD Structured Data
     const allQuestions = currentFaq.flatMap(cat => cat.questions);
