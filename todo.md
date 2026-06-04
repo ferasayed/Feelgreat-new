@@ -117,3 +117,68 @@
 - [x] Add topical authority clusters: Metabolic Health, Insulin Resistance, Sustainable Health, Healthy Aging
 - [x] Add content validation: minimum word count, FAQ presence, internal links check before publishing
 - [x] Add FAQ JSON-LD schema to article pages
+
+## 8-Phase SEO Authority Strategy (EXECUTE IN ORDER)
+
+### Phase 1: Technical SEO Foundation
+- [ ] Audit and fix all meta tags (title, description) on every page
+- [ ] Ensure every page has exactly one H1 tag
+- [ ] Fix any broken internal links
+- [ ] Optimize sitemap.xml with all pages and proper priorities
+- [ ] Optimize robots.txt for proper crawling
+- [ ] Improve Core Web Vitals (LCP, FID, CLS)
+- [ ] Ensure mobile usability across all pages
+- [ ] Add proper canonical URLs
+- [ ] Fix any duplicate content issues
+- [ ] Improve page speed (lazy loading, image optimization)
+- [ ] Map and improve internal linking structure
+- [ ] Deliver Phase 1 technical audit report
+
+### Phase 2: Website Structure & Architecture
+- [ ] Define 9 main authority categories with URL structure
+- [ ] Create topic cluster map under each category
+- [ ] Build navigation reflecting authority structure
+- [ ] Create category landing pages
+- [ ] Deliver sitemap document before proceeding
+
+### Phase 3: Authority Pillar Pages (3000+ words each)
+- [ ] Sustainable Health pillar page
+- [ ] Insulin Resistance pillar page
+- [ ] Prediabetes pillar page
+- [ ] Weight Loss After 40 pillar page
+- [ ] Metabolic Health pillar page
+- [ ] Gut Health pillar page
+- [ ] Healthy Aging pillar page
+- [ ] Energy & Fatigue pillar page
+- [ ] Behavioral Nutrition pillar page
+
+### Phase 4: Conversion Funnels
+- [ ] Funnel A (Health Clients): Assessment → Consultation → Application
+- [ ] Funnel B (Business Partners): Opportunity → Video → Application → Call Booking
+- [ ] Ensure funnels are separate and don't mix audiences
+
+### Phase 5: Trust System
+- [ ] About Feras Alayed page (enhanced)
+- [ ] Credentials page
+- [ ] Case Studies page
+- [ ] Testimonials page
+- [ ] Health Assessment page (interactive)
+
+### Phase 6: Content Engine (1 article/day)
+- [ ] Configure article generation to 1/day targeting low-competition keywords
+- [ ] Focus on US, UK, Germany, Netherlands, Sweden markets
+- [ ] Target: Women 35-60, Prediabetes, Insulin Resistance, Weight Loss, Gut Health, Healthy Aging
+
+### Phase 7: Keyword Priority Report
+- [ ] Research top 20 keywords for fastest traffic growth in 90 days
+- [ ] Provide: Search Volume, Difficulty, Intent, Ranking Opportunity, Priority Score
+- [ ] Sort by ROI (highest to lowest)
+
+### Phase 8: Growth Dashboard
+- [ ] Track indexed pages
+- [ ] Track organic traffic
+- [ ] Track keyword rankings
+- [ ] Track leads generated
+- [ ] Track WhatsApp clicks
+- [ ] Track consultation requests
+- [ ] Weekly performance report system

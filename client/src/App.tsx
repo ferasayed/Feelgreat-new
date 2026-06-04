@@ -15,6 +15,8 @@ const Partner = lazy(() => import("./pages/Partner"));
 const Founder = lazy(() => import("./pages/Founder"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
+const HealthConditionsList = lazy(() => import("./pages/HealthConditions").then(m => ({ default: m.HealthConditionsList })));
+const HealthConditionDetail = lazy(() => import("./pages/HealthConditions").then(m => ({ default: m.HealthConditionDetail })));
 
 function PageLoader() {
   return (
@@ -38,6 +40,8 @@ function Router() {
         <Route path={"/founder"} component={Founder} />
         <Route path={"/blog"} component={Blog} />
         <Route path={"/blog/:slug"} component={BlogArticle} />
+        <Route path={"/health"} component={HealthConditionsList} />
+        <Route path={"/health/:slug"} component={HealthConditionDetail} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
