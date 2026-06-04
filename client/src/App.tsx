@@ -27,6 +27,8 @@ const GrowthDashboard = lazy(() => import("./pages/GrowthDashboard"));
 const LeadMagnet = lazy(() => import("./pages/LeadMagnet"));
 const PartnerWithFeras = lazy(() => import("./pages/PartnerWithFeras"));
 const HealthInvestor = lazy(() => import("./pages/HealthInvestor"));
+const Reviews = lazy(() => import("./pages/Reviews"));
+const JourneyRoadmap = lazy(() => import("./pages/JourneyRoadmap"));
 
 function PageLoader() {
   return (
@@ -62,6 +64,8 @@ function Router() {
         <Route path={"/assessments"} component={LeadMagnet} />
         <Route path={"/partner-with-feras"} component={PartnerWithFeras} />
         <Route path={"/health-investor"} component={HealthInvestor} />
+        <Route path={"/reviews"} component={Reviews} />
+        <Route path={"/90-day-journey"} component={JourneyRoadmap} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

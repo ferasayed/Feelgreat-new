@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -452,6 +452,46 @@ export const appRouter = router({
     list: adminProcedure.query(async () => {
       const jobs = await listHeartbeatJobs("");
       return jobs;
+    }),
+  }),
+
+  reviews: router({
+    submit: publicProcedure.input(z.object({
+      name: z.string().min(2),
+      country: z.string().min(2),
+      rating: z.number().min(1).max(5),
+      title: z.string().min(3),
+      content: z.string().min(10),
+      category: z.string().optional(),
+    })).mutation(async ({ input }) => {
+      const review = await createReview({
+        name: input.name,
+        country: input.country,
+        rating: input.rating,
+        title: input.title,
+        content: input.content,
+        category: input.category || "general",
+      });
+      // Notify owner of new review
+      await notifyOwner({ title: "New Review Submitted", content: `${input.name} (${input.country}) rated ${input.rating}/5: ${input.title}` });
+      return { success: true, review };
+    }),
+
+    published: publicProcedure.query(async () => {
+      return getPublishedReviews();
+    }),
+
+    all: adminProcedure.query(async () => {
+      return getAllReviews();
+    }),
+
+    approve: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+      await approveReview(input.id);
+      return { success: true };
+    }),
+
+    stats: publicProcedure.query(async () => {
+      return getReviewStats();
     }),
   }),
 });

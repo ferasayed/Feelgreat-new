@@ -1,6 +1,6 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -313,4 +313,41 @@ export async function getRecentArticleSlugs(limit = 30): Promise<string[]> {
     .orderBy(desc(blogArticles.createdAt))
     .limit(limit);
   return result.map(r => r.slug);
+}
+
+// ========== Reviews ==========
+
+export async function createReview(data: InsertReview): Promise<Review | null> {
+  const db = await getDb();
+  if (!db) return null;
+  await db.insert(reviews).values(data);
+  const [review] = await db.select().from(reviews).where(eq(reviews.name, data.name)).orderBy(desc(reviews.createdAt)).limit(1);
+  return review || null;
+}
+
+export async function getPublishedReviews(limit = 20): Promise<Review[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(reviews).where(and(eq(reviews.isApproved, true), eq(reviews.isPublished, true))).orderBy(desc(reviews.createdAt)).limit(limit);
+}
+
+export async function getAllReviews(): Promise<Review[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(reviews).orderBy(desc(reviews.createdAt));
+}
+
+export async function approveReview(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(reviews).set({ isApproved: true, isPublished: true }).where(eq(reviews.id, id));
+}
+
+export async function getReviewStats(): Promise<{ total: number; avgRating: number; published: number }> {
+  const db = await getDb();
+  if (!db) return { total: 0, avgRating: 0, published: 0 };
+  const all = await db.select().from(reviews);
+  const published = all.filter(r => r.isPublished);
+  const avgRating = all.length > 0 ? all.reduce((sum, r) => sum + r.rating, 0) / all.length : 0;
+  return { total: all.length, avgRating: Math.round(avgRating * 10) / 10, published: published.length };
 }

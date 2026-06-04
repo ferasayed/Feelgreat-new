@@ -62,9 +62,9 @@
 
 ## Future Enhancements (Optional)
 - [x] Create health condition pillar pages (diabetes, insulin resistance, fatty liver, IBS, obesity, PCOS, cholesterol, hypertension) - already implemented in /health/:slug
-- [ ] Add customer reviews/ratings system
-- [ ] Add 90-day journey roadmap section
-- [ ] Add lead magnet for email collection
+- [x] Add customer reviews/ratings system - /reviews page with submission form, moderation, and display
+- [x] Add 90-day journey roadmap section - /90-day-journey page with 3 phases and weekly focus guide
+- [x] Add lead magnet for email collection - implemented at /assessments with 4 lead magnets (quizzes + guide)
 - [x] Wire heartbeat cron job activation via dashboard button (manual)
 - [x] Add Google Drive success stories link to chatbot for condition-specific story sharing
 

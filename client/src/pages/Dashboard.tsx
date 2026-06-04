@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MessageCircle, TrendingUp, AlertTriangle, ArrowLeft, ShieldAlert } from "lucide-react";
+import { Users, MessageCircle, TrendingUp, AlertTriangle, ArrowLeft, ShieldAlert, Star, CheckCircle } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 
@@ -199,6 +199,7 @@ function DashboardContent() {
           <TabsList>
             <TabsTrigger value="leads">Registered Leads</TabsTrigger>
             <TabsTrigger value="conversations">Chat Conversations</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews</TabsTrigger>
           </TabsList>
 
           <TabsContent value="leads">
@@ -326,8 +327,100 @@ function DashboardContent() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="reviews">
+            <ReviewsModeration />
+          </TabsContent>
         </Tabs>
       </main>
     </div>
+  );
+}
+
+function ReviewsModeration() {
+  const { data: reviews, isLoading } = trpc.reviews.all.useQuery();
+  const utils = trpc.useUtils();
+  const approveMutation = trpc.reviews.approve.useMutation({
+    onSuccess: () => {
+      toast.success("Review approved and published!");
+      utils.reviews.all.invalidate();
+    },
+  });
+
+  if (isLoading) return <div className="py-8 text-center text-muted-foreground">Loading reviews...</div>;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Star className="w-5 h-5" />
+          Customer Reviews ({reviews?.length ?? 0})
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {!reviews || reviews.length === 0 ? (
+          <p className="text-muted-foreground text-center py-8">No reviews submitted yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Rating</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {reviews.map((review) => (
+                  <TableRow key={review.id}>
+                    <TableCell>
+                      <div className="font-medium">{review.name}</div>
+                      <div className="text-xs text-muted-foreground">{review.country}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} className={`w-3 h-3 ${s <= review.rating ? "text-amber-400 fill-amber-400" : "text-slate-200"}`} />
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">{review.title}</TableCell>
+                    <TableCell><Badge variant="outline" className="capitalize">{review.category}</Badge></TableCell>
+                    <TableCell>
+                      {review.isPublished ? (
+                        <Badge className="bg-green-100 text-green-700">Published</Badge>
+                      ) : review.isApproved ? (
+                        <Badge className="bg-blue-100 text-blue-700">Approved</Badge>
+                      ) : (
+                        <Badge className="bg-amber-100 text-amber-700">Pending</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-xs">{new Date(review.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {!review.isPublished && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => approveMutation.mutate({ id: review.id })}
+                          disabled={approveMutation.isPending}
+                          className="text-xs"
+                        >
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          Approve
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
