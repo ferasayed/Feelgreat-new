@@ -24,6 +24,9 @@ const BusinessOpportunity = lazy(() => import("./pages/BusinessOpportunity"));
 const About = lazy(() => import("./pages/About"));
 const KeywordReport = lazy(() => import("./pages/KeywordReport"));
 const GrowthDashboard = lazy(() => import("./pages/GrowthDashboard"));
+const LeadMagnet = lazy(() => import("./pages/LeadMagnet"));
+const PartnerWithFeras = lazy(() => import("./pages/PartnerWithFeras"));
+const HealthInvestor = lazy(() => import("./pages/HealthInvestor"));
 
 function PageLoader() {
   return (
@@ -56,6 +59,9 @@ function Router() {
         <Route path={"/about"} component={About} />
         <Route path={"/keywords"} component={KeywordReport} />
         <Route path={"/growth"} component={GrowthDashboard} />
+        <Route path={"/assessments"} component={LeadMagnet} />
+        <Route path={"/partner-with-feras"} component={PartnerWithFeras} />
+        <Route path={"/health-investor"} component={HealthInvestor} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

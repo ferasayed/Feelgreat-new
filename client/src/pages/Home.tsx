@@ -1116,18 +1116,260 @@ function SchemaMarkup() {
   return null;
 }
 
+function ProblemSection() {
+  const { lang } = useLanguage();
+
+  const content: Record<string, { title: string; subtitle: string; problems: Array<{ stat: string; desc: string }> }> = {
+    ar: {
+      title: "المشكلة التي لا يتحدث عنها أحد",
+      subtitle: "88% من البالغين يعانون من خلل أيضي — وأغلبهم لا يعرفون",
+      problems: [
+        { stat: "1 من 3", desc: "بالغين لديهم مقاومة إنسولين بدون تشخيص" },
+        { stat: "73%", desc: "من الحميات تفشل خلال أول 6 أشهر" },
+        { stat: "$4.1T", desc: "تكلفة الأمراض المزمنة سنوياً في أمريكا" },
+        { stat: "10-15", desc: "سنة من العمر تُفقد بسبب الإهمال الصحي" },
+      ],
+    },
+    en: {
+      title: "The Problem No One Talks About",
+      subtitle: "88% of adults have suboptimal metabolic health — and most don't know it",
+      problems: [
+        { stat: "1 in 3", desc: "adults have undiagnosed insulin resistance" },
+        { stat: "73%", desc: "of diets fail within the first 6 months" },
+        { stat: "$4.1T", desc: "annual cost of chronic disease in the US" },
+        { stat: "10-15", desc: "quality years lost to preventable health decline" },
+      ],
+    },
+    fr: {
+      title: "Le Problème Dont Personne Ne Parle",
+      subtitle: "88% des adultes ont une santé métabolique sous-optimale",
+      problems: [
+        { stat: "1 sur 3", desc: "adultes ont une résistance à l'insuline non diagnostiquée" },
+        { stat: "73%", desc: "des régimes échouent dans les 6 premiers mois" },
+        { stat: "4,1T$", desc: "coût annuel des maladies chroniques aux USA" },
+        { stat: "10-15", desc: "années de qualité perdues" },
+      ],
+    },
+    es: {
+      title: "El Problema Del Que Nadie Habla",
+      subtitle: "88% de los adultos tienen salud metabólica subóptima",
+      problems: [
+        { stat: "1 de 3", desc: "adultos tienen resistencia a la insulina sin diagnosticar" },
+        { stat: "73%", desc: "de las dietas fracasan en los primeros 6 meses" },
+        { stat: "$4.1T", desc: "costo anual de enfermedades crónicas en EE.UU." },
+        { stat: "10-15", desc: "años de calidad perdidos" },
+      ],
+    },
+    de: {
+      title: "Das Problem, Über Das Niemand Spricht",
+      subtitle: "88% der Erwachsenen haben suboptimale Stoffwechselgesundheit",
+      problems: [
+        { stat: "1 von 3", desc: "Erwachsenen haben unerkannte Insulinresistenz" },
+        { stat: "73%", desc: "der Diäten scheitern in den ersten 6 Monaten" },
+        { stat: "4,1T$", desc: "jährliche Kosten chronischer Krankheiten in den USA" },
+        { stat: "10-15", desc: "Qualitätsjahre gehen verloren" },
+      ],
+    },
+    tr: {
+      title: "Kimsenin Konuşmadığı Sorun",
+      subtitle: "Yetişkinlerin %88'i optimal altı metabolik sağlığa sahip",
+      problems: [
+        { stat: "3'te 1", desc: "yetişkinin teşhis edilmemiş insülin direnci var" },
+        { stat: "%73", desc: "diyetler ilk 6 ayda başarısız oluyor" },
+        { stat: "4,1T$", desc: "ABD'de kronik hastalıkların yıllık maliyeti" },
+        { stat: "10-15", desc: "önlenebilir sağlık düşüşüne kaybedilen yıl" },
+      ],
+    },
+  };
+
+  const c = content[lang] || content.en;
+
+  return (
+    <section className="py-20 bg-slate-50">
+      <div className="container">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{c.title}</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{c.subtitle}</p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          {c.problems.map((p, i) => (
+            <div key={i} className="text-center p-6 bg-white rounded-2xl shadow-sm border border-red-100">
+              <div className="text-2xl md:text-3xl font-bold text-red-500 mb-2">{p.stat}</div>
+              <p className="text-sm text-muted-foreground">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-10">
+          <p className="text-muted-foreground italic max-w-xl mx-auto">
+            {lang === "ar" ? "ماذا لو كان هناك نهج مختلف — نهج يعالج السبب الجذري بدلاً من الأعراض؟" : "What if there was a different approach — one that addresses the root cause, not just the symptoms?"}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TrustAuthoritySection() {
+  const { lang } = useLanguage();
+
+  const content: Record<string, { title: string; subtitle: string }> = {
+    ar: { title: "لماذا يثق الناس بفراس العايد؟", subtitle: "أكثر من عقد من الخبرة في التحول الصحي والقيادة العالمية" },
+    en: { title: "Why People Trust Feras Alayed", subtitle: "Over a decade of experience in health transformation and global leadership" },
+    fr: { title: "Pourquoi Faire Confiance à Feras Alayed", subtitle: "Plus d'une décennie d'expérience en transformation santé" },
+    es: { title: "Por Qué Confiar en Feras Alayed", subtitle: "Más de una década de experiencia en transformación de salud" },
+    de: { title: "Warum Menschen Feras Alayed Vertrauen", subtitle: "Über ein Jahrzehnt Erfahrung in Gesundheitstransformation" },
+    tr: { title: "İnsanlar Neden Feras Alayed'e Güveniyor", subtitle: "Sağlık dönüşümünde on yılı aşkın deneyim" },
+  };
+  const c = content[lang] || content.en;
+
+  const stats = [
+    { value: "50+", label: lang === "ar" ? "دولة" : "Countries" },
+    { value: "10K+", label: lang === "ar" ? "عميل" : "Clients" },
+    { value: "5K+", label: lang === "ar" ? "استشارة" : "Consultations" },
+    { value: "12+", label: lang === "ar" ? "سنة خبرة" : "Years" },
+  ];
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="container">
+        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{c.title}</h2>
+            <p className="text-muted-foreground mb-6">{c.subtitle}</p>
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              {stats.map((s, i) => (
+                <div key={i} className="bg-primary/5 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-primary">{s.value}</div>
+                  <div className="text-xs text-muted-foreground">{s.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {["Global Trainer", "Health Strategist", "Leadership Mentor", "Behavioral Nutrition", "Presidential Sapphire"].map((badge, i) => (
+                <span key={i} className="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-700">{badge}</span>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <img
+              src="/manus-storage/feras-portrait-1_d1f8a83f.png"
+              alt="Feras Alayed"
+              className="rounded-2xl shadow-xl max-h-[400px] object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TransformationSection() {
+  const { lang } = useLanguage();
+
+  const content: Record<string, { title: string; subtitle: string; steps: Array<{ before: string; after: string }> }> = {
+    ar: {
+      title: "التحول الذي ينتظرك",
+      subtitle: "من حيث أنت الآن… إلى حيث تستحق أن تكون",
+      steps: [
+        { before: "تعب مزمن وطاقة منخفضة", after: "طاقة مستدامة طوال اليوم" },
+        { before: "حميات فاشلة ووزن متذبذب", after: "نظام مستدام بنتائج دائمة" },
+        { before: "مقاومة إنسولين صامتة", after: "صحة أيضية متوازنة" },
+        { before: "قلق على المستقبل الصحي", after: "ثقة وسيطرة على صحتك" },
+      ],
+    },
+    en: {
+      title: "The Transformation Awaiting You",
+      subtitle: "From where you are now… to where you deserve to be",
+      steps: [
+        { before: "Chronic fatigue and low energy", after: "Sustained energy all day long" },
+        { before: "Failed diets and fluctuating weight", after: "Sustainable system with lasting results" },
+        { before: "Silent insulin resistance", after: "Balanced metabolic health" },
+        { before: "Anxiety about future health", after: "Confidence and control over your health" },
+      ],
+    },
+    fr: {
+      title: "La Transformation Qui Vous Attend",
+      subtitle: "De là où vous êtes… à là où vous méritez d'être",
+      steps: [
+        { before: "Fatigue chronique", after: "Énergie durable toute la journée" },
+        { before: "Régimes échoués", after: "Système durable avec résultats" },
+        { before: "Résistance à l'insuline silencieuse", after: "Santé métabolique équilibrée" },
+        { before: "Anxiété sur la santé future", after: "Confiance et contrôle" },
+      ],
+    },
+    es: {
+      title: "La Transformación Que Te Espera",
+      subtitle: "De donde estás ahora… a donde mereces estar",
+      steps: [
+        { before: "Fatiga crónica y baja energía", after: "Energía sostenida todo el día" },
+        { before: "Dietas fallidas y peso fluctuante", after: "Sistema sostenible con resultados" },
+        { before: "Resistencia a la insulina silenciosa", after: "Salud metabólica equilibrada" },
+        { before: "Ansiedad sobre la salud futura", after: "Confianza y control" },
+      ],
+    },
+    de: {
+      title: "Die Transformation, Die Auf Sie Wartet",
+      subtitle: "Von wo Sie jetzt sind… zu wo Sie es verdienen zu sein",
+      steps: [
+        { before: "Chronische Müdigkeit", after: "Nachhaltige Energie den ganzen Tag" },
+        { before: "Gescheiterte Diäten", after: "Nachhaltiges System mit Ergebnissen" },
+        { before: "Stille Insulinresistenz", after: "Ausgeglichene Stoffwechselgesundheit" },
+        { before: "Gesundheitsangst", after: "Vertrauen und Kontrolle" },
+      ],
+    },
+    tr: {
+      title: "Sizi Bekleyen Dönüşüm",
+      subtitle: "Şu an olduğunuz yerden… olmayı hak ettiğiniz yere",
+      steps: [
+        { before: "Kronik yorgunluk", after: "Gün boyu sürdürülebilir enerji" },
+        { before: "Başarısız diyetler", after: "Kalıcı sonuçlarla sürdürülebilir sistem" },
+        { before: "Sessiz insülin direnci", after: "Dengeli metabolik sağlık" },
+        { before: "Gelecek sağlık kaygısı", after: "Güven ve kontrol" },
+      ],
+    },
+  };
+  const c = content[lang] || content.en;
+
+  return (
+    <section className="py-20 gradient-section">
+      <div className="container">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{c.title}</h2>
+          <p className="text-lg text-muted-foreground">{c.subtitle}</p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {c.steps.map((step, i) => (
+            <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-border">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-red-400 line-through text-sm">{step.before}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-green-600 font-medium">→ {step.after}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <SchemaMarkup />
       <Navbar />
       <HeroSection />
-      <StatsSection />
-      <ProductsSection />
+      {/* New flow: Problem → Education → Trust → Transformation → Solution → Consultation */}
+      <ProblemSection />
       <SustainableHealthSection />
-      <HealthInvestorSection />
-      <PartnershipSection />
+      <TrustAuthoritySection />
+      <TransformationSection />
       <TestimonialsSection />
+      <HealthInvestorSection />
+      <ProductsSection />
+      <PartnershipSection />
       <RegistrationForm />
       <Footer />
       <ChatWidget />
