@@ -19,6 +19,11 @@ const HealthConditionsList = lazy(() => import("./pages/HealthConditions").then(
 const PillarPagesList = lazy(() => import("./pages/PillarPage").then(m => ({ default: m.PillarPagesList })));
 const PillarPageDetail = lazy(() => import("./pages/PillarPage").then(m => ({ default: m.PillarPageDetail })));
 const HealthConditionDetail = lazy(() => import("./pages/HealthConditions").then(m => ({ default: m.HealthConditionDetail })));
+const HealthAssessment = lazy(() => import("./pages/HealthAssessment"));
+const BusinessOpportunity = lazy(() => import("./pages/BusinessOpportunity"));
+const About = lazy(() => import("./pages/About"));
+const KeywordReport = lazy(() => import("./pages/KeywordReport"));
+const GrowthDashboard = lazy(() => import("./pages/GrowthDashboard"));
 
 function PageLoader() {
   return (
@@ -46,6 +51,11 @@ function Router() {
         <Route path={"/topics"} component={PillarPagesList} />
         <Route path={"/topics/:slug"} component={PillarPageDetail} />
         <Route path={"/health/:slug"} component={HealthConditionDetail} />
+        <Route path={"/health-assessment"} component={HealthAssessment} />
+        <Route path={"/business-opportunity"} component={BusinessOpportunity} />
+        <Route path={"/about"} component={About} />
+        <Route path={"/keywords"} component={KeywordReport} />
+        <Route path={"/growth"} component={GrowthDashboard} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
