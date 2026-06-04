@@ -186,6 +186,9 @@ export default function BlogArticle() {
             [&_.cta-buttons]:flex [&_.cta-buttons]:flex-col [&_.cta-buttons]:sm:flex-row [&_.cta-buttons]:gap-3 [&_.cta-buttons]:justify-center [&_.cta-buttons]:mt-4
             [&_.cta-whatsapp]:bg-green-500 [&_.cta-whatsapp]:text-white [&_.cta-whatsapp]:px-6 [&_.cta-whatsapp]:py-3 [&_.cta-whatsapp]:rounded-lg [&_.cta-whatsapp]:font-bold [&_.cta-whatsapp]:no-underline [&_.cta-whatsapp]:hover:bg-green-600
             [&_.cta-partner]:bg-[#c8a951] [&_.cta-partner]:text-[#0a1628] [&_.cta-partner]:px-6 [&_.cta-partner]:py-3 [&_.cta-partner]:rounded-lg [&_.cta-partner]:font-bold [&_.cta-partner]:no-underline [&_.cta-partner]:hover:bg-[#d4b85c]
+            [&_.cta-assess]:bg-[#1a5276] [&_.cta-assess]:text-white [&_.cta-assess]:px-6 [&_.cta-assess]:py-3 [&_.cta-assess]:rounded-lg [&_.cta-assess]:font-bold [&_.cta-assess]:no-underline [&_.cta-assess]:hover:bg-[#1e6a9c]
+            [&_.cta-stories]:bg-white/10 [&_.cta-stories]:text-white [&_.cta-stories]:px-6 [&_.cta-stories]:py-3 [&_.cta-stories]:rounded-lg [&_.cta-stories]:font-medium [&_.cta-stories]:no-underline [&_.cta-stories]:border [&_.cta-stories]:border-white/30 [&_.cta-stories]:hover:bg-white/20
+            [&_.pillar-link]:text-gray-400 [&_.pillar-link]:text-sm [&_.pillar-link]:mt-4 [&_.pillar-link_a]:text-[#c8a951] [&_.pillar-link_a]:no-underline [&_.pillar-link_a]:hover:underline
           "
           dangerouslySetInnerHTML={{ __html: content }}
         />

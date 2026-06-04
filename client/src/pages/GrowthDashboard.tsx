@@ -11,8 +11,19 @@ export default function GrowthDashboard() {
   // Fetch article stats from the blog procedure
   const { data: articles } = trpc.blog.list.useQuery({ limit: 1000 });
 
+  // Fetch leads for conversion tracking
+  const { data: leadsData } = trpc.leads.list.useQuery(undefined, { retry: false });
+
   const totalArticles = articles?.articles?.length ?? 0;
   const publishedArticles = articles?.articles?.filter((a: any) => a.status === "published")?.length ?? 0;
+
+  // Conversion metrics from leads
+  const allLeads = (leadsData as any)?.leads ?? [];
+  const assessmentCompletions = allLeads.filter((l: any) => l.source?.includes("assessment") || l.source?.includes("health-score") || l.source?.includes("metabolic-quiz")).length;
+  const consultationRequests = allLeads.filter((l: any) => l.source?.includes("consultation") || l.source?.includes("book")).length;
+  const partnerApplications = allLeads.filter((l: any) => l.source?.includes("partner")).length;
+  const guideDownloads = allLeads.filter((l: any) => l.source?.includes("guide")).length;
+  const totalLeads = allLeads.length;
 
   // Category breakdown
   const categories: Record<string, number> = {};
@@ -68,14 +79,24 @@ export default function GrowthDashboard() {
           </div>
         </div>
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-10">
+        {/* Content Metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
           <MetricCard icon={FileText} label="Total Articles" value={totalArticles.toString()} color="text-blue-400" />
           <MetricCard icon={Globe} label="Published" value={publishedArticles.toString()} color="text-green-400" />
           <MetricCard icon={Target} label="Pillar Pages" value="9" color="text-purple-400" />
           <MetricCard icon={BarChart3} label="Site Pages" value={(sitePages.length + pillarPages.length + totalArticles).toString()} color="text-amber-400" />
           <MetricCard icon={TrendingUp} label="Keywords Tracked" value="20" color="text-cyan-400" />
           <MetricCard icon={Zap} label="Articles/Day" value="3" color="text-red-400" />
+        </div>
+
+        {/* Conversion Metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+          <MetricCard icon={Users} label="Total Leads" value={totalLeads.toString()} color="text-emerald-400" />
+          <MetricCard icon={Target} label="Assessments" value={assessmentCompletions.toString()} color="text-rose-400" />
+          <MetricCard icon={Calendar} label="Consultations" value={consultationRequests.toString()} color="text-violet-400" />
+          <MetricCard icon={Users} label="Partner Apps" value={partnerApplications.toString()} color="text-orange-400" />
+          <MetricCard icon={MessageCircle} label="Guide Downloads" value={guideDownloads.toString()} color="text-teal-400" />
+          <MetricCard icon={MessageCircle} label="WhatsApp Clicks" value="—" color="text-green-400" />
         </div>
 
         {/* Content Performance Grid */}

@@ -199,6 +199,94 @@ export default function KeywordReport() {
           </div>
         </div>
 
+        {/* Conversion Funnel Roadmap */}
+        <div className="mt-10 bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+          <h3 className="font-bold text-lg mb-4 text-green-400">Conversion Funnel Keyword Roadmap</h3>
+          <p className="text-sm text-slate-400 mb-6">Keywords mapped to conversion goals: Consultation Booking, Assessment Completion, WhatsApp Contact, and Partner Application.</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-4">
+              <h4 className="font-bold text-green-400 text-sm mb-2">Consultation Booking</h4>
+              <ul className="text-xs text-slate-400 space-y-1">
+                <li>• nutrition coach online</li>
+                <li>• behavioral nutrition coaching</li>
+                <li>• metabolic health test at home</li>
+                <li>• insulin resistance diet plan</li>
+              </ul>
+              <p className="text-xs text-green-400 mt-2 font-medium">Target: /health-assessment → WhatsApp</p>
+            </div>
+            <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4">
+              <h4 className="font-bold text-blue-400 text-sm mb-2">Assessment Completion</h4>
+              <ul className="text-xs text-slate-400 space-y-1">
+                <li>• how to reverse prediabetes naturally</li>
+                <li>• prediabetes symptoms women</li>
+                <li>• energy levels after 40</li>
+                <li>• gut health supplements</li>
+              </ul>
+              <p className="text-xs text-blue-400 mt-2 font-medium">Target: /assessments → Lead Capture</p>
+            </div>
+            <div className="bg-purple-500/5 border border-purple-500/20 rounded-lg p-4">
+              <h4 className="font-bold text-purple-400 text-sm mb-2">WhatsApp Contact</h4>
+              <ul className="text-xs text-slate-400 space-y-1">
+                <li>• weight loss after 40 women</li>
+                <li>• menopause weight gain solutions</li>
+                <li>• sustainable weight loss</li>
+                <li>• fiber supplement for blood sugar</li>
+              </ul>
+              <p className="text-xs text-purple-400 mt-2 font-medium">Target: Blog CTA → WhatsApp</p>
+            </div>
+            <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-4">
+              <h4 className="font-bold text-amber-400 text-sm mb-2">Partner Application</h4>
+              <ul className="text-xs text-slate-400 space-y-1">
+                <li>• feel great unicity reviews</li>
+                <li>• health entrepreneurship</li>
+                <li>• wellness business opportunity</li>
+                <li>• health coaching career</li>
+              </ul>
+              <p className="text-xs text-amber-400 mt-2 font-medium">Target: /partner-with-feras → Apply</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Keyword Segments */}
+        <div className="mt-10 grid md:grid-cols-3 gap-6">
+          <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-6">
+            <h3 className="font-bold text-green-400 mb-3">Low Competition (KD ≤ 25)</h3>
+            <p className="text-xs text-slate-400 mb-3">Quick wins — rank within 30-60 days</p>
+            <ul className="text-sm text-slate-300 space-y-2">
+              {keywords.filter(k => k.difficulty <= 25).map((k, i) => (
+                <li key={i} className="flex justify-between">
+                  <span className="truncate mr-2">{k.keyword}</span>
+                  <span className="text-green-400 font-mono text-xs">{k.difficulty}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-6">
+            <h3 className="font-bold text-amber-400 mb-3">Medium Competition (KD 26-40)</h3>
+            <p className="text-xs text-slate-400 mb-3">Achievable — rank within 60-90 days</p>
+            <ul className="text-sm text-slate-300 space-y-2">
+              {keywords.filter(k => k.difficulty > 25 && k.difficulty <= 40).map((k, i) => (
+                <li key={i} className="flex justify-between">
+                  <span className="truncate mr-2">{k.keyword}</span>
+                  <span className="text-amber-400 font-mono text-xs">{k.difficulty}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-6">
+            <h3 className="font-bold text-red-400 mb-3">High Competition (KD 40+)</h3>
+            <p className="text-xs text-slate-400 mb-3">Long-term — 90+ days with authority building</p>
+            <ul className="text-sm text-slate-300 space-y-2">
+              {keywords.filter(k => k.difficulty > 40).map((k, i) => (
+                <li key={i} className="flex justify-between">
+                  <span className="truncate mr-2">{k.keyword}</span>
+                  <span className="text-red-400 font-mono text-xs">{k.difficulty}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
         {/* Footer */}
         <div className="mt-10 text-center text-slate-500 text-sm">
           <p>Report generated for feelgreat.us.com | Target: Women 35-60 | Markets: US, UK, DE, NL, SE</p>

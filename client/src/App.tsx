@@ -30,6 +30,7 @@ const HealthInvestor = lazy(() => import("./pages/HealthInvestor"));
 const Reviews = lazy(() => import("./pages/Reviews"));
 const JourneyRoadmap = lazy(() => import("./pages/JourneyRoadmap"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
+const SuccessStoryDetail = lazy(() => import("./pages/SuccessStories").then(m => ({ default: m.SuccessStoryDetail })));
 
 function PageLoader() {
   return (
@@ -68,6 +69,7 @@ function Router() {
         <Route path={"/reviews"} component={Reviews} />
         <Route path={"/90-day-journey"} component={JourneyRoadmap} />
         <Route path={"/success-stories"} component={SuccessStories} />
+        <Route path={"/success-stories/:id"} component={SuccessStoryDetail} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

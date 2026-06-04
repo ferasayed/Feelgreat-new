@@ -358,34 +358,75 @@ Return a JSON object with this exact structure:
       faqSchemaJson = JSON.stringify(faqLD);
     }
 
-    // Append CTA and lead gen section to content (includes Free Assessment + WhatsApp + Consultation)
+    // Append CTA and lead gen section with internal links to pillar pages, assessments, and success stories
+    const pillarLinks: Record<string, { en: string; ar: string; path: string }> = {
+      "insulin-resistance": { en: "Insulin Resistance", ar: "مقاومة الأنسولين", path: "/health/insulin-resistance" },
+      "sustainable-health": { en: "Sustainable Health", ar: "الصحة المستدامة", path: "/health/sustainable-health" },
+      "weight-management": { en: "Weight Loss After 40", ar: "فقدان الوزن بعد الأربعين", path: "/health/weight-loss-after-40" },
+      "gut-health": { en: "Gut Health", ar: "صحة الأمعاء", path: "/health/gut-health" },
+      "healthy-habits": { en: "Energy & Fatigue", ar: "الطاقة والنشاط", path: "/health/energy-fatigue" },
+      "behavioral-nutrition": { en: "Behavioral Nutrition", ar: "التغذية السلوكية", path: "/health/behavioral-nutrition" },
+      "metabolic-health": { en: "Metabolic Health", ar: "الصحة الأيضية", path: "/health/metabolic-health" },
+      "healthy-aging": { en: "Healthy Aging", ar: "الشيخوخة الصحية", path: "/health/healthy-aging" },
+    };
+    const pillar = pillarLinks[cluster.id] || pillarLinks["sustainable-health"];
+
     const ctaAr = `
 <div class="article-cta">
 <h2>هل تريد تحسين صحتك بشكل مستدام؟</h2>
-<p>تواصل مع فراس العايد - أخصائي التغذية العلاجية والسلوكية - للحصول على تقييم صحي مجاني وخطة مخصصة لك.</p>
+<p>تواصل مع <strong>فراس العايد</strong> - أخصائي التغذية العلاجية والسلوكية - للحصول على تقييم صحي مجاني وخطة مخصصة لك.</p>
 <div class="cta-buttons">
-<a href="https://wa.me/96877020770?text=أريد تقييم صحي مجاني" class="cta-whatsapp">تقييم صحي مجاني عبر واتساب</a>
+<a href="/assessments" class="cta-assess">ابدأ التقييم الصحي المجاني</a>
 <a href="https://wa.me/96877020770?text=أريد حجز استشارة مع فراس" class="cta-whatsapp">احجز استشارة مجانية</a>
-<a href="/partner" class="cta-partner">اكتشف فرصة الشراكة</a>
+<a href="/success-stories" class="cta-stories">شاهد قصص النجاح</a>
+<a href="/partner-with-feras" class="cta-partner">اكتشف فرصة الشراكة</a>
 </div>
+<p class="pillar-link">اقرأ المزيد عن <a href="${pillar.path}">${pillar.ar}</a> | <a href="/health-investor">مفهوم المستثمر الصحي</a></p>
 </div>`;
 
     const ctaEn = `
 <div class="article-cta">
 <h2>Ready to Transform Your Health Sustainably?</h2>
-<p>Connect with Feras Alayed - Therapeutic & Behavioral Nutrition Specialist - for a free health assessment and personalized wellness plan.</p>
+<p>Connect with <strong>Feras Alayed</strong> - Therapeutic & Behavioral Nutrition Specialist - for a free health assessment and personalized wellness plan.</p>
 <div class="cta-buttons">
-<a href="https://wa.me/96877020770?text=I'd like a free health assessment" class="cta-whatsapp">Free Health Assessment</a>
+<a href="/assessments" class="cta-assess">Take Free Health Assessment</a>
 <a href="https://wa.me/96877020770?text=I want to book a free consultation" class="cta-whatsapp">Book Free Consultation</a>
-<a href="/partner" class="cta-partner">Discover Partnership Opportunity</a>
+<a href="/success-stories" class="cta-stories">View Success Stories</a>
+<a href="/partner-with-feras" class="cta-partner">Discover Partnership Opportunity</a>
 </div>
+<p class="pillar-link">Learn more about <a href="${pillar.path}">${pillar.en}</a> | <a href="/health-investor">The Health Investor Concept</a></p>
 </div>`;
 
     const fullContentAr = article.contentAr + ctaAr;
     const fullContentEn = article.contentEn + ctaEn;
 
-    // Store FAQ schema in keywords field for frontend rendering
-    const keywordsWithSchema = `${article.keywords || ""}|${article.metaDescriptionEn || ""}|FAQ_SCHEMA:${faqSchemaJson}`;
+    // Build Article Schema JSON-LD
+    const articleSchemaJson = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: article.titleEn,
+      description: article.metaDescriptionEn,
+      author: {
+        "@type": "Person",
+        name: "Feras Alayed",
+        url: "https://feelgreat.us.com/about",
+        jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
+        sameAs: ["https://www.instagram.com/feras.alayed", "https://wa.me/96877020770"],
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Feel Great Partner",
+        url: "https://feelgreat.us.com",
+      },
+      datePublished: new Date().toISOString(),
+      mainEntityOfPage: `https://feelgreat.us.com/blog/${slug}`,
+      keywords: article.keywords,
+      wordCount: wordCountEn,
+      articleSection: cluster.id.replace(/-/g, " "),
+    });
+
+    // Store FAQ schema + Article schema in keywords field for frontend rendering
+    const keywordsWithSchema = `${article.keywords || ""}|${article.metaDescriptionEn || ""}|FAQ_SCHEMA:${faqSchemaJson}|ARTICLE_SCHEMA:${articleSchemaJson}`;
 
     // Save to database
     await createBlogArticle({

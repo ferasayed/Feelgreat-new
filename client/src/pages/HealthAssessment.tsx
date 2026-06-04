@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle, Heart, Activity, Brain, Scale, Zap, Moon, ChevronRight } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 type Step = "assessment" | "results" | "consultation";
 
@@ -109,13 +110,24 @@ export default function HealthAssessment() {
     },
   ];
 
+  const registerLead = trpc.leads.register.useMutation();
+
   const handleAnswer = (value: string) => {
     const key = questions[currentQuestion].key as keyof AssessmentAnswers;
-    setAnswers((prev) => ({ ...prev, [key]: value }));
+    const updated = { ...answers, [key]: value };
+    setAnswers(updated);
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
     } else {
       setStep("results");
+      // Track assessment completion
+      registerLead.mutate({
+        fullName: "Health Assessment",
+        email: "",
+        phone: "",
+        country: "",
+        source: "health-assessment-completion",
+      });
     }
   };
 

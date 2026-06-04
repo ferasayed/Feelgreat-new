@@ -1035,18 +1035,28 @@ function StickyCTA() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-border shadow-2xl py-3 px-4 animate-in slide-in-from-bottom duration-300">
-      <div className="container flex items-center justify-between gap-4">
-        <p className="text-sm font-medium text-foreground hidden sm:block">
-          {lang === "ar" ? "استثمر في صحتك وابنِ مستقبلك اليوم" : "Invest in your health and build your future today"}
-        </p>
-        <div className="flex gap-2">
-          <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer" className="gradient-blue text-white font-bold px-6 py-2.5 rounded-full text-sm transition-all hover:opacity-90 whitespace-nowrap">
-            {lang === "ar" ? "ابدأ الآن" : "Start Now"} →
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-r from-slate-900/98 to-slate-800/98 backdrop-blur-md border-t border-amber-500/20 shadow-2xl py-3 px-4 animate-in slide-in-from-bottom duration-300">
+      <div className="container flex items-center justify-between gap-3">
+        <div className="hidden sm:flex items-center gap-2">
+          <Shield className="w-4 h-4 text-amber-400" />
+          <p className="text-sm font-medium text-white/90">
+            {lang === "ar" ? "ابدأ رحلتك الصحية مع فراس" : "Start your health journey with Feras"}
+          </p>
+        </div>
+        <div className="flex gap-2 w-full sm:w-auto justify-center">
+          {/* Primary CTA: Book Consultation */}
+          <a href="https://wa.me/96877020770?text=I'd%20like%20to%20book%20a%20free%20consultation" target="_blank" rel="noopener noreferrer" className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-5 py-2.5 rounded-full text-sm transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap inline-flex items-center gap-1.5 shadow-lg shadow-amber-500/25">
+            <Phone className="w-3.5 h-3.5" />
+            {lang === "ar" ? "احجز استشارة مجانية" : "Book Free Consultation"}
           </a>
-          <a href="https://wa.me/96877020770?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D9%85%D8%B9%D8%B1%D9%81%D8%A9%20%D8%A7%D9%84%D9%85%D8%B2%D9%8A%D8%AF%20%D8%B9%D9%86%20%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC%20%D8%A7%D9%84%D8%B5%D8%AD%D8%A9%20%D8%A7%D9%84%D9%85%D8%B3%D8%AA%D8%AF%D8%A7%D9%85%D8%A9%20%D9%88%D9%81%D8%B1%D8%B5%D8%A9%20%D8%A7%D9%84%D8%B4%D8%B1%D8%A7%D9%83%D8%A9" target="_blank" rel="noopener noreferrer" className="bg-green-500 text-white font-bold px-4 py-2.5 rounded-full text-sm transition-all hover:bg-green-600 whitespace-nowrap hidden sm:inline-flex items-center gap-1">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            WhatsApp
+          {/* Secondary CTA: Take Assessment */}
+          <a href="/health-assessment" className="border border-white/30 hover:border-amber-400/50 text-white font-medium px-4 py-2.5 rounded-full text-sm transition-all hover:bg-white/5 whitespace-nowrap hidden md:inline-flex items-center gap-1.5">
+            <Activity className="w-3.5 h-3.5 text-amber-400" />
+            {lang === "ar" ? "تقييم صحتك" : "Health Assessment"}
+          </a>
+          {/* Tertiary CTA: WhatsApp */}
+          <a href="https://wa.me/96877020770" target="_blank" rel="noopener noreferrer" className="bg-green-500 hover:bg-green-400 text-white font-bold w-10 h-10 rounded-full text-sm transition-all inline-flex items-center justify-center sm:hidden">
+            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           </a>
         </div>
       </div>
