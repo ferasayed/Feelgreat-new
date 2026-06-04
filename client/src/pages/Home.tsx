@@ -959,7 +959,11 @@ function Footer() {
               <a href="/faq" className="block hover:text-white transition-colors">{lang === "ar" ? "الأسئلة الشائعة" : "FAQ"}</a>
               <a href="/partner" className="block hover:text-white transition-colors">{lang === "ar" ? "كن شريكاً" : "Become a Partner"}</a>
               <a href="/founder" className="block hover:text-white transition-colors">{lang === "ar" ? "عن المؤسس" : "About the Founder"}</a>
-              <a href="/blog" className="block hover:text-white transition-colors">{lang === "ar" ? "المدونة" : "Blog"}</a>
+              <a href="/blog" className="block hover:text-white transition-colors">{lang === "ar" ? "المدونة الصحية" : "Health Blog"}</a>
+              <a href="/blog?category=insulin-resistance" className="block hover:text-white transition-colors">{lang === "ar" ? "مقاومة الإنسولين" : "Insulin Resistance"}</a>
+              <a href="/blog?category=sustainable-health" className="block hover:text-white transition-colors">{lang === "ar" ? "الصحة المستدامة" : "Sustainable Health"}</a>
+              <a href="/blog?category=weight-loss" className="block hover:text-white transition-colors">{lang === "ar" ? "إنقاص الوزن" : "Weight Loss"}</a>
+              <a href="/blog?category=gut-health" className="block hover:text-white transition-colors">{lang === "ar" ? "صحة الأمعاء" : "Gut Health"}</a>
             </div>
           </div>
 
@@ -1039,9 +1043,74 @@ function StickyCTA() {
   );
 }
 
+function SchemaMarkup() {
+  useEffect(() => {
+    // Organization Schema
+    const orgSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Feel Great by Feras Alayed",
+      url: "https://feelgreat.us.com",
+      logo: "https://feelgreat.us.com/favicon.ico",
+      description: "Sustainable health and wellness platform by Feras Alayed - Therapeutic & Behavioral Nutrition Specialist",
+      founder: {
+        "@type": "Person",
+        name: "Feras Alayed",
+        jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
+        url: "https://feelgreat.us.com/founder",
+        sameAs: [
+          "https://www.instagram.com/use2lose",
+          "https://www.tiktok.com/@feras.alayed"
+        ]
+      },
+      sameAs: [
+        "https://www.instagram.com/use2lose",
+        "https://www.tiktok.com/@feras.alayed"
+      ],
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: "+96877020770",
+        contactType: "customer service",
+        availableLanguage: ["Arabic", "English"]
+      }
+    };
+
+    // WebSite Schema with SearchAction
+    const webSchema = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Feel Great",
+      url: "https://feelgreat.us.com",
+      description: "Invest in your health today. Sustainable health, behavioral nutrition, and partnership opportunities.",
+      publisher: { "@type": "Organization", name: "Feel Great by Feras Alayed" },
+      inLanguage: ["ar", "en", "fr", "de", "tr", "es"]
+    };
+
+    const orgEl = document.createElement("script");
+    orgEl.id = "org-schema";
+    orgEl.type = "application/ld+json";
+    orgEl.textContent = JSON.stringify(orgSchema);
+    document.head.appendChild(orgEl);
+
+    const webEl = document.createElement("script");
+    webEl.id = "web-schema";
+    webEl.type = "application/ld+json";
+    webEl.textContent = JSON.stringify(webSchema);
+    document.head.appendChild(webEl);
+
+    return () => {
+      document.getElementById("org-schema")?.remove();
+      document.getElementById("web-schema")?.remove();
+    };
+  }, []);
+
+  return null;
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      <SchemaMarkup />
       <Navbar />
       <HeroSection />
       <StatsSection />

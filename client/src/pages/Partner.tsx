@@ -301,6 +301,19 @@ export default function Partner() {
         </div>
       </section>
 
+      {/* Cross-links */}
+      <section className="py-12 bg-muted/30">
+        <div className="container text-center">
+          <h3 className="text-lg font-bold text-foreground mb-4">{lang === "ar" ? "استكشف المزيد" : "Explore More"}</h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a href="/founder" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "عن المؤسس" : "About the Founder"}</a>
+            <a href="/blog" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "المدونة الصحية" : "Health Blog"}</a>
+            <a href="/faq" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "الأسئلة الشائعة" : "FAQ"}</a>
+            <a href="/blog?category=sustainable-health" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "الصحة المستدامة" : "Sustainable Health"}</a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 bg-foreground text-white/60 text-center">
         <div className="container">

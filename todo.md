@@ -89,14 +89,14 @@
 
 ## SEO Technical Improvements & Auto Blog
 
-- [ ] Add JSON-LD Schema Markup (Organization, WebSite, FAQ, Article)
-- [ ] Improve internal linking between pages
-- [ ] Add Schema for FAQ page
+- [x] Add JSON-LD Schema Markup (Organization, WebSite, FAQ, Article)
+- [x] Improve internal linking between pages (Footer links to blog categories, all pages cross-linked)
+- [x] Add Schema for FAQ page (already implemented with FAQ JSON-LD)
 - [ ] Create health condition pillar pages (diabetes, insulin resistance, fatty liver, IBS, obesity, PCOS, cholesterol, hypertension)
-- [ ] Build automated daily blog article generation system (LLM + heartbeat cron)
-- [ ] Create blog articles database table and tRPC procedures
-- [ ] Create blog article detail page with dynamic routing
-- [ ] Schedule daily heartbeat job for article generation
+- [x] Build automated daily blog article generation system (LLM + heartbeat cron)
+- [x] Create blog articles database table and tRPC procedures
+- [x] Create blog article detail page with dynamic routing
+- [x] Schedule daily heartbeat job for article generation (3x daily via admin mutation)
 
 ## AI SEO Content Engine
 

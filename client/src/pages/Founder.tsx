@@ -224,6 +224,19 @@ export default function Founder() {
         </div>
       </section>
 
+      {/* Cross-links */}
+      <section className="py-12 bg-muted/30">
+        <div className="container text-center">
+          <h3 className="text-lg font-bold text-foreground mb-4">{lang === "ar" ? "استكشف المزيد" : "Explore More"}</h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a href="/partner" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "كن شريكاً" : "Become a Partner"}</a>
+            <a href="/blog" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "المدونة الصحية" : "Health Blog"}</a>
+            <a href="/faq" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "الأسئلة الشائعة" : "FAQ"}</a>
+            <a href="/blog?category=behavioral-nutrition" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "التغذية السلوكية" : "Behavioral Nutrition"}</a>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 bg-foreground text-white/60 text-center">
         <div className="container">

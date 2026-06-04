@@ -382,6 +382,16 @@ export default function FAQ() {
             </a>
           </div>
         </div>
+        {/* Cross-links */}
+        <div className="mt-12 text-center">
+          <h3 className="text-lg font-bold text-foreground mb-4">{lang === "ar" ? "صفحات مفيدة" : "Useful Pages"}</h3>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a href="/partner" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "كن شريكاً" : "Become a Partner"}</a>
+            <a href="/founder" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "عن المؤسس" : "About the Founder"}</a>
+            <a href="/blog" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "المدونة" : "Blog"}</a>
+            <a href="/blog?category=insulin-resistance" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{lang === "ar" ? "مقاومة الإنسولين" : "Insulin Resistance"}</a>
+          </div>
+        </div>
       </main>
       <a
         href="https://wa.me/96877020770?text=Hi%2C%20I%27m%20interested%20in%20Feel%20Great"

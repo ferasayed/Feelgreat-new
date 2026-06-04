@@ -141,6 +141,18 @@ export default function Blog() {
         )}
       </main>
 
+      {/* Cross-links */}
+      <section className="py-10 bg-muted/30">
+        <div className="container text-center">
+          <div className="flex flex-wrap justify-center gap-3">
+            <a href="/partner" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{isAr ? "كن شريكاً" : "Become a Partner"}</a>
+            <a href="/founder" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{isAr ? "عن المؤسس" : "About the Founder"}</a>
+            <a href="/faq" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{isAr ? "الأسئلة الشائعة" : "FAQ"}</a>
+            <a href="/" className="px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">{isAr ? "الرئيسية" : "Home"}</a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-[#0a1628] to-[#1a5276] py-16 text-center">
         <div className="container">

@@ -10,6 +10,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { followUpHandler } from "../scheduled/followUp";
 import { generateArticleHandler } from "../scheduled/generateArticle";
+import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -67,6 +68,46 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+
+  // Auto-initialize article generation cron jobs on production startup
+  if (process.env.NODE_ENV !== "development") {
+    initArticleGenJobs().catch((e) => console.error("[Heartbeat] Failed to init article gen jobs:", e));
+  }
+}
+
+async function initArticleGenJobs() {
+  try {
+    // Check if jobs already exist
+    const existing = await listHeartbeatJobs("");
+    const existingNames = existing.jobs.map((j) => j.name);
+
+    const schedules = [
+      { name: "article-gen-morning", cron: "0 0 6 * * *", description: "Morning SEO article generation (6:00 UTC)" },
+      { name: "article-gen-afternoon", cron: "0 0 12 * * *", description: "Afternoon SEO article generation (12:00 UTC)" },
+      { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation (18:00 UTC)" },
+    ];
+
+    for (const schedule of schedules) {
+      if (!existingNames.includes(schedule.name)) {
+        const result = await createHeartbeatJob(
+          {
+            name: schedule.name,
+            cron: schedule.cron,
+            path: "/api/scheduled/generateArticle",
+            method: "POST",
+            description: schedule.description,
+          },
+          "" // empty = project owner
+        );
+        console.log(`[Heartbeat] Created job: ${schedule.name} (next: ${result.nextExecutionAt})`);
+      } else {
+        console.log(`[Heartbeat] Job already exists: ${schedule.name}`);
+      }
+    }
+    console.log("[Heartbeat] Article generation jobs initialized successfully");
+  } catch (e) {
+    console.error("[Heartbeat] Init error (will retry on next deploy):", e);
+  }
 }
 
 startServer().catch(console.error);
