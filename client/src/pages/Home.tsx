@@ -167,6 +167,16 @@ function HeroSection() {
 
   return (
     <section className="gradient-hero min-h-screen flex items-center pt-16 relative overflow-hidden">
+      {/* Feras watermark background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <img
+          src="/manus-storage/feras-hero-bg_f4e10bc1.jpg"
+          alt=""
+          className="w-full h-full object-cover opacity-[0.12] scale-110"
+          style={{ filter: 'grayscale(30%) blur(1px)' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-900/40 to-slate-950/80"></div>
+      </div>
       {/* Background decorations */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 start-10 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"></div>
