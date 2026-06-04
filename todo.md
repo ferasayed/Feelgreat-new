@@ -86,3 +86,34 @@
 - [x] Add CRO elements: Sticky CTA bar with WhatsApp + Register buttons
 - [x] Optimize performance: mobile-first responsive design, optimized assets via manus-storage CDN
 - [x] Add Feras social media links (Instagram @use2lose, TikTok @feras.alayed) in Footer and Founder page
+
+## SEO Technical Improvements & Auto Blog
+
+- [ ] Add JSON-LD Schema Markup (Organization, WebSite, FAQ, Article)
+- [ ] Improve internal linking between pages
+- [ ] Add Schema for FAQ page
+- [ ] Create health condition pillar pages (diabetes, insulin resistance, fatty liver, IBS, obesity, PCOS, cholesterol, hypertension)
+- [ ] Build automated daily blog article generation system (LLM + heartbeat cron)
+- [ ] Create blog articles database table and tRPC procedures
+- [ ] Create blog article detail page with dynamic routing
+- [ ] Schedule daily heartbeat job for article generation
+
+## AI SEO Content Engine
+
+- [x] Upgrade article generation to produce 1200-2500 word articles with FAQ, internal links, Schema, external references
+- [x] Position Feras Alayed as Therapeutic & Behavioral Nutrition Specialist in all articles
+- [x] Add lead generation CTAs in every article (WhatsApp, Free Assessment, Consultation)
+- [x] Create dynamic article detail page (/blog/:slug) with full SEO rendering
+- [x] Create content hub pages for 6 clusters (Insulin Resistance, Sustainable Health, Weight Loss, Gut Health, Healthy Habits, Behavioral Nutrition)
+- [x] Set up 3x daily heartbeat cron for article generation (morning, afternoon, evening)
+- [x] Add Schema markup (Article, FAQ, Person) to article pages
+- [x] Rewrite Blog.tsx to use database-backed articles with category filtering
+
+## Target Market Expansion (US + Europe)
+
+- [x] Add US/UK/Europe-focused content clusters targeting women 35-60, prediabetes, menopause weight gain
+- [x] Add country-specific article topics (US, UK, Germany, Netherlands, Sweden)
+- [x] Update article generator to produce geo-targeted content for English-speaking audiences
+- [x] Add topical authority clusters: Metabolic Health, Insulin Resistance, Sustainable Health, Healthy Aging
+- [x] Add content validation: minimum word count, FAQ presence, internal links check before publishing
+- [x] Add FAQ JSON-LD schema to article pages

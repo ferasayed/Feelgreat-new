@@ -1,6 +1,6 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -254,4 +254,63 @@ export async function updateLeadStatus(leadId: number, status: "pending" | "cont
   await db.update(leads)
     .set({ followUpStatus: status })
     .where(eq(leads.id, leadId));
+}
+
+// ===== BLOG ARTICLES =====
+
+export async function createBlogArticle(article: InsertBlogArticle): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.insert(blogArticles).values(article);
+}
+
+export async function getPublishedArticles(limit = 20, offset = 0): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(blogArticles)
+    .where(eq(blogArticles.isPublished, true))
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function getArticleBySlug(slug: string): Promise<BlogArticle | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(blogArticles)
+    .where(eq(blogArticles.slug, slug))
+    .limit(1);
+  return result[0] || null;
+}
+
+export async function getArticlesByCategory(category: string, limit = 10): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(blogArticles)
+    .where(and(eq(blogArticles.category, category), eq(blogArticles.isPublished, true)))
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit);
+}
+
+export async function getArticlesCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+
+  const result = await db.select({ count: count() }).from(blogArticles)
+    .where(eq(blogArticles.isPublished, true));
+  return result[0]?.count ?? 0;
+}
+
+export async function getRecentArticleSlugs(limit = 30): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db.select({ slug: blogArticles.slug }).from(blogArticles)
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit);
+  return result.map(r => r.slug);
 }

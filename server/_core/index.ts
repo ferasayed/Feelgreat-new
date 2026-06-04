@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { followUpHandler } from "../scheduled/followUp";
+import { generateArticleHandler } from "../scheduled/generateArticle";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -39,6 +40,7 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Scheduled task handlers
   app.post("/api/scheduled/followUp", followUpHandler);
+  app.post("/api/scheduled/generateArticle", generateArticleHandler);
 
   // tRPC API
   app.use(

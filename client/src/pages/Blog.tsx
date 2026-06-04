@@ -1,146 +1,178 @@
+import { useState } from "react";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Clock, ArrowUp, Phone } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const CATEGORIES = [
+  { id: "all", labelAr: "الكل", labelEn: "All" },
+  { id: "insulin-resistance", labelAr: "مقاومة الإنسولين", labelEn: "Insulin Resistance" },
+  { id: "sustainable-health", labelAr: "الصحة المستدامة", labelEn: "Sustainable Health" },
+  { id: "weight-management", labelAr: "إدارة الوزن", labelEn: "Weight Loss" },
+  { id: "gut-health", labelAr: "صحة الأمعاء", labelEn: "Gut Health" },
+  { id: "healthy-habits", labelAr: "عادات صحية", labelEn: "Healthy Habits" },
+  { id: "behavioral-nutrition", labelAr: "التغذية السلوكية", labelEn: "Behavioral Nutrition" },
+  { id: "hormonal-balance", labelAr: "التوازن الهرموني", labelEn: "Hormonal Balance" },
+  { id: "nutrition", labelAr: "التغذية", labelEn: "Nutrition" },
+  { id: "mental-wellness", labelAr: "الصحة النفسية", labelEn: "Mental Wellness" },
+  { id: "lifestyle-medicine", labelAr: "طب نمط الحياة", labelEn: "Lifestyle Medicine" },
+  { id: "intermittent-fasting", labelAr: "الصيام المتقطع", labelEn: "Intermittent Fasting" },
+];
 
 export default function Blog() {
   const { lang } = useLanguage();
+  const isAr = lang === "ar";
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const articles: Record<string, Array<{ title: string; excerpt: string; date: string; readTime: string; category: string }>> = {
-    ar: [
-      { title: "ما هو الصيام المتقطع وكيف يساعدك Feel Great؟", excerpt: "تعرّف على العلاقة بين الصيام المتقطع ونظام Feel Great وكيف يمكنك تحقيق نتائج أفضل بدون جوع أو حرمان.", date: "2024-03-15", readTime: "5 دقائق", category: "الصحة" },
-      { title: "كيف تبدأ مشروعك الخاص مع يونيسيتي؟", excerpt: "دليل شامل للمبتدئين حول كيفية بناء مصدر دخل إضافي مع برنامج الشراكة في يونيسيتي.", date: "2024-03-10", readTime: "7 دقائق", category: "الشراكة" },
-      { title: "فوائد الألياف الذائبة لصحة الجهاز الهضمي", excerpt: "اكتشف كيف تعمل الألياف الذائبة في Balance على تحسين صحة أمعائك ودعم التمثيل الغذائي.", date: "2024-03-05", readTime: "4 دقائق", category: "التغذية" },
-      { title: "قصة نجاح: من 101 كيلو إلى 72 كيلو", excerpt: "قصة حقيقية لعميلة خسرت 29.5 كيلو مع Feel Great بدون حمية قاسية أو تمارين مرهقة.", date: "2024-02-28", readTime: "6 دقائق", category: "قصص نجاح" },
-      { title: "Unimate: مشروب الطاقة الذكي", excerpt: "تعرّف على مكونات Unimate وكيف يختلف عن مشروبات الطاقة التقليدية في دعم التركيز والأداء.", date: "2024-02-20", readTime: "5 دقائق", category: "المنتجات" },
-      { title: "5 عادات صباحية تغيّر حياتك", excerpt: "اكتشف العادات الصباحية التي يتبعها الشركاء الناجحون في يونيسيتي لبدء يومهم بطاقة عالية.", date: "2024-02-15", readTime: "4 دقائق", category: "نمط الحياة" },
-    ],
-    en: [
-      { title: "What is Intermittent Fasting and How Does Feel Great Help?", excerpt: "Learn about the relationship between intermittent fasting and the Feel Great system for better results without hunger.", date: "2024-03-15", readTime: "5 min", category: "Health" },
-      { title: "How to Start Your Own Business with Unicity?", excerpt: "A comprehensive guide for beginners on building additional income with Unicity's partnership program.", date: "2024-03-10", readTime: "7 min", category: "Partnership" },
-      { title: "Benefits of Soluble Fiber for Digestive Health", excerpt: "Discover how soluble fiber in Balance improves gut health and supports metabolism.", date: "2024-03-05", readTime: "4 min", category: "Nutrition" },
-      { title: "Success Story: From 101kg to 72kg", excerpt: "A real story of a client who lost 29.5kg with Feel Great without strict dieting.", date: "2024-02-28", readTime: "6 min", category: "Success Stories" },
-      { title: "Unimate: The Smart Energy Drink", excerpt: "Learn about Unimate's ingredients and how it differs from traditional energy drinks.", date: "2024-02-20", readTime: "5 min", category: "Products" },
-      { title: "5 Morning Habits That Change Your Life", excerpt: "Discover the morning habits of successful Unicity partners for high-energy days.", date: "2024-02-15", readTime: "4 min", category: "Lifestyle" },
-    ],
-    fr: [
-      { title: "Qu'est-ce que le jeûne intermittent et comment Feel Great aide ?", excerpt: "Découvrez la relation entre le jeûne intermittent et le système Feel Great.", date: "2024-03-15", readTime: "5 min", category: "Santé" },
-      { title: "Comment démarrer votre entreprise avec Unicity ?", excerpt: "Guide complet pour les débutants sur la construction de revenus supplémentaires.", date: "2024-03-10", readTime: "7 min", category: "Partenariat" },
-      { title: "Bienfaits des fibres solubles pour la digestion", excerpt: "Comment les fibres solubles dans Balance améliorent votre santé intestinale.", date: "2024-03-05", readTime: "4 min", category: "Nutrition" },
-      { title: "Histoire de réussite : De 101kg à 72kg", excerpt: "Une histoire vraie de perte de 29,5kg avec Feel Great.", date: "2024-02-28", readTime: "6 min", category: "Réussites" },
-      { title: "Unimate : La boisson énergétique intelligente", excerpt: "Les ingrédients d'Unimate et ses différences avec les boissons énergétiques.", date: "2024-02-20", readTime: "5 min", category: "Produits" },
-      { title: "5 habitudes matinales qui changent votre vie", excerpt: "Les habitudes des partenaires Unicity à succès.", date: "2024-02-15", readTime: "4 min", category: "Style de vie" },
-    ],
-    es: [
-      { title: "¿Qué es el ayuno intermitente y cómo ayuda Feel Great?", excerpt: "Aprende sobre la relación entre el ayuno intermitente y el sistema Feel Great.", date: "2024-03-15", readTime: "5 min", category: "Salud" },
-      { title: "¿Cómo iniciar tu negocio con Unicity?", excerpt: "Guía completa para principiantes sobre la construcción de ingresos adicionales.", date: "2024-03-10", readTime: "7 min", category: "Asociación" },
-      { title: "Beneficios de la fibra soluble para la digestión", excerpt: "Cómo la fibra soluble en Balance mejora tu salud intestinal.", date: "2024-03-05", readTime: "4 min", category: "Nutrición" },
-      { title: "Historia de éxito: De 101kg a 72kg", excerpt: "Una historia real de pérdida de 29,5kg con Feel Great.", date: "2024-02-28", readTime: "6 min", category: "Éxitos" },
-      { title: "Unimate: La bebida energética inteligente", excerpt: "Los ingredientes de Unimate y sus diferencias.", date: "2024-02-20", readTime: "5 min", category: "Productos" },
-      { title: "5 hábitos matutinos que cambian tu vida", excerpt: "Los hábitos de los socios exitosos de Unicity.", date: "2024-02-15", readTime: "4 min", category: "Estilo de vida" },
-    ],
-    de: [
-      { title: "Was ist Intervallfasten und wie hilft Feel Great?", excerpt: "Erfahren Sie mehr über die Beziehung zwischen Intervallfasten und dem Feel Great System.", date: "2024-03-15", readTime: "5 Min", category: "Gesundheit" },
-      { title: "Wie starten Sie Ihr Geschäft mit Unicity?", excerpt: "Ein umfassender Leitfaden für Anfänger zum Aufbau zusätzlicher Einnahmen.", date: "2024-03-10", readTime: "7 Min", category: "Partnerschaft" },
-      { title: "Vorteile löslicher Ballaststoffe für die Verdauung", excerpt: "Wie lösliche Ballaststoffe in Balance Ihre Darmgesundheit verbessern.", date: "2024-03-05", readTime: "4 Min", category: "Ernährung" },
-      { title: "Erfolgsgeschichte: Von 101kg auf 72kg", excerpt: "Eine wahre Geschichte über 29,5kg Gewichtsverlust mit Feel Great.", date: "2024-02-28", readTime: "6 Min", category: "Erfolge" },
-      { title: "Unimate: Das intelligente Energiegetränk", excerpt: "Die Inhaltsstoffe von Unimate und seine Unterschiede.", date: "2024-02-20", readTime: "5 Min", category: "Produkte" },
-      { title: "5 Morgenroutinen, die Ihr Leben verändern", excerpt: "Die Gewohnheiten erfolgreicher Unicity-Partner.", date: "2024-02-15", readTime: "4 Min", category: "Lebensstil" },
-    ],
-    tr: [
-      { title: "Aralıklı Oruç Nedir ve Feel Great Nasıl Yardımcı Olur?", excerpt: "Aralıklı oruç ve Feel Great sistemi arasındaki ilişkiyi öğrenin.", date: "2024-03-15", readTime: "5 dk", category: "Sağlık" },
-      { title: "Unicity ile İşinizi Nasıl Kurarsınız?", excerpt: "Ek gelir oluşturma konusunda yeni başlayanlar için kapsamlı rehber.", date: "2024-03-10", readTime: "7 dk", category: "Ortaklık" },
-      { title: "Çözünür Lifin Sindirim Sağlığına Faydaları", excerpt: "Balance'daki çözünür lifin bağırsak sağlığınızı nasıl iyileştirdiğini keşfedin.", date: "2024-03-05", readTime: "4 dk", category: "Beslenme" },
-      { title: "Başarı Hikayesi: 101kg'dan 72kg'a", excerpt: "Feel Great ile 29,5kg veren bir müşterinin gerçek hikayesi.", date: "2024-02-28", readTime: "6 dk", category: "Başarılar" },
-      { title: "Unimate: Akıllı Enerji İçeceği", excerpt: "Unimate'in içerikleri ve geleneksel enerji içeceklerinden farkları.", date: "2024-02-20", readTime: "5 dk", category: "Ürünler" },
-      { title: "Hayatınızı Değiştiren 5 Sabah Alışkanlığı", excerpt: "Başarılı Unicity ortaklarının sabah rutinleri.", date: "2024-02-15", readTime: "4 dk", category: "Yaşam Tarzı" },
-    ],
-  };
+  const { data, isLoading } = trpc.blog.list.useQuery({ limit: 50 });
 
-  const arts = articles[lang] || articles.en;
-  const categoryColors: Record<string, string> = {
-    "الصحة": "bg-green-100 text-green-700", "Health": "bg-green-100 text-green-700", "Santé": "bg-green-100 text-green-700", "Salud": "bg-green-100 text-green-700", "Gesundheit": "bg-green-100 text-green-700", "Sağlık": "bg-green-100 text-green-700",
-    "الشراكة": "bg-blue-100 text-blue-700", "Partnership": "bg-blue-100 text-blue-700", "Partenariat": "bg-blue-100 text-blue-700", "Asociación": "bg-blue-100 text-blue-700", "Partnerschaft": "bg-blue-100 text-blue-700", "Ortaklık": "bg-blue-100 text-blue-700",
-    "التغذية": "bg-amber-100 text-amber-700", "Nutrition": "bg-amber-100 text-amber-700", "Ernährung": "bg-amber-100 text-amber-700", "Beslenme": "bg-amber-100 text-amber-700",
-    "قصص نجاح": "bg-purple-100 text-purple-700", "Success Stories": "bg-purple-100 text-purple-700", "Réussites": "bg-purple-100 text-purple-700", "Éxitos": "bg-purple-100 text-purple-700", "Erfolge": "bg-purple-100 text-purple-700", "Başarılar": "bg-purple-100 text-purple-700",
-    "المنتجات": "bg-primary/10 text-primary", "Products": "bg-primary/10 text-primary", "Produits": "bg-primary/10 text-primary", "Productos": "bg-primary/10 text-primary", "Produkte": "bg-primary/10 text-primary", "Ürünler": "bg-primary/10 text-primary",
-    "نمط الحياة": "bg-rose-100 text-rose-700", "Lifestyle": "bg-rose-100 text-rose-700", "Style de vie": "bg-rose-100 text-rose-700", "Estilo de vida": "bg-rose-100 text-rose-700", "Lebensstil": "bg-rose-100 text-rose-700", "Yaşam Tarzı": "bg-rose-100 text-rose-700",
-  };
+  const articles = data?.articles ?? [];
+  const filteredArticles = selectedCategory === "all"
+    ? articles
+    : articles.filter((a) => a.category === selectedCategory);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Navbar */}
-      <nav className="fixed top-0 start-0 end-0 z-50 glass-effect shadow-sm">
-        <div className="container flex items-center justify-between h-16">
-          <a href="/" className="text-xl font-bold text-primary">Feel Great</a>
-          <a href="https://wa.me/96877020770" target="_blank" rel="noopener noreferrer">
-            <Button size="sm" className="gradient-blue text-white border-0">
-              <Phone className="w-4 h-4 me-2" />
-              {lang === "ar" ? "تواصل معنا" : "Contact Us"}
-            </Button>
-          </a>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
       {/* Header */}
-      <section className="pt-24 pb-12 bg-white border-b border-border">
-        <div className="container text-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            {lang === "ar" ? "المدونة" : "Blog"}
+      <header className="bg-gradient-to-b from-[#0a1628] to-[#132240] py-16 text-center">
+        <div className="container">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/80 text-sm mb-6">
+            <span>{isAr ? "بقلم فراس العايد" : "By Feras Alayed"}</span>
+            <span className="text-[#c8a951]">•</span>
+            <span>{isAr ? "أخصائي التغذية العلاجية والسلوكية" : "Therapeutic & Behavioral Nutrition Specialist"}</span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            {isAr ? "مدونة الصحة المستدامة" : "Sustainable Health Blog"}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {lang === "ar" ? "مقالات ونصائح حول الصحة المستدامة وبناء الدخل" : "Articles and tips on sustainable health and income building"}
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            {isAr
+              ? "مقالات علمية يومية عن الصحة، التغذية، والعافية - محتوى متجدد يومياً"
+              : "Daily science-backed articles on health, nutrition, and wellness"}
+          </p>
+          <p className="text-sm text-gray-400 mt-3">
+            {isAr
+              ? `${data?.total ?? 0} مقال منشور • محتوى جديد كل يوم`
+              : `${data?.total ?? 0} articles published • New content daily`}
           </p>
         </div>
-      </section>
+      </header>
 
-      {/* Articles Grid */}
-      <section className="py-16">
-        <div className="container">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {arts.map((article, i) => (
-              <Card key={i} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${categoryColors[article.category] || 'bg-muted text-muted-foreground'}`}>
-                      {article.category}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">{article.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{article.excerpt}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{article.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{article.readTime}</span>
-                  </div>
-                </CardContent>
-              </Card>
+      {/* Category Filter */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b py-3">
+        <div className="container overflow-x-auto">
+          <div className="flex gap-2 min-w-max pb-1">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                  selectedCategory === cat.id
+                    ? "bg-[#1a5276] text-white shadow-md"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {isAr ? cat.labelAr : cat.labelEn}
+              </button>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* CTA */}
-      <section className="py-16 gradient-section text-center">
+      {/* Articles Grid */}
+      <main className="container py-12">
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-xl border p-6 space-y-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ))}
+          </div>
+        ) : filteredArticles.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">📝</div>
+            <p className="text-xl text-muted-foreground">
+              {isAr ? "لا توجد مقالات في هذا التصنيف بعد" : "No articles in this category yet"}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {isAr ? "يتم نشر مقالات جديدة يومياً - عد قريباً!" : "New articles are published daily - check back soon!"}
+            </p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredArticles.map((article) => (
+              <Link
+                key={article.id}
+                href={`/blog/${article.slug}`}
+                className="group rounded-xl border bg-card p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#1a5276]/10 text-[#1a5276]">
+                    {CATEGORIES.find((c) => c.id === article.category)?.[isAr ? "labelAr" : "labelEn"] ?? article.category}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {article.readTimeMinutes} {isAr ? "دقائق قراءة" : "min read"}
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold text-foreground group-hover:text-[#1a5276] transition-colors mb-2 line-clamp-2">
+                  {isAr ? article.titleAr : article.titleEn}
+                </h2>
+                <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                  {isAr ? article.excerptAr : article.excerptEn}
+                </p>
+                <div className="flex items-center justify-between pt-3 border-t">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(article.createdAt).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                  <span className="text-sm font-medium text-[#c8a951] group-hover:underline">
+                    {isAr ? "اقرأ المزيد" : "Read more"} →
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* CTA Section */}
+      <section className="bg-gradient-to-r from-[#0a1628] to-[#1a5276] py-16 text-center">
         <div className="container">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            {lang === "ar" ? "هل لديك أسئلة؟ تواصل معنا" : "Have Questions? Contact Us"}
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+            {isAr ? "هل تريد استشارة صحية مجانية؟" : "Want a Free Health Consultation?"}
           </h2>
-          <a href="https://wa.me/96877020770" target="_blank" rel="noopener noreferrer">
-            <Button size="lg" className="gradient-blue text-white border-0">
-              <Phone className="w-5 h-5 me-2" />
-              WhatsApp
-            </Button>
-          </a>
+          <p className="text-gray-300 mb-6 max-w-xl mx-auto">
+            {isAr
+              ? "تواصل مع فراس العايد للحصول على خطة صحية مخصصة تناسب أهدافك"
+              : "Connect with Feras Alayed for a personalized health plan tailored to your goals"}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="https://wa.me/96877020770?text=أريد استشارة صحية مجانية"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              {isAr ? "تواصل عبر واتساب" : "Chat on WhatsApp"}
+            </a>
+            <a
+              href="https://ufeelgreat.com/c/GBP556"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-8 py-3 bg-[#c8a951] text-[#0a1628] font-bold rounded-lg hover:bg-[#d4b85c] transition-colors"
+            >
+              {isAr ? "ابدأ رحلتك الصحية" : "Start Your Health Journey"}
+            </a>
+          </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-8 bg-foreground text-white/60 text-center">
-        <div className="container">
-          <a href="/" className="text-white font-bold hover:text-white/80 transition-colors">← {lang === "ar" ? "العودة للرئيسية" : "Back to Home"}</a>
-          <p className="text-xs mt-4">© 2024 Feel Great. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -1,0 +1,20 @@
+CREATE TABLE `blog_articles` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`slug` varchar(255) NOT NULL,
+	`title_ar` text NOT NULL,
+	`title_en` text NOT NULL,
+	`excerpt_ar` text NOT NULL,
+	`excerpt_en` text NOT NULL,
+	`content_ar` text NOT NULL,
+	`content_en` text NOT NULL,
+	`category` varchar(100) NOT NULL,
+	`tags` json NOT NULL,
+	`keywords` text,
+	`read_time_minutes` int NOT NULL DEFAULT 5,
+	`is_published` boolean NOT NULL DEFAULT true,
+	`schedule_cron_task_uid` varchar(65),
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `blog_articles_id` PRIMARY KEY(`id`),
+	CONSTRAINT `blog_articles_slug_unique` UNIQUE(`slug`)
+);

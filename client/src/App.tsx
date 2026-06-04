@@ -14,6 +14,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Partner = lazy(() => import("./pages/Partner"));
 const Founder = lazy(() => import("./pages/Founder"));
 const Blog = lazy(() => import("./pages/Blog"));
+const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 
 function PageLoader() {
   return (
@@ -36,6 +37,7 @@ function Router() {
         <Route path={"/partner"} component={Partner} />
         <Route path={"/founder"} component={Founder} />
         <Route path={"/blog"} component={Blog} />
+        <Route path={"/blog/:slug"} component={BlogArticle} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

@@ -57,3 +57,28 @@ export const chatConversations = mysqlTable("chat_conversations", {
 
 export type ChatConversation = typeof chatConversations.$inferSelect;
 export type InsertChatConversation = typeof chatConversations.$inferInsert;
+
+/**
+ * Blog articles table - stores auto-generated and manual articles
+ */
+export const blogArticles = mysqlTable("blog_articles", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  titleAr: text("title_ar").notNull(),
+  titleEn: text("title_en").notNull(),
+  excerptAr: text("excerpt_ar").notNull(),
+  excerptEn: text("excerpt_en").notNull(),
+  contentAr: text("content_ar").notNull(),
+  contentEn: text("content_en").notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  tags: json("tags").$type<string[]>().notNull(),
+  keywords: text("keywords"),
+  readTimeMinutes: int("read_time_minutes").default(5).notNull(),
+  isPublished: boolean("is_published").default(true).notNull(),
+  scheduleCronTaskUid: varchar("schedule_cron_task_uid", { length: 65 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BlogArticle = typeof blogArticles.$inferSelect;
+export type InsertBlogArticle = typeof blogArticles.$inferInsert;

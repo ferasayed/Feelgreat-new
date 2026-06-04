@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -373,6 +373,40 @@ export const appRouter = router({
     }),
   }),
 
+  // Blog articles (public)
+  blog: router({
+    list: publicProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(50).optional(),
+        offset: z.number().min(0).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const limit = input?.limit ?? 20;
+        const offset = input?.offset ?? 0;
+        const [articles, total] = await Promise.all([
+          getPublishedArticles(limit, offset),
+          getArticlesCount(),
+        ]);
+        return { articles, total };
+      }),
+
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const article = await getArticleBySlug(input.slug);
+        if (!article) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        }
+        return article;
+      }),
+
+    getByCategory: publicProcedure
+      .input(z.object({ category: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return getArticlesByCategory(input.category, input.limit ?? 10);
+      }),
+  }),
+
   // Schedule management (admin only)
   schedule: router({
     setup: adminProcedure.mutation(async ({ ctx }) => {
@@ -388,6 +422,31 @@ export const appRouter = router({
         "" // empty string = project owner session
       );
       return { success: true, taskUid: result.taskUid, nextExecution: result.nextExecutionAt };
+    }),
+
+    setupArticleGen: adminProcedure.mutation(async ({ ctx }) => {
+      // Create 3x daily article generation cron jobs (6:00, 12:00, 18:00 UTC)
+      const schedules = [
+        { name: "article-gen-morning", cron: "0 0 6 * * *", description: "Morning SEO article generation" },
+        { name: "article-gen-afternoon", cron: "0 0 12 * * *", description: "Afternoon SEO article generation" },
+        { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation" },
+      ];
+
+      const results = [];
+      for (const schedule of schedules) {
+        const result = await createHeartbeatJob(
+          {
+            name: schedule.name,
+            cron: schedule.cron,
+            path: "/api/scheduled/generateArticle",
+            method: "POST",
+            description: schedule.description,
+          },
+          "" // empty string = project owner session
+        );
+        results.push({ name: schedule.name, taskUid: result.taskUid, nextExecution: result.nextExecutionAt });
+      }
+      return { success: true, jobs: results };
     }),
 
     list: adminProcedure.query(async () => {
