@@ -232,17 +232,32 @@ function HeroSection() {
             </a>
           </div>
 
-          {/* Audio Introduction */}
+          {/* Audio Introduction - All 6 Languages */}
           <div className="mt-10 animate-fade-in-up stagger-4">
             <div className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
               <Play className="w-5 h-5 text-amber-400" />
               <span className="text-white/80 text-sm">
-                {lang === 'ar' ? 'استمع لرسالة فراس' : 'Listen to Feras\'s Message'}
+                {{
+                  ar: 'استمع لرسالة فراس',
+                  en: "Listen to Feras's Message",
+                  fr: 'Écoutez le message de Feras',
+                  es: 'Escucha el mensaje de Feras',
+                  de: 'Hören Sie Feras\' Nachricht',
+                  tr: "Feras'ın mesajını dinleyin",
+                }[lang]}
               </span>
               <audio
+                key={lang}
                 controls
                 className="h-8 max-w-[200px] sm:max-w-[280px]"
-                src={lang === 'ar' ? '/manus-storage/feras-intro-ar_62a1c58b.wav' : '/manus-storage/feras-intro-en_adcbb476.wav'}
+                src={{
+                  ar: '/manus-storage/feras-intro-ar_62a1c58b.wav',
+                  en: '/manus-storage/feras-intro-en_adcbb476.wav',
+                  fr: '/manus-storage/feras-intro-fr_45dd79f3.wav',
+                  es: '/manus-storage/feras-intro-es_889943c2.wav',
+                  de: '/manus-storage/feras-intro-de_6b6facb3.wav',
+                  tr: '/manus-storage/feras-intro-tr_d9118264.wav',
+                }[lang]}
               />
             </div>
           </div>

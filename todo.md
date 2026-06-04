@@ -288,3 +288,8 @@
 - [x] Integrate audio player into the website (hero section with language-aware switching)
 - [x] Create Free Health Calculators page (BMI, Insulin Resistance Score, Metabolic Age) at /calculators
 - [x] Add Exit-Intent Popup with "7 Hidden Signs of Insulin Resistance" lead magnet
+- [x] Generate French AI voice recording and upload to CDN
+- [x] Generate Spanish AI voice recording and upload to CDN
+- [x] Generate German AI voice recording and upload to CDN
+- [x] Generate Turkish AI voice recording and upload to CDN
+- [x] Update hero audio player to support all 6 languages (ar, en, fr, es, de, tr) with automatic switching based on selected language
