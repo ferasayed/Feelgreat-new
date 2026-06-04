@@ -1,6 +1,18 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Globe, Heart, Users, Award, BookOpen, Mic, Target, Zap, Shield, Star, CheckCircle, TrendingUp, Briefcase } from "lucide-react";
+import { useCountUp } from "@/hooks/useCountUp";
+
+function AboutCounter({ end, suffix, label, icon: Icon, color }: { end: number; suffix: string; label: string; icon: any; color: string }) {
+  const { count, ref } = useCountUp(end, 2200);
+  return (
+    <div ref={ref} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
+      <Icon className={`w-8 h-8 ${color} mx-auto mb-3`} />
+      <div className={`text-3xl font-bold ${color}`}>{count.toLocaleString()}{suffix}</div>
+      <div className="text-sm text-slate-400">{label}</div>
+    </div>
+  );
+}
 
 export default function About() {
   useEffect(() => {
@@ -109,26 +121,10 @@ export default function About() {
           Over the years, Feras has helped individuals across different countries improve their wellbeing, develop healthier lifestyles, grow their confidence, strengthen leadership abilities, and create new opportunities for personal and financial growth. His work focuses on empowering people to become the strongest version of themselves.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
-            <Globe className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-amber-400">30+</div>
-            <div className="text-sm text-slate-400">Countries Reached</div>
-          </div>
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
-            <Users className="w-8 h-8 text-green-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-green-400">10,000+</div>
-            <div className="text-sm text-slate-400">Lives Impacted</div>
-          </div>
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
-            <Mic className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-blue-400">200+</div>
-            <div className="text-sm text-slate-400">Training Sessions</div>
-          </div>
-          <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-center">
-            <Award className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-            <div className="text-3xl font-bold text-purple-400">15+</div>
-            <div className="text-sm text-slate-400">Years Experience</div>
-          </div>
+          <AboutCounter end={30} suffix="+" label="Countries Reached" icon={Globe} color="text-amber-400" />
+          <AboutCounter end={10000} suffix="+" label="Lives Impacted" icon={Users} color="text-green-400" />
+          <AboutCounter end={200} suffix="+" label="Training Sessions" icon={Mic} color="text-blue-400" />
+          <AboutCounter end={15} suffix="+" label="Years Experience" icon={Award} color="text-purple-400" />
         </div>
       </section>
 

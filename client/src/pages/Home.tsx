@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCountUp } from "@/hooks/useCountUp";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -1209,6 +1210,16 @@ function ProblemSection() {
   );
 }
 
+function AnimatedCounter({ end, suffix, label }: { end: number; suffix: string; label: string }) {
+  const { count, ref } = useCountUp(end, 2000);
+  return (
+    <div ref={ref} className="bg-primary/5 rounded-xl p-4 text-center">
+      <div className="text-2xl font-bold text-primary">{count}{suffix}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
 function TrustAuthoritySection() {
   const { lang } = useLanguage();
 
@@ -1223,10 +1234,10 @@ function TrustAuthoritySection() {
   const c = content[lang] || content.en;
 
   const stats = [
-    { value: "50+", label: lang === "ar" ? "دولة" : "Countries" },
-    { value: "10K+", label: lang === "ar" ? "عميل" : "Clients" },
-    { value: "5K+", label: lang === "ar" ? "استشارة" : "Consultations" },
-    { value: "12+", label: lang === "ar" ? "سنة خبرة" : "Years" },
+    { end: 50, suffix: "+", label: lang === "ar" ? "دولة" : "Countries" },
+    { end: 10000, suffix: "+", label: lang === "ar" ? "عميل" : "Clients" },
+    { end: 5000, suffix: "+", label: lang === "ar" ? "استشارة" : "Consultations" },
+    { end: 12, suffix: "+", label: lang === "ar" ? "سنة خبرة" : "Years" },
   ];
 
   return (
@@ -1238,10 +1249,7 @@ function TrustAuthoritySection() {
             <p className="text-muted-foreground mb-6">{c.subtitle}</p>
             <div className="grid grid-cols-2 gap-4 mb-6">
               {stats.map((s, i) => (
-                <div key={i} className="bg-primary/5 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-primary">{s.value}</div>
-                  <div className="text-xs text-muted-foreground">{s.label}</div>
-                </div>
+                <AnimatedCounter key={i} end={s.end} suffix={s.suffix} label={s.label} />
               ))}
             </div>
             <div className="flex flex-wrap gap-2">
@@ -1355,17 +1363,139 @@ function TransformationSection() {
   );
 }
 
+function SuccessStoriesSection() {
+  const { lang } = useLanguage();
+  const content: Record<string, { title: string; subtitle: string; cta: string; categories: Array<{ name: string; count: string; icon: any; color: string }> }> = {
+    ar: {
+      title: "قصص نجاح حقيقية",
+      subtitle: "أكثر من 500 قصة نجاح موثقة في 14 فئة صحية مختلفة",
+      cta: "شاهد جميع القصص",
+      categories: [
+        { name: "نزول الوزن", count: "120+", icon: TrendingUp, color: "from-green-500 to-emerald-600" },
+        { name: "مقاومة الأنسولين", count: "85+", icon: Activity, color: "from-blue-500 to-indigo-600" },
+        { name: "السكري", count: "70+", icon: Heart, color: "from-red-500 to-rose-600" },
+        { name: "القولون والهضم", count: "60+", icon: Leaf, color: "from-amber-500 to-orange-600" },
+        { name: "الطاقة والنشاط", count: "55+", icon: Zap, color: "from-yellow-500 to-amber-600" },
+        { name: "صحة المرأة", count: "45+", icon: Shield, color: "from-pink-500 to-rose-600" },
+      ],
+    },
+    en: {
+      title: "Real Success Stories",
+      subtitle: "Over 500 documented success stories across 14 different health categories",
+      cta: "View All Stories",
+      categories: [
+        { name: "Weight Loss", count: "120+", icon: TrendingUp, color: "from-green-500 to-emerald-600" },
+        { name: "Insulin Resistance", count: "85+", icon: Activity, color: "from-blue-500 to-indigo-600" },
+        { name: "Diabetes", count: "70+", icon: Heart, color: "from-red-500 to-rose-600" },
+        { name: "Gut Health", count: "60+", icon: Leaf, color: "from-amber-500 to-orange-600" },
+        { name: "Energy & Vitality", count: "55+", icon: Zap, color: "from-yellow-500 to-amber-600" },
+        { name: "Women's Health", count: "45+", icon: Shield, color: "from-pink-500 to-rose-600" },
+      ],
+    },
+    fr: {
+      title: "Histoires de Réussite Réelles",
+      subtitle: "Plus de 500 histoires documentées dans 14 catégories de santé",
+      cta: "Voir Toutes les Histoires",
+      categories: [
+        { name: "Perte de Poids", count: "120+", icon: TrendingUp, color: "from-green-500 to-emerald-600" },
+        { name: "Résistance à l'Insuline", count: "85+", icon: Activity, color: "from-blue-500 to-indigo-600" },
+        { name: "Diabète", count: "70+", icon: Heart, color: "from-red-500 to-rose-600" },
+        { name: "Santé Intestinale", count: "60+", icon: Leaf, color: "from-amber-500 to-orange-600" },
+        { name: "Énergie & Vitalité", count: "55+", icon: Zap, color: "from-yellow-500 to-amber-600" },
+        { name: "Santé Féminine", count: "45+", icon: Shield, color: "from-pink-500 to-rose-600" },
+      ],
+    },
+    es: {
+      title: "Historias de Éxito Reales",
+      subtitle: "Más de 500 historias documentadas en 14 categorías de salud",
+      cta: "Ver Todas las Historias",
+      categories: [
+        { name: "Pérdida de Peso", count: "120+", icon: TrendingUp, color: "from-green-500 to-emerald-600" },
+        { name: "Resistencia a la Insulina", count: "85+", icon: Activity, color: "from-blue-500 to-indigo-600" },
+        { name: "Diabetes", count: "70+", icon: Heart, color: "from-red-500 to-rose-600" },
+        { name: "Salud Intestinal", count: "60+", icon: Leaf, color: "from-amber-500 to-orange-600" },
+        { name: "Energía & Vitalidad", count: "55+", icon: Zap, color: "from-yellow-500 to-amber-600" },
+        { name: "Salud Femenina", count: "45+", icon: Shield, color: "from-pink-500 to-rose-600" },
+      ],
+    },
+    de: {
+      title: "Echte Erfolgsgeschichten",
+      subtitle: "Über 500 dokumentierte Erfolgsgeschichten in 14 Gesundheitskategorien",
+      cta: "Alle Geschichten Ansehen",
+      categories: [
+        { name: "Gewichtsverlust", count: "120+", icon: TrendingUp, color: "from-green-500 to-emerald-600" },
+        { name: "Insulinresistenz", count: "85+", icon: Activity, color: "from-blue-500 to-indigo-600" },
+        { name: "Diabetes", count: "70+", icon: Heart, color: "from-red-500 to-rose-600" },
+        { name: "Darmgesundheit", count: "60+", icon: Leaf, color: "from-amber-500 to-orange-600" },
+        { name: "Energie & Vitalität", count: "55+", icon: Zap, color: "from-yellow-500 to-amber-600" },
+        { name: "Frauengesundheit", count: "45+", icon: Shield, color: "from-pink-500 to-rose-600" },
+      ],
+    },
+    tr: {
+      title: "Gerçek Başarı Hikayeleri",
+      subtitle: "14 farklı sağlık kategorisinde 500'den fazla belgelenmiş başarı hikayesi",
+      cta: "Tüm Hikayeleri Gör",
+      categories: [
+        { name: "Kilo Kaybı", count: "120+", icon: TrendingUp, color: "from-green-500 to-emerald-600" },
+        { name: "İnsülin Direnci", count: "85+", icon: Activity, color: "from-blue-500 to-indigo-600" },
+        { name: "Diyabet", count: "70+", icon: Heart, color: "from-red-500 to-rose-600" },
+        { name: "Bağırsak Sağlığı", count: "60+", icon: Leaf, color: "from-amber-500 to-orange-600" },
+        { name: "Enerji & Canlılık", count: "55+", icon: Zap, color: "from-yellow-500 to-amber-600" },
+        { name: "Kadın Sağlığı", count: "45+", icon: Shield, color: "from-pink-500 to-rose-600" },
+      ],
+    },
+  };
+  const c = content[lang] || content.en;
+
+  return (
+    <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <div className="container">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2 mb-4">
+            <Star className="w-4 h-4 text-green-400" />
+            <span className="text-green-400 text-sm font-medium">500+ Documented Results</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{c.title}</h2>
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">{c.subtitle}</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-10">
+          {c.categories.map((cat, i) => (
+            <div key={i} className="group relative overflow-hidden rounded-2xl bg-slate-800/50 border border-slate-700 p-6 hover:border-slate-500 transition-all duration-300 hover:scale-[1.02]">
+              <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
+              <cat.icon className="w-8 h-8 text-slate-300 mb-3" />
+              <div className="text-2xl font-bold text-white mb-1">{cat.count}</div>
+              <div className="text-sm text-slate-400">{cat.name}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <a
+            href="/success-stories"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 hover:scale-105"
+          >
+            <Play className="w-5 h-5" />
+            {c.cta}
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <SchemaMarkup />
       <Navbar />
       <HeroSection />
-      {/* New flow: Problem → Education → Trust → Transformation → Solution → Consultation */}
+      {/* New flow: Problem → Education → Trust → Transformation → Success Stories → Solution → Consultation */}
       <ProblemSection />
       <SustainableHealthSection />
       <TrustAuthoritySection />
       <TransformationSection />
+      <SuccessStoriesSection />
       <TestimonialsSection />
       <HealthInvestorSection />
       <ProductsSection />
