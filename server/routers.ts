@@ -449,6 +449,57 @@ export const appRouter = router({
         return { success: true };
       }),
 
+    // Admin: prepare Instagram post for article
+    prepareInstagramPost: adminProcedure
+      .input(z.object({ articleId: z.number() }))
+      .mutation(async ({ input }) => {
+        const article = await getArticleById(input.articleId);
+        if (!article) throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        
+        // Build the Instagram caption from the social content
+        const caption = article.socialInstagram || article.socialFacebook || 
+          `${article.titleAr}\n\n${article.excerptAr || ""}\n\nاقرأ المقال الكامل: https://feelgreat.us.com/blog/${article.slug}\n\n#FeelGreat #صحة_مستدامة #Unicity`;
+        
+        // Get the hero image URL (must be publicly accessible)
+        const imageUrl = article.heroImageUrl || article.ogImageUrl;
+        if (!imageUrl) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "لا توجد صورة للمقال. يرجى توليد صورة أولاً." });
+        }
+
+        // Build the full public URL for the image
+        const baseUrl = "https://feelgreat.us.com";
+        const fullImageUrl = imageUrl.startsWith("http") ? imageUrl : `${baseUrl}${imageUrl}`;
+
+        return {
+          success: true,
+          articleId: article.id,
+          caption,
+          imageUrl: fullImageUrl,
+          articleTitle: article.titleAr,
+          articleSlug: article.slug,
+        };
+      }),
+
+    // Admin: prepare Facebook post for article
+    prepareFacebookPost: adminProcedure
+      .input(z.object({ articleId: z.number() }))
+      .mutation(async ({ input }) => {
+        const article = await getArticleById(input.articleId);
+        if (!article) throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        
+        const content = article.socialFacebook || 
+          `${article.titleAr}\n\n${article.excerptAr || ""}\n\nاقرأ المقال الكامل: https://feelgreat.us.com/blog/${article.slug}`;
+        
+        return {
+          success: true,
+          articleId: article.id,
+          content,
+          articleTitle: article.titleAr,
+          articleSlug: article.slug,
+          link: `https://feelgreat.us.com/blog/${article.slug}`,
+        };
+      }),
+
     // Admin: content engine stats
     stats: adminProcedure.query(async () => {
       return getArticleStats();

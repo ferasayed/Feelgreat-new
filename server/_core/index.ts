@@ -45,6 +45,99 @@ async function startServer() {
   app.post("/api/scheduled/followUpSequence", followUpSequenceHandler);
   app.post("/api/scheduled/generateArticle", generateArticleHandler);
 
+  // Dynamic sitemap.xml - auto-includes all published blog articles
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const { getPublishedArticles } = await import("../db");
+      const articles = await getPublishedArticles(1000, 0);
+      const baseUrl = "https://feelgreat.us.com";
+      const languages = ["ar", "en", "fr", "es", "de", "tr"];
+
+      // Static pages with their priorities
+      const staticPages = [
+        { path: "/", changefreq: "weekly", priority: "1.0" },
+        { path: "/partner", changefreq: "monthly", priority: "0.9" },
+        { path: "/founder", changefreq: "monthly", priority: "0.8" },
+        { path: "/blog", changefreq: "daily", priority: "0.9" },
+        { path: "/faq", changefreq: "monthly", priority: "0.8" },
+        { path: "/health", changefreq: "weekly", priority: "0.9" },
+        { path: "/about", changefreq: "monthly", priority: "0.8" },
+        { path: "/health-assessment", changefreq: "monthly", priority: "0.8" },
+        { path: "/business-opportunity", changefreq: "monthly", priority: "0.8" },
+        { path: "/reviews", changefreq: "weekly", priority: "0.7" },
+        { path: "/success-stories", changefreq: "weekly", priority: "0.7" },
+        { path: "/90-day-journey", changefreq: "monthly", priority: "0.7" },
+        { path: "/topics", changefreq: "weekly", priority: "0.8" },
+        { path: "/health/insulin-resistance", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/type-2-diabetes", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/fatty-liver", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/ibs-digestive", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/obesity", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/pcos", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/cholesterol", changefreq: "monthly", priority: "0.8" },
+        { path: "/health/hypertension", changefreq: "monthly", priority: "0.8" },
+      ];
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
+
+      // Static pages with hreflang alternates
+      for (const page of staticPages) {
+        xml += `  <url>\n`;
+        xml += `    <loc>${baseUrl}${page.path}</loc>\n`;
+        xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
+        xml += `    <priority>${page.priority}</priority>\n`;
+        // Add hreflang alternates for each language
+        for (const lang of languages) {
+          const langPath = lang === "en" ? page.path : `/${lang}${page.path}`;
+          xml += `    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}" />\n`;
+        }
+        xml += `    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${page.path}" />\n`;
+        xml += `  </url>\n`;
+      }
+
+      // Dynamic blog articles
+      for (const article of articles) {
+        const lastmod = article.publishedAt || article.createdAt;
+        xml += `  <url>\n`;
+        xml += `    <loc>${baseUrl}/blog/${article.slug}</loc>\n`;
+        xml += `    <lastmod>${new Date(lastmod).toISOString().split("T")[0]}</lastmod>\n`;
+        xml += `    <changefreq>monthly</changefreq>\n`;
+        xml += `    <priority>0.7</priority>\n`;
+        xml += `  </url>\n`;
+      }
+
+      xml += `</urlset>`;
+
+      res.set("Content-Type", "application/xml");
+      res.set("Cache-Control", "public, max-age=3600"); // Cache 1 hour
+      res.send(xml);
+    } catch (error) {
+      console.error("[Sitemap] Error generating sitemap:", error);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
+  // Robots.txt - dynamic to include sitemap URL
+  app.get("/robots.txt", (req, res) => {
+    const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /content-engine
+
+Sitemap: https://feelgreat.us.com/sitemap.xml
+`;
+    res.set("Content-Type", "text/plain");
+    res.send(robotsTxt);
+  });
+
+  // IndexNow endpoint - serves the key file for verification
+  app.get("/indexnow-key.txt", (req, res) => {
+    res.set("Content-Type", "text/plain");
+    res.send("feelgreat-indexnow-2026");
+  });
+
   // IP-based geolocation endpoint for auto language detection
   app.get("/api/geo", async (req, res) => {
     try {

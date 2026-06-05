@@ -10,8 +10,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   FileText, TrendingUp, Image, Share2, BarChart3,
   Eye, EyeOff, Copy, ExternalLink, Calendar, Target,
-  Zap, Globe, BookOpen, Sparkles, Clock
+  Zap, Globe, BookOpen, Sparkles, Clock, Instagram, Send, Play
 } from "lucide-react";
+import { toast } from "sonner";
 
 const PILLARS = [
   { id: "sustainable-health", nameAr: "الصحة المستدامة", nameEn: "Sustainable Health" },
@@ -31,6 +32,7 @@ const PILLARS = [
 
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);
+  toast.success("تم النسخ!");
 }
 
 function ArticleDetailDialog({ article }: { article: any }) {
@@ -154,6 +156,71 @@ function ArticleDetailDialog({ article }: { article: any }) {
   );
 }
 
+function PublishToInstagramButton({ articleId }: { articleId: number }) {
+  const prepareMutation = trpc.blog.prepareInstagramPost.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handlePublish = async () => {
+    setIsLoading(true);
+    try {
+      const result = await prepareMutation.mutateAsync({ articleId });
+      // Copy the caption and show instructions
+      await navigator.clipboard.writeText(result.caption);
+      toast.success(
+        `تم تجهيز منشور إنستغرام!\nالكابشن تم نسخه. الصورة: ${result.imageUrl}`,
+        { duration: 8000 }
+      );
+    } catch (e: any) {
+      toast.error(e.message || "فشل في تجهيز المنشور");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="h-7 px-2 text-pink-500 hover:text-pink-600"
+      onClick={handlePublish}
+      disabled={isLoading}
+      title="نشر على إنستغرام"
+    >
+      <Instagram className="h-3 w-3" />
+    </Button>
+  );
+}
+
+function ManualTriggerButton() {
+  const triggerMutation = trpc.schedule.triggerArticleGen.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTrigger = async () => {
+    setIsLoading(true);
+    try {
+      const result = await triggerMutation.mutateAsync();
+      toast.info(result.message || "تم إرسال طلب التوليد", { duration: 5000 });
+    } catch (e: any) {
+      toast.error("فشل في تشغيل التوليد");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="gap-1"
+      onClick={handleTrigger}
+      disabled={isLoading}
+    >
+      <Play className="h-3 w-3" />
+      {isLoading ? "جاري التوليد..." : "توليد مقال الآن"}
+    </Button>
+  );
+}
+
 export default function ContentEngine() {
   useEffect(() => {
     document.title = "Content Engine | Feel Great";
@@ -210,6 +277,7 @@ export default function ContentEngine() {
           <p className="text-muted-foreground mt-1">نظام توليد ونشر المقالات الصحية الأوتوماتيكي</p>
         </div>
         <div className="flex items-center gap-2">
+          <ManualTriggerButton />
           <Badge variant="outline" className="gap-1">
             <Clock className="h-3 w-3" />
             {articleJobs.length} وظائف مجدولة
@@ -400,6 +468,9 @@ export default function ContentEngine() {
                             <ExternalLink className="h-3 w-3" />
                           </Button>
                         </a>
+                        {article.heroImageUrl && article.socialInstagram && (
+                          <PublishToInstagramButton articleId={article.id} />
+                        )}
                       </div>
                     </td>
                   </tr>

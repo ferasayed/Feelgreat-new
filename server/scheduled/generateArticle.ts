@@ -696,6 +696,11 @@ export async function generateArticleHandler(req: Request, res: Response) {
 
     console.log(`[GenerateArticle] ✅ Complete! Slug: ${slug}, Words: ${wordCount}, Published: ${meetsMinWordCount}`);
 
+    // Ping IndexNow to notify search engines of new content
+    if (meetsMinWordCount) {
+      pingIndexNow(slug).catch((e) => console.error("[IndexNow] Ping failed:", e));
+    }
+
     return res.json({
       ok: true,
       slug,
@@ -720,5 +725,37 @@ export async function generateArticleHandler(req: Request, res: Response) {
       error: errMsg,
       timestamp: new Date().toISOString(),
     });
+  }
+}
+
+/**
+ * Ping IndexNow to notify Bing, Yandex, and other search engines of new content.
+ * Google doesn't support IndexNow but we also ping Google's sitemap endpoint.
+ */
+async function pingIndexNow(slug: string): Promise<void> {
+  const baseUrl = "https://feelgreat.us.com";
+  const articleUrl = `${baseUrl}/blog/${slug}`;
+  const key = "feelgreat-indexnow-2026";
+
+  // IndexNow ping (Bing, Yandex, Seznam, Naver)
+  try {
+    await fetch(`https://api.indexnow.org/indexnow?url=${encodeURIComponent(articleUrl)}&key=${key}`, {
+      method: "GET",
+      signal: AbortSignal.timeout(10000),
+    });
+    console.log(`[IndexNow] Pinged: ${articleUrl}`);
+  } catch (e: unknown) {
+    console.error("[IndexNow] IndexNow ping failed:", e);
+  }
+
+  // Google sitemap ping
+  try {
+    await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(`${baseUrl}/sitemap.xml`)}`, {
+      method: "GET",
+      signal: AbortSignal.timeout(10000),
+    });
+    console.log(`[IndexNow] Google sitemap ping sent`);
+  } catch (e: unknown) {
+    console.error("[IndexNow] Google ping failed:", e);
   }
 }

@@ -355,3 +355,11 @@
 - [x] Shorten title from 88 chars to 47 chars
 - [x] Shorten description from 168 chars to 123 chars
 - [x] Add alt text to the 1 image missing it (hero background)
+
+## Dynamic Sitemap + Social Auto-Publish + GSC Integration
+- [x] Dynamic sitemap.xml endpoint that includes all pages + blog articles automatically
+- [x] Auto-ping Google + IndexNow on new article publish
+- [x] Instagram publish button in Content Engine (prepares caption + image for MCP publish)
+- [x] Facebook post preparation endpoint in Content Engine
+- [x] Google Search Console site verification meta tag (placeholder ready)
+- [x] IndexNow API key file + auto-submission on article publish
