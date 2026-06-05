@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, json, boolean } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, boolean, timestamp, json, mysqlEnum } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -60,6 +60,7 @@ export type InsertChatConversation = typeof chatConversations.$inferInsert;
 
 /**
  * Blog articles table - stores auto-generated and manual articles
+ * Enhanced with SEO metadata, images, social content, and clustering
  */
 export const blogArticles = mysqlTable("blog_articles", {
   id: int("id").autoincrement().primaryKey(),
@@ -73,6 +74,35 @@ export const blogArticles = mysqlTable("blog_articles", {
   category: varchar("category", { length: 100 }).notNull(),
   tags: json("tags").$type<string[]>().notNull(),
   keywords: text("keywords"),
+  // SEO metadata
+  metaTitleAr: varchar("meta_title_ar", { length: 255 }),
+  metaTitleEn: varchar("meta_title_en", { length: 255 }),
+  metaDescriptionAr: text("meta_description_ar"),
+  metaDescriptionEn: text("meta_description_en"),
+  // Generated images
+  heroImageUrl: varchar("hero_image_url", { length: 500 }),
+  ogImageUrl: varchar("og_image_url", { length: 500 }),
+  socialImageUrl: varchar("social_image_url", { length: 500 }),
+  // Social media repurposed content
+  socialFacebook: text("social_facebook"),
+  socialLinkedin: text("social_linkedin"),
+  socialInstagram: text("social_instagram"),
+  socialReelsScript: text("social_reels_script"),
+  socialTiktokScript: text("social_tiktok_script"),
+  // Content clustering & SEO strategy
+  pillarId: varchar("pillar_id", { length: 100 }),
+  clusterId: varchar("cluster_id", { length: 100 }),
+  targetKeyword: varchar("target_keyword", { length: 255 }),
+  keywordVolume: int("keyword_volume"),
+  keywordDifficulty: varchar("keyword_difficulty", { length: 20 }),
+  wordCount: int("word_count").default(0),
+  // Article status and metadata
+  status: varchar("status", { length: 20 }).default("published"),
+  language: varchar("language", { length: 10 }).default("both"),
+  faqSchema: json("faq_schema").$type<Array<{ question: string; answer: string }>>(),
+  internalLinks: json("internal_links").$type<Array<{ slug: string; title: string }>>(),
+  publishedAt: timestamp("published_at"),
+  // Legacy fields
   readTimeMinutes: int("read_time_minutes").default(5).notNull(),
   isPublished: boolean("is_published").default(true).notNull(),
   scheduleCronTaskUid: varchar("schedule_cron_task_uid", { length: 65 }),
@@ -93,7 +123,7 @@ export const reviews = mysqlTable("reviews", {
   rating: int("rating").notNull(), // 1-5
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(),
-  category: varchar("category", { length: 100 }).default("general").notNull(), // weight-loss, energy, metabolic, gut-health, etc.
+  category: varchar("category", { length: 100 }).default("general").notNull(),
   isApproved: boolean("is_approved").default(false).notNull(),
   isPublished: boolean("is_published").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

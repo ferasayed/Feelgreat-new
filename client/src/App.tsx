@@ -32,6 +32,7 @@ const JourneyRoadmap = lazy(() => import("./pages/JourneyRoadmap"));
 const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const SuccessStoryDetail = lazy(() => import("./pages/SuccessStories").then(m => ({ default: m.SuccessStoryDetail })));
 const HealthCalculators = lazy(() => import("./pages/HealthCalculators"));
+const ContentEngine = lazy(() => import("./pages/ContentEngine"));
 import ExitIntentPopup from "./components/ExitIntentPopup";
 import HreflangTags from "./components/HreflangTags";
 
@@ -66,6 +67,7 @@ function AppRoutes() {
         <Route path={"/about"} component={About} />
         <Route path={"/keywords"} component={KeywordReport} />
         <Route path={"/growth"} component={GrowthDashboard} />
+        <Route path={"/content-engine"} component={ContentEngine} />
         <Route path={"/assessments"} component={LeadMagnet} />
         <Route path={"/partner-with-feras"} component={PartnerWithFeras} />
         <Route path={"/health-investor"} component={HealthInvestor} />

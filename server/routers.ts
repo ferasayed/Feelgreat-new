@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -405,6 +405,61 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getArticlesByCategory(input.category, input.limit ?? 10);
       }),
+
+    // Admin: get all articles (published + drafts)
+    adminList: adminProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(100).optional(),
+        offset: z.number().min(0).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const limit = input?.limit ?? 50;
+        const offset = input?.offset ?? 0;
+        return getAllArticles(limit, offset);
+      }),
+
+    // Admin: get article by ID (full details including social content)
+    adminGetById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const article = await getArticleById(input.id);
+        if (!article) throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        return article;
+      }),
+
+    // Admin: update article status/content
+    adminUpdate: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        isPublished: z.boolean().optional(),
+        status: z.string().optional(),
+        titleAr: z.string().optional(),
+        titleEn: z.string().optional(),
+        excerptAr: z.string().optional(),
+        excerptEn: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        const updateData: any = { ...data };
+        if (data.isPublished === true && !updateData.publishedAt) {
+          updateData.publishedAt = new Date();
+          updateData.status = "published";
+        }
+        await updateArticle(id, updateData);
+        return { success: true };
+      }),
+
+    // Admin: content engine stats
+    stats: adminProcedure.query(async () => {
+      return getArticleStats();
+    }),
+
+    // Admin: get articles by cluster
+    byCluster: adminProcedure
+      .input(z.object({ clusterId: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return getArticlesByCluster(input.clusterId, input.limit ?? 20);
+      }),
   }),
 
   // Schedule management (admin only)
@@ -425,28 +480,36 @@ export const appRouter = router({
     }),
 
     setupArticleGen: adminProcedure.mutation(async ({ ctx }) => {
-      // Create 3x daily article generation cron jobs (6:00, 12:00, 18:00 UTC)
-      const schedules = [
-        { name: "article-gen-morning", cron: "0 0 6 * * *", description: "Morning SEO article generation" },
-        { name: "article-gen-afternoon", cron: "0 0 12 * * *", description: "Afternoon SEO article generation" },
-        { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation" },
-      ];
+      // Create daily article generation cron job at 6:00 AM UTC (9:00 AM Saudi time)
+      // This runs the full pipeline: keyword research → article generation → image → social content → publish
+      const result = await createHeartbeatJob(
+        {
+          name: "daily-seo-article",
+          cron: "0 0 6 * * *",
+          path: "/api/scheduled/generateArticle",
+          method: "POST",
+          description: "Daily automated SEO health article: keyword research → content generation → image → social media → publish",
+        },
+        "" // empty string = project owner session
+      );
+      return { success: true, taskUid: result.taskUid, nextExecution: result.nextExecutionAt };
+    }),
 
-      const results = [];
-      for (const schedule of schedules) {
-        const result = await createHeartbeatJob(
-          {
-            name: schedule.name,
-            cron: schedule.cron,
-            path: "/api/scheduled/generateArticle",
-            method: "POST",
-            description: schedule.description,
-          },
-          "" // empty string = project owner session
-        );
-        results.push({ name: schedule.name, taskUid: result.taskUid, nextExecution: result.nextExecutionAt });
+    // Manual trigger for testing
+    triggerArticleGen: adminProcedure.mutation(async ({ ctx }) => {
+      // Trigger article generation manually for testing
+      const baseUrl = process.env.VITE_FRONTEND_FORGE_API_URL || "http://localhost:3000";
+      try {
+        const response = await fetch(`http://localhost:${process.env.PORT || 3000}/api/scheduled/generateArticle`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+        // Note: This will fail auth check in production since it needs cron auth
+        // For manual testing, use the heartbeat system's "Run Now" feature
+        return { success: true, message: "Use the Schedules panel in Management UI to trigger manually via 'Run Now'" };
+      } catch (e) {
+        return { success: false, message: "Use the Schedules panel in Management UI to trigger manually" };
       }
-      return { success: true, jobs: results };
     }),
 
     list: adminProcedure.query(async () => {

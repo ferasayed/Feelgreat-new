@@ -36,6 +36,13 @@
       "when": 1780561377378,
       "tag": "0004_premium_johnny_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1780641714649,
+      "tag": "0005_yellow_adam_destine",
+      "breakpoints": true
     }
   ]
 }

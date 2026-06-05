@@ -1,5 +1,6 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import { sql } from "drizzle-orm";
 import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -350,4 +351,88 @@ export async function getReviewStats(): Promise<{ total: number; avgRating: numb
   const published = all.filter(r => r.isPublished);
   const avgRating = all.length > 0 ? all.reduce((sum, r) => sum + r.rating, 0) / all.length : 0;
   return { total: all.length, avgRating: Math.round(avgRating * 10) / 10, published: published.length };
+}
+
+
+// ========== Enhanced Blog Article Helpers ==========
+
+export async function getAllArticles(limit = 100, offset = 0): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles)
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function getArticleById(id: number): Promise<BlogArticle | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [article] = await db.select().from(blogArticles).where(eq(blogArticles.id, id)).limit(1);
+  return article || null;
+}
+
+export async function updateArticle(id: number, data: Partial<InsertBlogArticle>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(blogArticles).set(data).where(eq(blogArticles.id, id));
+}
+
+export async function getArticlesByCluster(clusterId: string, limit = 20): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles)
+    .where(and(eq(blogArticles.clusterId, clusterId), eq(blogArticles.isPublished, true)))
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit);
+}
+
+export async function getArticlesByPillar(pillarId: string, limit = 20): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles)
+    .where(and(eq(blogArticles.pillarId, pillarId), eq(blogArticles.isPublished, true)))
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit);
+}
+
+export async function getRecentArticleKeywords(limit = 50): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const results = await db.select({ keyword: blogArticles.targetKeyword })
+    .from(blogArticles)
+    .where(sql`${blogArticles.targetKeyword} IS NOT NULL`)
+    .orderBy(desc(blogArticles.createdAt))
+    .limit(limit);
+  return results.map(r => r.keyword).filter(Boolean) as string[];
+}
+
+export async function getArticleStats(): Promise<{
+  total: number;
+  published: number;
+  drafts: number;
+  byCluster: Record<string, number>;
+  byLanguage: Record<string, number>;
+  totalWords: number;
+}> {
+  const db = await getDb();
+  if (!db) return { total: 0, published: 0, drafts: 0, byCluster: {}, byLanguage: {}, totalWords: 0 };
+  
+  const all = await db.select().from(blogArticles);
+  const published = all.filter(a => a.isPublished);
+  const drafts = all.filter(a => !a.isPublished);
+  
+  const byCluster: Record<string, number> = {};
+  const byLanguage: Record<string, number> = {};
+  let totalWords = 0;
+  
+  for (const article of all) {
+    const cluster = article.clusterId || article.category || "uncategorized";
+    byCluster[cluster] = (byCluster[cluster] || 0) + 1;
+    const lang = article.language || "both";
+    byLanguage[lang] = (byLanguage[lang] || 0) + 1;
+    totalWords += article.wordCount || 0;
+  }
+  
+  return { total: all.length, published: published.length, drafts: drafts.length, byCluster, byLanguage, totalWords };
 }
