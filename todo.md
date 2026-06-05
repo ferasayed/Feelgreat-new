@@ -363,3 +363,13 @@
 - [x] Facebook post preparation endpoint in Content Engine
 - [x] Google Search Console site verification meta tag (placeholder ready)
 - [x] IndexNow API key file + auto-submission on article publish
+
+## Enhanced Content Engine v3 - 1-3 Articles Daily
+- [x] Upgrade from 1 article/day to 1-3 articles/day (3 cron jobs: 6AM, 12PM, 6PM UTC)
+- [x] Enhanced EEAT optimization (expertise, experience, authoritativeness, trustworthiness signals)
+- [x] GEO optimization (Generative Engine Optimization for AI search results)
+- [x] AI Search Optimization (structured answers, featured snippet format, concise definitions)
+- [x] Enhanced Cluster Content strategy with pillar-supporting article linking
+- [x] Improved internal linking algorithm (link to related articles + pillar pages)
+- [x] Focus on 10 health domains: insulin resistance, diabetes, weight, fatty liver, gut health, women's health, behavioral nutrition, sleep & energy, chronic inflammation, sustainable health
+- [x] Multiple cron runs per day for 1-3 articles (3 Heartbeat jobs auto-created on deploy)

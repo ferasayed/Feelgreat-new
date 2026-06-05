@@ -212,14 +212,18 @@ async function selectTopicWithAI(recentSlugs: string[], recentKeywords: string[]
     messages: [
       {
         role: "system",
-        content: `You are an expert SEO keyword researcher specializing in health and wellness content for 2026. Your job is to identify the BEST keyword opportunity right now based on:
+        content: `You are an expert SEO + GEO (Generative Engine Optimization) keyword researcher specializing in health and wellness content for 2026. Your job is to identify the BEST keyword opportunity right now based on:
 - High search volume (monthly searches)
 - Low-to-medium competition
 - Clear search intent (informational, how-to, comparison)
 - Trending health topics in 2026
 - Relevance to the health pillar provided
+- AI Search potential (topics that AI assistants like ChatGPT, Gemini, Perplexity frequently answer)
+- Featured Snippet opportunity (questions, definitions, lists, comparisons)
+- People Also Ask potential (conversational queries)
 
-Consider seasonal trends, recent health news, and emerging research topics.
+Consider seasonal trends, recent health news, emerging research topics, and what people are asking AI chatbots about health.
+Prioritize long-tail keywords (3-6 words) with high intent and low competition.
 IMPORTANT: Respond ONLY with valid JSON.`,
       },
       {
@@ -301,16 +305,51 @@ async function generateArticleContent(topic: string, targetKeyword: string, sear
 - الثانوي: المهنيون المهتمون بالصحة في أوروبا
 - تحدث مباشرة عن مشاكلهم اليومية
 
-=== قواعد SEO 2026 ===
+=== E-E-A-T OPTIMIZATION (2026) ===
+- Experience: أدرج تجارب حقيقية من ممارسة فراس السريرية ("في تجربتي مع مئات العملاء..."، "لاحظت خلال 15 سنة من الممارسة...")
+- Expertise: استشهد بالتخصص الدقيق لفراس (أخصائي تغذية علاجية وسلوكية معتمد)
+- Authoritativeness: اذكر إنجازاته (مؤسس مفهوم المستثمر الصحي، شريك Unicity الرسمي)
+- Trustworthiness: أضف disclaimers طبية عند الحاجة، اذكر أن المعلومات لا تغني عن استشارة الطبيب
+- أضف "Author Box" info: اسم المؤلف، تخصصه، خبرته، روابط ملفاته المهنية
+- استخدم مصادر peer-reviewed فقط (لا مدونات أو مواقع تجارية)
+
+=== GEO OPTIMIZATION (Generative Engine Optimization) ===
+- اكتب إجابات مباشرة وواضحة في أول 2-3 جمل من كل قسم (لاستهداف AI Overviews)
+- استخدم تنسيق "Definition → Explanation → Evidence → Action" في كل H2
+- أضف ملخصات قابلة للاقتباس (quotable summaries) بعد كل قسم رئيسي
+- اكتب بأسلوب يسهل على AI استخراج الحقائق منه (factual density عالية)
+- أدرج statistics + numbers + percentages (AI يفضل البيانات الكمية)
+- استخدم bullet points للنصائح العملية (AI يقتبسها بسهولة)
+
+=== AI SEARCH OPTIMIZATION ===
+- هيكل المقال ليظهر في Featured Snippets: paragraph snippet (40-60 كلمة)، list snippet، table snippet
+- أضف "TL;DR" أو "الخلاصة" في بداية المقال (3-4 جمل تلخص الإجابة)
+- اكتب FAQ بأسلوب "People Also Ask" (أسئلة طبيعية كما يسألها الناس)
+- أدرج comparison tables عند المقارنة بين خيارات
+- استخدم schema-friendly formatting: تعريفات واضحة، خطوات مرقمة، قوائم
+- أضف "Key Takeaways" section قبل الخاتمة
+
+=== SEMANTIC SEO & TOPICAL AUTHORITY ===
 - استخدم الكلمة المفتاحية الرئيسية 4-6 مرات بشكل طبيعي
-- أدرج كلمات LSI ومتغيرات دلالية
-- اكتب meta description جذاب (150-160 حرف)
+- أدرج 10-15 كلمة LSI ومتغيرات دلالية (semantic variations)
+- غطِّ الموضوع بعمق 360° (لا تترك سؤالاً بدون إجابة)
+- اربط بالمحور الأم (Pillar Page) وبمقالات داعمة أخرى
+- استخدم NLP-friendly structure: entity mentions، co-occurrence terms، topic clusters
+
+=== قواعد SEO 2026 ===
+- اكتب meta description جذاب (150-160 حرف) يحتوي CTA ضمني
 - هيكل واضح بـ H2 و H3 (الكلمة المفتاحية في H2 واحد على الأقل)
-- قسم FAQ مع 5 أسئلة (لاستهداف Featured Snippets)
-- 3 روابط داخلية مقترحة
-- 3 مراجع خارجية (NIH, Mayo Clinic, Harvard Health)
-- محتوى يجيب على نية البحث مباشرة
-- E-E-A-T: خبرة، تجربة، سلطة، موثوقية
+- قسم FAQ مع 5-7 أسئلة (لاستهداف Featured Snippets + People Also Ask)
+- 3-5 روابط داخلية مقترحة (مقالات + صفحات محاور)
+- 3-5 مراجع خارجية (NIH, Mayo Clinic, Harvard Health, PubMed, WHO)
+- محتوى يجيب على نية البحث مباشرة في أول 100 كلمة
+- Passage Ranking optimization: كل H2 section يجب أن يكون self-contained
+
+=== CONTENT CLUSTER STRATEGY ===
+- اربط المقال بصفحة المحور (Pillar Page) في المقدمة والخاتمة
+- أشر إلى 2-3 مقالات داعمة أخرى في نفس المحور
+- استخدم anchor text وصفي (لا "اضغط هنا")
+- أضف "مقالات ذات صلة" section قبل CTA
 
 === قواعد المحتوى ===
 - لا تستخدم لغة التسويق الشبكي أبداً
@@ -318,12 +357,13 @@ async function generateArticleContent(topic: string, targetKeyword: string, sear
 - ركز على تغيير نمط الحياة والوقاية
 - عزز مكانة فراس كخبير استراتيجي صحي
 - روّج لمفهوم "المستثمر الصحي" بشكل طبيعي
+- أضف disclaimer طبي في نهاية المقال
 
 IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks.`,
       },
       {
         role: "user",
-        content: `اكتب مقالاً شاملاً ومحسّناً لـ SEO عن: "${topic}"
+        content: `اكتب مقالاً شاملاً ومحسّناً لـ SEO + GEO + AI Search عن: "${topic}"
 
 الكلمة المفتاحية الرئيسية: "${targetKeyword}"
 نية البحث: ${searchIntent}
@@ -331,13 +371,17 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks.`,
 الروابط الداخلية المتاحة: ${suggestedInternalLinks}
 صفحة المحور: ${PILLAR_PAGES[pillar.id]?.path || "/blog"}
 
-المقال يجب أن يكون 1500-2500 كلمة ويتضمن:
-1. مقدمة جذابة مع hook قوي
-2. جسم منظم بـ H2/H3
-3. نصائح عملية قابلة للتطبيق
-4. مراجع علمية
-5. قسم FAQ (5 أسئلة مع إجابات)
-6. خاتمة قوية مع CTA
+المقال يجب أن يكون 1800-2500 كلمة ويتضمن:
+1. TL;DR / الخلاصة (3-4 جمل تلخص الإجابة مباشرة - لـ AI Overviews)
+2. مقدمة جذابة مع hook قوي + EEAT signal (تجربة فراس الشخصية)
+3. جسم منظم بـ H2/H3 (كل H2 = self-contained passage لـ Passage Ranking)
+4. نصائح عملية قابلة للتطبيق (بـ bullet points لـ AI extraction)
+5. Key Takeaways section (5-7 نقاط ملخصة)
+6. مراجع علمية (3-5 peer-reviewed sources)
+7. قسم FAQ (5-7 أسئلة بأسلوب People Also Ask)
+8. "مقالات ذات صلة" section مع روابط داخلية
+9. خاتمة قوية مع CTA
+10. Disclaimer طبي في النهاية
 
 أرجع JSON بهذا الهيكل:
 {
@@ -513,9 +557,30 @@ export async function generateArticleHandler(req: Request, res: Response) {
       getRecentArticleKeywords(50),
     ]);
 
-    // Select a pillar (rotate through them evenly)
-    const pillarIndex = Math.floor(Date.now() / (24 * 60 * 60 * 1000)) % CONTENT_PILLARS.length;
-    const pillar = CONTENT_PILLARS[pillarIndex];
+    // Smart pillar selection: prioritize the 10 requested domains with weighted rotation
+    // Priority pillars (user requested): insulin-resistance, diabetes, weight-management, 
+    // fatty-liver, gut-health, womens-health, behavioral-nutrition, sleep-energy, 
+    // chronic-inflammation, sustainable-health
+    const PRIORITY_PILLAR_IDS = [
+      "insulin-resistance", "diabetes", "weight-management", "fatty-liver",
+      "gut-health", "womens-health", "behavioral-nutrition", "sleep-energy",
+      "chronic-inflammation", "sustainable-health"
+    ];
+    
+    // Use hour-based rotation for multiple articles per day
+    const hourOfDay = new Date().getUTCHours();
+    const dayOfYear = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
+    const rotationIndex = (dayOfYear * 3 + Math.floor(hourOfDay / 8)) % CONTENT_PILLARS.length;
+    
+    // 80% chance to pick from priority pillars, 20% from all pillars
+    const usePriority = Math.random() < 0.8;
+    let pillar: typeof CONTENT_PILLARS[0];
+    if (usePriority) {
+      const priorityIndex = rotationIndex % PRIORITY_PILLAR_IDS.length;
+      pillar = CONTENT_PILLARS.find(p => p.id === PRIORITY_PILLAR_IDS[priorityIndex]) || CONTENT_PILLARS[rotationIndex];
+    } else {
+      pillar = CONTENT_PILLARS[rotationIndex];
+    }
     console.log(`[GenerateArticle] Selected pillar: ${pillar.nameEn} (${pillar.id})`);
 
     // STEP 1: AI Keyword Research
