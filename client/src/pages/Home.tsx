@@ -171,7 +171,7 @@ function HeroSection() {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
           src="/manus-storage/feras-hero-bg_f4e10bc1.jpg"
-          alt=""
+          alt="Feras Alayed - Sustainable Health Expert"
           className="w-full h-full object-cover opacity-[0.12] scale-110"
           style={{ filter: 'grayscale(30%) blur(1px)' }}
         />
@@ -1097,9 +1097,9 @@ function StickyCTA() {
 function SchemaMarkup() {
   useEffect(() => {
     // Set page title and meta description
-    document.title = "Feel Great - Invest in Your Health, Build Your Future | Sustainable Health & Partnership";
+    document.title = "Feel Great | Sustainable Health by Feras Alayed";
     const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute('content', 'Feel Great by Feras Alayed - A science-backed sustainable health system. Invest in your health today and build your impact & income tomorrow with Unicity International.');
+    if (metaDesc) metaDesc.setAttribute('content', 'Feel Great by Feras Alayed - Science-backed sustainable health system. Transform your health and build income with Unicity.');
     const metaCanonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
     metaCanonical.setAttribute('rel', 'canonical');
     metaCanonical.setAttribute('href', 'https://feelgreat.us.com/');

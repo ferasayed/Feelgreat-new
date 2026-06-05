@@ -349,3 +349,9 @@
 - [x] Pillar pages for 13 main topics auto-linked
 - [x] Supporting articles cluster around each pillar
 - [x] Semantic search optimization (EEAT signals)
+
+## SEO Fixes for Homepage (/)
+- [x] Reduce keywords from 18 to 5 focused keywords (Feel Great, sustainable health, insulin resistance, Unicity, Feras Alayed)
+- [x] Shorten title from 88 chars to 47 chars
+- [x] Shorten description from 168 chars to 123 chars
+- [x] Add alt text to the 1 image missing it (hero background)
