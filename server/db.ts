@@ -332,6 +332,12 @@ export async function getPublishedReviews(limit = 20): Promise<Review[]> {
   return db.select().from(reviews).where(and(eq(reviews.isApproved, true), eq(reviews.isPublished, true))).orderBy(desc(reviews.createdAt)).limit(limit);
 }
 
+export async function getPublishedReviewsByCategory(category: string, limit = 5): Promise<Review[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(reviews).where(and(eq(reviews.isApproved, true), eq(reviews.isPublished, true), eq(reviews.category, category))).orderBy(desc(reviews.createdAt)).limit(limit);
+}
+
 export async function getAllReviews(): Promise<Review[]> {
   const db = await getDb();
   if (!db) return [];

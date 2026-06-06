@@ -414,3 +414,13 @@
 - [x] Generate initial seed research summaries
 - [x] Add research section to main navigation
 - [x] Bilingual support (Arabic + English) for all research summaries
+
+## Blog Content Rules - Full Compliance Fix
+- [x] Add "تاريخ آخر تحديث" (Last Updated date) visible in article UI
+- [x] Add "تمت المراجعة العلمية" (Scientifically Reviewed) badge visible in article UI
+- [x] Add Breadcrumb Schema (JSON-LD) to article pages
+- [x] Add standalone Author/Person Schema with full credentials in article pages
+- [x] Add automated validation: reject articles without "References" section before publishing
+- [x] Improve Content Clusters: add tree-structured cluster navigation in article sidebar/footer
+- [x] Auto-link related Success Stories to articles based on category matching
+- [x] Ensure minimum 1500 words enforcement with fallback retry

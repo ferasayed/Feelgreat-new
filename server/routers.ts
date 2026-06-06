@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -406,6 +406,13 @@ export const appRouter = router({
         return getArticlesByCategory(input.category, input.limit ?? 10);
       }),
 
+    // Get articles by pillar (public - for cluster navigation)
+    getByPillar: publicProcedure
+      .input(z.object({ pillarId: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return getArticlesByCluster(input.pillarId, input.limit ?? 20);
+      }),
+
     // Track article view (called from BlogArticle page)
     recordView: publicProcedure
       .input(z.object({
@@ -703,6 +710,12 @@ export const appRouter = router({
     published: publicProcedure.query(async () => {
       return getPublishedReviews();
     }),
+
+    byCategory: publicProcedure
+      .input(z.object({ category: z.string(), limit: z.number().optional() }))
+      .query(async ({ input }) => {
+        return getPublishedReviewsByCategory(input.category, input.limit ?? 5);
+      }),
 
     all: adminProcedure.query(async () => {
       return getAllReviews();
