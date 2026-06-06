@@ -201,6 +201,51 @@ async function startServer() {
     }
   });
 
+  // Google News Sitemap
+  app.get("/news-sitemap.xml", async (req, res) => {
+    try {
+      const { getPublishedArticles } = await import("../db");
+      const articles = await getPublishedArticles(50, 0);
+      const baseUrl = "https://feelgreat.us.com";
+      // Get articles published in the last 48 hours (Google News requirement)
+      const recentArticles = articles.filter((a: any) => {
+        const pubDate = new Date(a.publishedAt || a.createdAt);
+        const hoursDiff = (Date.now() - pubDate.getTime()) / (1000 * 60 * 60);
+        return hoursDiff <= 48;
+      });
+      // If no articles in 48h, get the 10 most recent
+      const newsArticles = recentArticles.length > 0 ? recentArticles : articles.slice(0, 10);
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n`;
+      xml += `        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n`;
+
+      for (const article of newsArticles) {
+        const pubDate = new Date(article.publishedAt || article.createdAt).toISOString();
+        const title = (article.titleEn || article.titleAr || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        xml += `  <url>\n`;
+        xml += `    <loc>${baseUrl}/blog/${article.slug}</loc>\n`;
+        xml += `    <news:news>\n`;
+        xml += `      <news:publication>\n`;
+        xml += `        <news:name>Feel Great Health by Feras Alayed</news:name>\n`;
+        xml += `        <news:language>en</news:language>\n`;
+        xml += `      </news:publication>\n`;
+        xml += `      <news:publication_date>${pubDate}</news:publication_date>\n`;
+        xml += `      <news:title>${title}</news:title>\n`;
+        xml += `    </news:news>\n`;
+        xml += `  </url>\n`;
+      }
+
+      xml += `</urlset>`;
+      res.set("Content-Type", "application/xml");
+      res.set("Cache-Control", "public, max-age=1800");
+      res.send(xml);
+    } catch (error) {
+      console.error("[NewsSitemap] Error:", error);
+      res.status(500).send("Error generating news sitemap");
+    }
+  });
+
   // Robots.txt - comprehensive with all sitemaps and crawl directives
   app.get("/robots.txt", (req, res) => {
     const robotsTxt = `# Robots.txt for feelgreat.us.com
@@ -216,6 +261,11 @@ Disallow: /admin/
 
 # Sitemaps
 Sitemap: https://feelgreat.us.com/sitemap.xml
+Sitemap: https://feelgreat.us.com/news-sitemap.xml
+
+# RSS Feeds
+# Blog: https://feelgreat.us.com/feed.xml
+# Research: https://feelgreat.us.com/research-feed.xml
 
 # Crawl-delay for polite crawling
 User-agent: AhrefsBot
@@ -226,6 +276,22 @@ Crawl-delay: 2
 
 User-agent: MJ12bot
 Crawl-delay: 5
+
+# Allow AI crawlers for citation
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
 `;
     res.set("Content-Type", "text/plain");
     res.set("Cache-Control", "public, max-age=86400");

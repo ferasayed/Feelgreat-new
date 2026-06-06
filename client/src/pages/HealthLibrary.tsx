@@ -964,6 +964,11 @@ export function HealthLibraryHub() {
             <span className="w-1 h-8 bg-primary rounded-full" />
             {isAr ? "مراكز معرفة مرتبطة" : "Connected Knowledge Hubs"}
           </h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            {isAr
+              ? `${hub.titleAr} مرتبط بشكل وثيق بالمواضيع التالية. استكشف هذه المراكز لفهم أعمق وأشمل لصحتك.`
+              : `${hub.titleEn} is closely connected to the following topics. Explore these hubs for a deeper, more comprehensive understanding of your health.`}
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {connectedHubData.map((connHub) => (
               <Link key={connHub.slug} href={`/health-library/${connHub.slug}`}>
@@ -975,13 +980,51 @@ export function HealthLibraryHub() {
                         {isAr ? connHub.titleAr : connHub.titleEn}
                       </h3>
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-2">
+                    <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
                       {isAr ? connHub.subtitleAr : connHub.subtitleEn}
                     </p>
+                    <span className="text-[10px] text-primary/70 font-medium">
+                      {isAr ? `اكتشف العلاقة مع ${hub.titleAr} →` : `Discover the connection to ${hub.titleEn} →`}
+                    </span>
                   </CardContent>
                 </Card>
               </Link>
             ))}
+          </div>
+
+          {/* Cross-hub contextual links */}
+          <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border/50">
+            <h3 className="text-sm font-semibold text-foreground mb-3">
+              {isAr ? "🔗 روابط سريعة بين المراكز" : "🔗 Quick Hub Links"}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {PILLAR_HUBS.filter(h => h.slug !== hub.slug).map((h) => (
+                <Link key={h.slug} href={`/health-library/${h.slug}`}>
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-background border border-border hover:border-primary/50 hover:text-primary transition-colors cursor-pointer">
+                    <span>{h.icon}</span>
+                    <span>{isAr ? h.titleAr : h.titleEn}</span>
+                  </span>
+                </Link>
+              ))}
+              <Link href="/feras-alayed">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors cursor-pointer">
+                  <span>👤</span>
+                  <span>{isAr ? "فراس العايد" : "Feras Alayed"}</span>
+                </span>
+              </Link>
+              <Link href="/blog">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-background border border-border hover:border-primary/50 hover:text-primary transition-colors cursor-pointer">
+                  <span>📝</span>
+                  <span>{isAr ? "المدونة" : "Blog"}</span>
+                </span>
+              </Link>
+              <Link href="/research">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-background border border-border hover:border-primary/50 hover:text-primary transition-colors cursor-pointer">
+                  <span>🔬</span>
+                  <span>{isAr ? "الأبحاث" : "Research"}</span>
+                </span>
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -1006,7 +1049,7 @@ export function HealthLibraryHub() {
                   ? "هذا المحتوى مبني على أحدث الأبحاث العلمية المحكّمة ومراجع من مؤسسات طبية رائدة. يتم تحديثه بانتظام ليعكس أحدث الاكتشافات."
                   : "This content is built on the latest peer-reviewed scientific research and references from leading medical institutions. It is regularly updated to reflect the newest findings."}
               </p>
-              <Link href="/author" className="text-primary text-xs hover:underline mt-2 inline-block">
+              <Link href="/feras-alayed" className="text-primary text-xs hover:underline mt-2 inline-block">
                 {isAr ? "عرض الملف الكامل →" : "View Full Profile →"}
               </Link>
             </div>

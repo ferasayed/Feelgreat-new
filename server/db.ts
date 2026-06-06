@@ -666,10 +666,10 @@ export async function getMostImpactfulResearch(limit = 10): Promise<ResearchStud
     .limit(limit);
 }
 
-export async function getRecentResearchByPeriod(period: "week" | "month"): Promise<ResearchStudy[]> {
+export async function getRecentResearchByPeriod(period: "today" | "week" | "month"): Promise<ResearchStudy[]> {
   const db = await getDb();
   if (!db) return [];
-  const days = period === "week" ? 7 : 30;
+  const days = period === "today" ? 1 : period === "week" ? 7 : 30;
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   return db.select().from(researchStudies)
     .where(and(

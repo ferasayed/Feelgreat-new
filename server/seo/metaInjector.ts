@@ -100,8 +100,8 @@ const STATIC_META: Record<string, MetaData> = {
     ogType: "website",
   },
   "/feras-alayed": {
-    title: "Feras Alayed | Knowledge Hub - Sustainable Health, Leadership, Human Empowerment",
-    description: "فراس العايد - مُثقف عالمي، أخصائي تغذية علاجية وسلوكية، مرشد قيادة. بناء حياة أفضل من خلال الصحة، القيادة، النمو، والإمكانات البشرية.",
+    title: "Feras Alayed | Knowledge Hub - Global Thinker, Educator & Mentor in Health, Growth & Human Empowerment",
+    description: "فراس العايد - مفكر ومدرب ومُثقف عالمي في الصحة المستدامة، التغذية السلوكية، القيادة، الإمكانات البشرية، ريادة الأعمال، والتمكين الإنساني. مركز المعرفة الشامل.",
     ogType: "profile",
     ogImage: "/manus-storage/feras-professional_115956a2.png",
     jsonLd: {
@@ -110,13 +110,13 @@ const STATIC_META: Record<string, MetaData> = {
       "@id": "https://feelgreat.us.com/#feras-alayed",
       "name": "Feras Alayed",
       "alternateName": ["فراس العايد", "Feras Al-Ayed"],
-      "jobTitle": "Global Health Educator, Therapeutic & Behavioral Nutrition Specialist, Leadership Mentor",
-      "description": "Global educator, speaker, entrepreneur, therapeutic and behavioral nutrition specialist, and leadership mentor dedicated to helping people create meaningful transformation in health, mindset, leadership, and financial future.",
+      "jobTitle": "Global Thinker, Educator & Mentor in Sustainable Health, Behavioral Nutrition, Leadership & Human Potential",
+      "description": "Global thinker, educator, and mentor dedicated to sustainable health, behavioral nutrition, leadership development, human potential, entrepreneurship, and financial empowerment. Helping people create meaningful transformation across all dimensions of life.",
       "url": "https://feelgreat.us.com/feras-alayed",
       "image": "https://feelgreat.us.com/manus-storage/feras-professional_115956a2.png",
       "sameAs": ["https://www.instagram.com/use2lose", "https://www.tiktok.com/@feras.alayed"],
-      "knowsAbout": ["Sustainable Health", "Behavioral Nutrition", "Metabolic Health", "Leadership Development", "Personal Growth", "Entrepreneurship", "Financial Empowerment", "Human Performance", "Insulin Resistance", "Gut Health"],
-      "worksFor": { "@type": "Organization", "name": "Feel Great", "url": "https://feelgreat.us.com" },
+      "knowsAbout": ["Sustainable Health", "Behavioral Nutrition", "Therapeutic Nutrition", "Metabolic Health", "Leadership Development", "Human Potential", "Personal Growth", "Team Building", "Entrepreneurship", "Financial Empowerment", "Human Performance", "Burnout Prevention", "Success Mindset", "Life Transformation", "Insulin Resistance", "Gut Health", "Behavioral Science"],
+      "worksFor": { "@type": "Organization", "name": "Feras Alayed - Knowledge Hub", "url": "https://feelgreat.us.com" },
       "nationality": { "@type": "Country", "name": "Saudi Arabia" }
     },
   },
@@ -212,10 +212,10 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
     const publishedAt = article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined;
     const updatedAt = article.updatedAt ? new Date(article.updatedAt).toISOString() : undefined;
 
-    // Build Article JSON-LD
+    // Build Article + NewsArticle JSON-LD (dual type for Google News eligibility)
     const jsonLd = {
       "@context": "https://schema.org",
-      "@type": "Article",
+      "@type": ["Article", "NewsArticle"],
       "headline": title,
       "description": description,
       "image": image.startsWith("/") ? `${BASE_URL}${image}` : image,
@@ -223,19 +223,26 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
         "@type": "Person",
         "@id": `${BASE_URL}/#feras-alayed`,
         "name": AUTHOR_NAME,
-        "url": `${BASE_URL}/author/feras-alayed`,
+        "url": `${BASE_URL}/feras-alayed`,
       },
       "publisher": {
         "@type": "Organization",
         "@id": `${BASE_URL}/#organization`,
-        "name": SITE_NAME,
-        "logo": { "@type": "ImageObject", "url": `${BASE_URL}${DEFAULT_IMAGE}` },
+        "name": "Feel Great Health by Feras Alayed",
+        "logo": { "@type": "ImageObject", "url": `${BASE_URL}${DEFAULT_IMAGE}`, "width": 600, "height": 60 },
+        "url": BASE_URL,
       },
       "datePublished": publishedAt,
       "dateModified": updatedAt || publishedAt,
       "mainEntityOfPage": { "@type": "WebPage", "@id": `${BASE_URL}/blog/${slug}` },
       "wordCount": article.wordCount || undefined,
       "articleSection": article.category,
+      "isAccessibleForFree": true,
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".article-headline", ".article-summary", ".key-takeaways"]
+      },
+      "inLanguage": "en",
     };
 
     return {

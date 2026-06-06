@@ -571,3 +571,31 @@
 - [x] Author entity links from all research pages
 - [x] Author entity links from all pillar pages
 - [x] sameAs links to social profiles
+
+## Feras Alayed Knowledge Hub - Full 20-Section Expansion
+Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → Leadership → Human Potential → Entrepreneurship → Financial Empowerment → Feel Great
+
+- [x] Expand Knowledge Hub to 20 comprehensive sections
+- [x] Section 1: Mission & Vision (expanded with strategic positioning)
+- [x] Section 2: Health, Leadership and Human Potential Philosophy
+- [x] Section 3: Sustainable Health Framework (core methodology)
+- [x] Section 4: Behavioral Nutrition Framework (unique approach)
+- [x] Section 5: Global Impact & Countries Served
+- [x] Section 6: Speaking & Workshops
+- [x] Section 7: Leadership Development Programs
+- [x] Section 8: Research Commentary Center
+- [x] Section 9: Success Stories Hub
+- [x] Section 10: Media & Interviews
+- [x] Section 11: Featured Articles (live from DB)
+- [x] Section 12: Latest Scientific Research (live from DB)
+- [x] Section 13: Health Library Access
+- [x] Section 14: Entrepreneurship & Financial Empowerment
+- [x] Section 15: Strategic Partnerships
+- [x] Section 16: Mastermind & Leadership Projects
+- [x] Section 17: Human Development Resources
+- [x] Section 18: Core Principles & Beliefs
+- [x] Section 19: Frequently Asked Questions
+- [x] Section 20: Work With Feras
+- [x] Central entity connecting all articles, research, pillar pages, success stories, workshops, and resources
+- [x] Route registered at /feras-alayed (replaces existing page)
+- [x] SEO meta injection for Knowledge Hub page

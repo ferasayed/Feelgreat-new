@@ -47,10 +47,10 @@ export default function BlogArticle() {
       document.getElementById("breadcrumb-schema")?.remove();
       document.getElementById("author-schema")?.remove();
 
-      // === Article Schema ===
+      // === Article + NewsArticle Schema (dual type for Google News eligibility) ===
       const articleSchema = {
         "@context": "https://schema.org",
-        "@type": "Article",
+        "@type": ["Article", "NewsArticle"],
         headline: title,
         description: desc,
         image: article.heroImageUrl || undefined,
@@ -67,19 +67,31 @@ export default function BlogArticle() {
         },
         publisher: {
           "@type": "Organization",
-          name: "Feel Great",
+          "@id": "https://feelgreat.us.com/#organization",
+          name: "Feel Great Health by Feras Alayed",
           url: "https://feelgreat.us.com",
           logo: {
             "@type": "ImageObject",
-            url: "https://feelgreat.us.com/favicon.ico"
+            url: "https://feelgreat.us.com/manus-storage/feel-great-complete_44bb8752.png",
+            width: 600,
+            height: 60
           }
         },
         datePublished: article.createdAt,
         dateModified: article.updatedAt || article.createdAt,
-        mainEntityOfPage: `https://feelgreat.us.com/blog/${article.slug}`,
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `https://feelgreat.us.com/blog/${article.slug}`
+        },
         wordCount: (isAr ? article.contentAr : article.contentEn).split(/\s+/).length,
         timeRequired: `PT${article.readTimeMinutes}M`,
         inLanguage: isAr ? "ar" : "en",
+        isAccessibleForFree: true,
+        speakable: {
+          "@type": "SpeakableSpecification",
+          cssSelector: [".article-headline", ".article-summary", ".key-takeaways"]
+        },
+        articleSection: article.category,
       };
 
       const articleScriptEl = document.createElement("script");
@@ -281,10 +293,10 @@ export default function BlogArticle() {
               </span>
             )}
           </div>
-          <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight mb-4">
+          <h1 className="article-headline text-2xl md:text-4xl font-bold text-white leading-tight mb-4">
             {title}
           </h1>
-          <p className="text-gray-300 text-lg">{excerpt}</p>
+          <p className="article-summary text-gray-300 text-lg">{excerpt}</p>
 
           {/* Author & EEAT Section */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-6 pt-6 border-t border-white/10">
@@ -346,6 +358,10 @@ export default function BlogArticle() {
             prose-strong:text-foreground
             prose-a:text-[#1a5276] prose-a:underline hover:prose-a:text-[#c8a951]
             prose-blockquote:border-[#c8a951] prose-blockquote:bg-muted/50 prose-blockquote:rounded-lg prose-blockquote:py-2 prose-blockquote:px-4
+            [&_.key-takeaways]:bg-gradient-to-r [&_.key-takeaways]:from-emerald-50 [&_.key-takeaways]:to-teal-50 [&_.key-takeaways]:dark:from-emerald-950/30 [&_.key-takeaways]:dark:to-teal-950/30 [&_.key-takeaways]:rounded-xl [&_.key-takeaways]:p-6 [&_.key-takeaways]:mb-8 [&_.key-takeaways]:border [&_.key-takeaways]:border-emerald-200 [&_.key-takeaways]:dark:border-emerald-800/40
+            [&_.key-takeaways_h2]:text-lg [&_.key-takeaways_h2]:font-bold [&_.key-takeaways_h2]:text-emerald-800 [&_.key-takeaways_h2]:dark:text-emerald-300 [&_.key-takeaways_h2]:border-0 [&_.key-takeaways_h2]:mt-0 [&_.key-takeaways_h2]:mb-3 [&_.key-takeaways_h2]:pb-0
+            [&_.key-takeaways_ul]:space-y-2 [&_.key-takeaways_ul]:list-none [&_.key-takeaways_ul]:pl-0
+            [&_.key-takeaways_li]:text-sm [&_.key-takeaways_li]:text-emerald-900 [&_.key-takeaways_li]:dark:text-emerald-200 [&_.key-takeaways_li]:pl-5 [&_.key-takeaways_li]:relative [&_.key-takeaways_li]:before:content-['✓'] [&_.key-takeaways_li]:before:absolute [&_.key-takeaways_li]:before:left-0 [&_.key-takeaways_li]:before:text-emerald-600
             [&_.faq-item]:bg-muted/30 [&_.faq-item]:rounded-lg [&_.faq-item]:p-4 [&_.faq-item]:mb-3 [&_.faq-item]:border [&_.faq-item]:border-border
             [&_.faq-item_h3]:text-base [&_.faq-item_h3]:font-semibold [&_.faq-item_h3]:text-foreground [&_.faq-item_h3]:mb-2
             [&_.article-cta]:bg-gradient-to-r [&_.article-cta]:from-[#0a1628] [&_.article-cta]:to-[#1a5276] [&_.article-cta]:rounded-xl [&_.article-cta]:p-8 [&_.article-cta]:mt-12 [&_.article-cta]:text-center

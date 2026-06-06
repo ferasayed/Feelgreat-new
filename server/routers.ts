@@ -560,7 +560,7 @@ export const appRouter = router({
         offset: z.number().min(0).optional(),
         topic: z.string().optional(),
         evidenceLevel: z.string().optional(),
-        period: z.enum(["week", "month", "all"]).optional(),
+        period: z.enum(["today", "week", "month", "all"]).optional(),
       }).optional())
       .query(async ({ input }) => {
         const limit = input?.limit ?? 20;
@@ -605,6 +605,10 @@ export const appRouter = router({
 
     topics: publicProcedure.query(async () => {
       return getResearchTopics();
+    }),
+
+    today: publicProcedure.query(async () => {
+      return getRecentResearchByPeriod("today");
     }),
 
     thisWeek: publicProcedure.query(async () => {

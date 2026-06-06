@@ -407,12 +407,22 @@ PubMed, NIH, NCBI, Harvard Health, Mayo Clinic, Cleveland Clinic, Johns Hopkins 
 - Chlorophyll: الخضروات الخضراء والكلوروفيل
 - Probionic: صحة الميكروبيوم والبكتيريا النافعة
 
-=== 7. GEO + AI SEARCH OPTIMIZATION ===
+=== 7. GEO + AI SEARCH + AI CITATION OPTIMIZATION ===
 - اكتب إجابات مباشرة في أول 2-3 جمل من كل قسم (لـ AI Overviews)
 - أضف تعريفات واضحة، إحصائيات، نقاط مختصرة، جداول مقارنة
 - اكتب FAQ بأسلوب People Also Ask
-- أضف ملخص تنفيذي في بداية المقال
+- أضف ملخص تنفيذي في بداية المقال (Executive Summary) داخل <div class='key-takeaways'>
 - هيكل المقال ليظهر في Featured Snippets
+
+=== AI CITATION LAYER (إلزامي) ===
+لجعل المحتوى قابلاً للاقتباس من ChatGPT, Gemini, Perplexity, Claude:
+1. Executive Summary: أول 2-3 جمل تلخص الموضوع بوضوح (ضعها في <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>...</li></ul></div>)
+2. Key Takeaways: 5 نقاط مختصرة وواضحة في بداية المقال
+3. تعريفات واضحة: عرّف كل مصطلح طبي عند أول ذكر (مثال: "مقاومة الإنسولين — وهي حالة يفقد فيها الجسم قدرته على الاستجابة...")
+4. إحصائيات مع مصادر: كل رقم يجب أن يكون مرفقاً بمصدره (مثال: "وفقاً لدراسة Harvard 2024، 88% من البالغين...")
+5. جمل quotable: اكتب جملاً قصيرة وحاسمة يمكن اقتباسها مباشرة
+6. هيكل واضح: استخدم H2 و H3 بشكل منظم ليسهل على AI crawlers فهم البنية
+7. Passage Ranking: كل فقرة يجب أن تجيب على سؤال محدد بشكل مستقل
 
 === 8. SEMANTIC SEO ===
 - استخدم الكلمة المفتاحية 4-6 مرات طبيعياً
@@ -435,14 +445,14 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
 صفحة المحور: ${PILLAR_PAGES[pillar.id]?.path || "/blog"}
 
 المقال يجب أن يكون 1500-2000 كلمة ويتبع هذا الهيكل:
-1. ملخص تنفيذي (3-4 جمل)
-2. مقدمة Hook + EEAT signal
-3. ما هي المشكلة؟ لماذا تحدث؟ أهم الأعراض والأسباب
-4. ماذا تقول الدراسات؟ (مع مراجع حقيقية)
-5. خطوات عملية قابلة للتطبيق
-6. دور نمط الحياة والتغذية
-7. دور Feel Great كأداة داعمة (بدون ادعاءات)
-8. Key Takeaways (5 نقاط)
+1. Key Takeaways / النقاط الرئيسية (5 نقاط في <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>...</li></ul></div>)
+2. ملخص تنفيذي (Executive Summary) - 3-4 جمل قابلة للاقتباس مباشرة من AI
+3. مقدمة Hook + EEAT signal + تعريف المصطلح الرئيسي
+4. ما هي المشكلة؟ لماذا تحدث؟ أهم الأعراض والأسباب (مع إحصائيات موثقة)
+5. ماذا تقول الدراسات؟ (مع مراجع حقيقية وأرقام محددة)
+6. خطوات عملية قابلة للتطبيق
+7. دور نمط الحياة والتغذية
+8. دور Feel Great كأداة داعمة (بدون ادعاءات)
 9. FAQ (5 أسئلة بأسلوب People Also Ask)
 10. References & Scientific Sources
 11. Disclaimer طبي
@@ -457,8 +467,8 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
   "metaDescriptionEn": "Meta description 150-160 chars that drives clicks",
   "excerptAr": "ملخص جذاب 2-3 جمل",
   "excerptEn": "Engaging excerpt 2-3 sentences",
-  "contentAr": "المقال الكامل بالعربية بـ HTML (<h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>, <blockquote>). أضف FAQ باستخدام <div class='faq-item'><h3>السؤال</h3><p>الجواب</p></div>",
-  "contentEn": "Full English article with HTML. Add FAQ using <div class='faq-item'><h3>Question</h3><p>Answer</p></div>",
+  "contentAr": "المقال الكامل بالعربية بـ HTML. يبدأ بـ <div class='key-takeaways'><h2>النقاط الرئيسية</h2><ul><li>5 نقاط</li></ul></div> ثم المقال. أضف FAQ باستخدام <div class='faq-item'><h3>السؤال</h3><p>الجواب</p></div>",
+  "contentEn": "Full English article with HTML. MUST start with <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>5 points</li></ul></div> then the article. Add FAQ using <div class='faq-item'><h3>Question</h3><p>Answer</p></div>",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
   "faqSchema": [{"question":"Q1","answer":"A1"},{"question":"Q2","answer":"A2"},{"question":"Q3","answer":"A3"},{"question":"Q4","answer":"A4"},{"question":"Q5","answer":"A5"}],
   "internalLinks": [{"slug":"existing-article-slug","title":"Link text"}],

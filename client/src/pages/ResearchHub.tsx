@@ -84,8 +84,20 @@ function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
 
           {/* Footer metadata */}
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/50">
-            <span className="font-medium truncate max-w-[60%]">{study.journal}</span>
-            <span>{new Date(study.publishDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", { year: "numeric", month: "short" })}</span>
+            <div className="flex items-center gap-2 truncate max-w-[70%]">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 font-semibold text-[10px] border border-blue-200 dark:border-blue-800/40">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                {study.journal}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {study.impactScore && study.impactScore > 7 && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 font-medium">
+                  ⭐ {study.impactScore}/10
+                </span>
+              )}
+              <span>{new Date(study.publishDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", { year: "numeric", month: "short" })}</span>
+            </div>
           </div>
 
           {/* Topics */}
@@ -96,6 +108,14 @@ function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
               </span>
             ))}
           </div>
+
+          {/* View count if available */}
+          {study.viewCount > 0 && (
+            <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+              {study.viewCount.toLocaleString()} {isAr ? "قراءة" : "reads"}
+            </div>
+          )}
         </div>
       </article>
     </Link>
@@ -139,11 +159,12 @@ export default function ResearchHub() {
   const { data: latestData, isLoading: latestLoading } = trpc.research.list.useQuery(
     selectedTopic === "all" ? { limit: 20 } : { limit: 20, topic: selectedTopic }
   );
+  const { data: todayData } = trpc.research.today.useQuery();
   const { data: weekData } = trpc.research.thisWeek.useQuery();
   const { data: monthData } = trpc.research.thisMonth.useQuery();
   const { data: topicsData } = trpc.research.topics.useQuery();
-  const { data: mostReadData } = trpc.research.mostRead.useQuery({ limit: 5 });
-  const { data: mostImpactfulData } = trpc.research.mostImpactful.useQuery({ limit: 5 });
+  const { data: mostReadData } = trpc.research.mostRead.useQuery({ limit: 10 });
+  const { data: mostImpactfulData } = trpc.research.mostImpactful.useQuery({ limit: 10 });
 
   const studies = latestData?.studies ?? [];
   const totalStudies = latestData?.total ?? 0;
@@ -221,8 +242,9 @@ export default function ResearchHub() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="grid w-full max-w-2xl grid-cols-5">
+          <TabsList className="grid w-full max-w-3xl grid-cols-6">
             <TabsTrigger value="latest">{isAr ? "الأحدث" : "Latest"}</TabsTrigger>
+            <TabsTrigger value="today">{isAr ? "اليوم" : "Today"}</TabsTrigger>
             <TabsTrigger value="week">{isAr ? "هذا الأسبوع" : "This Week"}</TabsTrigger>
             <TabsTrigger value="month">{isAr ? "هذا الشهر" : "This Month"}</TabsTrigger>
             <TabsTrigger value="popular">{isAr ? "الأكثر قراءة" : "Most Read"}</TabsTrigger>
@@ -249,6 +271,26 @@ export default function ResearchHub() {
                 {studies.map((study: any) => (
                   <StudyCard key={study.id} study={study} isAr={isAr} />
                 ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="today" className="mt-6">
+            {todayData && todayData.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {todayData.map((study: any) => (
+                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <div className="text-5xl mb-4">📅</div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {isAr ? "لا توجد دراسات جديدة اليوم" : "No new studies today"}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {isAr ? "تحقق من الدراسات الأحدث أو هذا الأسبوع" : "Check Latest or This Week tabs for recent studies"}
+                </p>
               </div>
             )}
           </TabsContent>
