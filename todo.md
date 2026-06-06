@@ -398,3 +398,19 @@
 - [x] Add robust JSON parsing with cleanup/recovery
 - [x] Generate initial seed articles to populate the blog
 - [x] Verify cron jobs produce articles successfully
+
+## Scientific Discovery Hub (Health Science Hub)
+- [x] Create research_studies database table (title, source, DOI, journal, university, study type, evidence level, participants, publish date, topics, summaries at multiple reading levels, hero image, etc.)
+- [x] Build PubMed/research API integration for automated discovery
+- [x] Create AI summarization system (30sec, 1min, 3min, full versions)
+- [x] Build "What does this mean for your health?" section generator
+- [x] Smart linking to Feel Great (fiber→Balance, polyphenols→Unimate, etc.)
+- [x] Create frontend Research Hub page (/research)
+- [x] Add filtering by topic, time period, source, evidence level
+- [x] Add "Today In Health Science" section (this week, this month, most read, most impactful)
+- [x] Display scientific trust indicators (university, journal, DOI, study type, evidence level, participants)
+- [x] Add disclaimer for preliminary/animal studies vs human trials
+- [x] Set up periodic heartbeat job for automated research monitoring
+- [x] Generate initial seed research summaries
+- [x] Add research section to main navigation
+- [x] Bilingual support (Arabic + English) for all research summaries

@@ -588,3 +588,130 @@ export async function getArticleViewsByPillar(days = 7): Promise<Array<{ pillarI
     .map(([pillarId, data]) => ({ pillarId, ...data }))
     .sort((a, b) => b.views - a.views);
 }
+
+
+// ===== RESEARCH STUDIES (Health Science Hub) =====
+
+import { researchStudies, ResearchStudy, InsertResearchStudy } from "../drizzle/schema";
+
+export async function createResearchStudy(data: InsertResearchStudy): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(researchStudies).values(data);
+}
+
+export async function getPublishedResearch(limit = 20, offset = 0): Promise<ResearchStudy[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(researchStudies)
+    .where(eq(researchStudies.isPublished, true))
+    .orderBy(desc(researchStudies.publishDate))
+    .limit(limit)
+    .offset(offset);
+}
+
+export async function getResearchByTopic(topic: string, limit = 20): Promise<ResearchStudy[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(researchStudies)
+    .where(and(
+      eq(researchStudies.isPublished, true),
+      or(
+        eq(researchStudies.primaryTopic, topic),
+        sql`JSON_CONTAINS(${researchStudies.topics}, JSON_QUOTE(${topic}))`
+      )
+    ))
+    .orderBy(desc(researchStudies.publishDate))
+    .limit(limit);
+}
+
+export async function getResearchBySlug(slug: string): Promise<ResearchStudy | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(researchStudies)
+    .where(eq(researchStudies.slug, slug))
+    .limit(1);
+  return result[0] ?? null;
+}
+
+export async function getResearchCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ count: count() }).from(researchStudies)
+    .where(eq(researchStudies.isPublished, true));
+  return result[0]?.count ?? 0;
+}
+
+export async function getMostReadResearch(limit = 10): Promise<ResearchStudy[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(researchStudies)
+    .where(eq(researchStudies.isPublished, true))
+    .orderBy(desc(researchStudies.viewCount))
+    .limit(limit);
+}
+
+export async function getMostImpactfulResearch(limit = 10): Promise<ResearchStudy[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(researchStudies)
+    .where(eq(researchStudies.isPublished, true))
+    .orderBy(desc(researchStudies.impactScore))
+    .limit(limit);
+}
+
+export async function getRecentResearchByPeriod(period: "week" | "month"): Promise<ResearchStudy[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const days = period === "week" ? 7 : 30;
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  return db.select().from(researchStudies)
+    .where(and(
+      eq(researchStudies.isPublished, true),
+      sql`${researchStudies.publishDate} >= ${cutoff.toISOString().split('T')[0]}`
+    ))
+    .orderBy(desc(researchStudies.publishDate));
+}
+
+export async function recordResearchView(slug: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(researchStudies)
+    .set({ viewCount: sql`${researchStudies.viewCount} + 1` })
+    .where(eq(researchStudies.slug, slug));
+}
+
+export async function getResearchByEvidenceLevel(level: string, limit = 20): Promise<ResearchStudy[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(researchStudies)
+    .where(and(
+      eq(researchStudies.isPublished, true),
+      eq(researchStudies.evidenceLevel, level)
+    ))
+    .orderBy(desc(researchStudies.publishDate))
+    .limit(limit);
+}
+
+export async function getExistingResearchDOIs(): Promise<string[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const results = await db.select({ doi: researchStudies.doi })
+    .from(researchStudies)
+    .where(sql`${researchStudies.doi} IS NOT NULL`);
+  return results.map(r => r.doi).filter(Boolean) as string[];
+}
+
+export async function getResearchTopics(): Promise<Array<{ topic: string; count: number }>> {
+  const db = await getDb();
+  if (!db) return [];
+  const results = await db.select({
+    topic: researchStudies.primaryTopic,
+    count: count(),
+  })
+    .from(researchStudies)
+    .where(eq(researchStudies.isPublished, true))
+    .groupBy(researchStudies.primaryTopic)
+    .orderBy(desc(count()));
+  return results.map(r => ({ topic: r.topic, count: r.count }));
+}

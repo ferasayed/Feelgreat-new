@@ -77,6 +77,7 @@ function Navbar() {
           <a href="#testimonials" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.stories}</a>
           <a href="#register" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.register}</a>
           <a href="/faq" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.faq}</a>
+          <a href="/research" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{lang === "ar" ? "الأبحاث" : "Research"}</a>
         </div>
 
         <div className="flex items-center gap-3">
@@ -103,6 +104,7 @@ function Navbar() {
           <a href="#testimonials" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.stories}</a>
           <a href="#register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.register}</a>
           <a href="/faq" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.faq}</a>
+          <a href="/research" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{lang === "ar" ? "الأبحاث" : "Research"}</a>
         </div>
       )}
     </nav>
@@ -1001,6 +1003,7 @@ function Footer() {
               <a href="/partner" className="block hover:text-white transition-colors">{lang === "ar" ? "كن شريكاً" : "Become a Partner"}</a>
               <a href="/founder" className="block hover:text-white transition-colors">{lang === "ar" ? "عن المؤسس" : "About the Founder"}</a>
               <a href="/blog" className="block hover:text-white transition-colors">{lang === "ar" ? "المدونة الصحية" : "Health Blog"}</a>
+              <a href="/research" className="block hover:text-white transition-colors">{lang === "ar" ? "مركز الأبحاث" : "Research Hub"}</a>
               <a href="/blog?category=insulin-resistance" className="block hover:text-white transition-colors">{lang === "ar" ? "مقاومة الإنسولين" : "Insulin Resistance"}</a>
               <a href="/blog?category=sustainable-health" className="block hover:text-white transition-colors">{lang === "ar" ? "الصحة المستدامة" : "Sustainable Health"}</a>
               <a href="/blog?category=weight-loss" className="block hover:text-white transition-colors">{lang === "ar" ? "إنقاص الوزن" : "Weight Loss"}</a>

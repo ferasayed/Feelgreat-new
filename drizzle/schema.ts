@@ -166,3 +166,76 @@ export const reviews = mysqlTable("reviews", {
 
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = typeof reviews.$inferInsert;
+
+/**
+ * Research studies table - stores scientific research summaries from PubMed, NIH, etc.
+ * Part of the Scientific Discovery Hub (Health Science Hub)
+ */
+export const researchStudies = mysqlTable("research_studies", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  // Original study metadata
+  originalTitle: text("original_title").notNull(),
+  doi: varchar("doi", { length: 255 }),
+  pubmedId: varchar("pubmed_id", { length: 50 }),
+  sourceUrl: varchar("source_url", { length: 500 }).notNull(),
+  journal: varchar("journal", { length: 255 }).notNull(),
+  university: varchar("university", { length: 255 }),
+  authors: text("authors"),
+  publishDate: date("publish_date").notNull(),
+  // Study classification
+  studyType: varchar("study_type", { length: 100 }).notNull(), // RCT, meta-analysis, cohort, case-control, animal, in-vitro, review
+  evidenceLevel: varchar("evidence_level", { length: 50 }).notNull(), // high, moderate, low, very-low, preliminary
+  participantCount: int("participant_count"),
+  isPreliminary: boolean("is_preliminary").default(false).notNull(), // animal/cell study flag
+  isHumanStudy: boolean("is_human_study").default(true).notNull(),
+  // Topics/categories
+  primaryTopic: varchar("primary_topic", { length: 100 }).notNull(),
+  topics: json("topics").$type<string[]>().notNull(),
+  // AI-generated summaries at different reading levels
+  titleAr: text("title_ar").notNull(),
+  titleEn: text("title_en").notNull(),
+  // 30-second summary
+  summary30sAr: text("summary_30s_ar").notNull(),
+  summary30sEn: text("summary_30s_en").notNull(),
+  // 1-minute summary
+  summary1minAr: text("summary_1min_ar").notNull(),
+  summary1minEn: text("summary_1min_en").notNull(),
+  // 3-minute summary
+  summary3minAr: text("summary_3min_ar").notNull(),
+  summary3minEn: text("summary_3min_en").notNull(),
+  // Full analysis
+  fullAnalysisAr: text("full_analysis_ar").notNull(),
+  fullAnalysisEn: text("full_analysis_en").notNull(),
+  // "What does this mean for your health?" section
+  healthImplicationsAr: text("health_implications_ar").notNull(),
+  healthImplicationsEn: text("health_implications_en").notNull(),
+  // Key findings structured
+  keyFindings: json("key_findings").$type<Array<{ findingEn: string; findingAr: string }>>().notNull(),
+  strengthsWeaknesses: json("strengths_weaknesses").$type<{ strengths: string[]; weaknesses: string[] }>(),
+  // Smart linking to Feel Great
+  feelGreatConnection: text("feel_great_connection"),
+  feelGreatConnectionAr: text("feel_great_connection_ar"),
+  // SEO
+  metaTitleEn: varchar("meta_title_en", { length: 255 }),
+  metaTitleAr: varchar("meta_title_ar", { length: 255 }),
+  metaDescriptionEn: text("meta_description_en"),
+  metaDescriptionAr: text("meta_description_ar"),
+  // Media
+  heroImageUrl: varchar("hero_image_url", { length: 500 }),
+  // Engagement metrics
+  viewCount: int("view_count").default(0).notNull(),
+  impactScore: int("impact_score").default(0).notNull(), // calculated based on journal, citations, relevance
+  // Status
+  isPublished: boolean("is_published").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+}, (table) => ([
+  index("idx_research_topic").on(table.primaryTopic),
+  index("idx_research_published").on(table.isPublished),
+  index("idx_research_date").on(table.publishDate),
+  index("idx_research_evidence").on(table.evidenceLevel),
+]));
+
+export type ResearchStudy = typeof researchStudies.$inferSelect;
+export type InsertResearchStudy = typeof researchStudies.$inferInsert;

@@ -50,6 +50,13 @@
       "when": 1780746986254,
       "tag": "0006_gray_misty_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1780773020714,
+      "tag": "0007_black_omega_red",
+      "breakpoints": true
     }
   ]
 }

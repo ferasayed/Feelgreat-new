@@ -1,0 +1,354 @@
+import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const TOPICS = [
+  { id: "all", labelAr: "الكل", labelEn: "All" },
+  { id: "insulin resistance", labelAr: "مقاومة الإنسولين", labelEn: "Insulin Resistance" },
+  { id: "metabolic health", labelAr: "الصحة الأيضية", labelEn: "Metabolic Health" },
+  { id: "gut health", labelAr: "صحة الأمعاء", labelEn: "Gut Health" },
+  { id: "weight loss", labelAr: "إنقاص الوزن", labelEn: "Weight Loss" },
+  { id: "sleep", labelAr: "النوم", labelEn: "Sleep" },
+  { id: "inflammation", labelAr: "الالتهاب", labelEn: "Inflammation" },
+  { id: "nutrition", labelAr: "التغذية", labelEn: "Nutrition" },
+  { id: "mental health", labelAr: "الصحة النفسية", labelEn: "Mental Health" },
+  { id: "longevity", labelAr: "طول العمر", labelEn: "Longevity" },
+  { id: "diabetes", labelAr: "السكري", labelEn: "Diabetes" },
+  { id: "microbiome", labelAr: "الميكروبيوم", labelEn: "Microbiome" },
+  { id: "women's health", labelAr: "صحة المرأة", labelEn: "Women's Health" },
+];
+
+const EVIDENCE_COLORS: Record<string, string> = {
+  high: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  moderate: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  low: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  preliminary: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  "very-low": "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+};
+
+const EVIDENCE_LABELS: Record<string, { ar: string; en: string }> = {
+  high: { ar: "دليل قوي", en: "Strong Evidence" },
+  moderate: { ar: "دليل متوسط", en: "Moderate Evidence" },
+  low: { ar: "دليل ضعيف", en: "Low Evidence" },
+  preliminary: { ar: "أولي", en: "Preliminary" },
+  "very-low": { ar: "ضعيف جداً", en: "Very Low" },
+};
+
+function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
+  const title = isAr ? study.titleAr : study.titleEn;
+  const summary = isAr ? study.summary30sAr : study.summary30sEn;
+  const evidenceLabel = EVIDENCE_LABELS[study.evidenceLevel] || { ar: study.evidenceLevel, en: study.evidenceLevel };
+  const evidenceColor = EVIDENCE_COLORS[study.evidenceLevel] || "bg-gray-100 text-gray-800";
+
+  return (
+    <Link href={`/research/${study.slug}`}>
+      <article className="group bg-card rounded-xl border border-border/50 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer h-full flex flex-col">
+        {study.heroImageUrl && (
+          <div className="aspect-[16/9] overflow-hidden">
+            <img
+              src={study.heroImageUrl}
+              alt={title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        )}
+        <div className="p-5 flex flex-col flex-1">
+          {/* Badges row */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            <Badge variant="outline" className={evidenceColor}>
+              {isAr ? evidenceLabel.ar : evidenceLabel.en}
+            </Badge>
+            {study.isPreliminary && (
+              <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300 border-amber-200">
+                {isAr ? "⚠️ دراسة أولية" : "⚠️ Preliminary"}
+              </Badge>
+            )}
+            <Badge variant="outline" className="text-xs">
+              {study.studyType}
+            </Badge>
+          </div>
+
+          {/* Title */}
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">
+            {title}
+          </h3>
+
+          {/* Summary */}
+          <p className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1">
+            {summary}
+          </p>
+
+          {/* Footer metadata */}
+          <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/50">
+            <span className="font-medium truncate max-w-[60%]">{study.journal}</span>
+            <span>{new Date(study.publishDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", { year: "numeric", month: "short" })}</span>
+          </div>
+
+          {/* Topics */}
+          <div className="flex flex-wrap gap-1 mt-2">
+            {(study.topics as string[])?.slice(0, 3).map((topic: string) => (
+              <span key={topic} className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                {topic}
+              </span>
+            ))}
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+function StudyCardSkeleton() {
+  return (
+    <div className="bg-card rounded-xl border border-border/50 overflow-hidden">
+      <Skeleton className="aspect-[16/9] w-full" />
+      <div className="p-5 space-y-3">
+        <div className="flex gap-2">
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-5 w-16" />
+        </div>
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+    </div>
+  );
+}
+
+export default function ResearchHub() {
+  const { lang } = useLanguage();
+  const isAr = lang === "ar";
+  const [selectedTopic, setSelectedTopic] = useState("all");
+  const [activeTab, setActiveTab] = useState("latest");
+
+  useEffect(() => {
+    document.title = isAr
+      ? "مركز الأبحاث العلمية | Health Science Hub"
+      : "Health Science Hub | Latest Research & Discoveries";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute("content", isAr
+      ? "أحدث الدراسات والأبحاث العلمية في مجال الصحة المستدامة، مبسطة ومترجمة من أفضل المجلات العلمية العالمية."
+      : "Latest health research simplified. Scientific studies from PubMed, Nature, JAMA and more - made accessible for everyone.");
+  }, [isAr]);
+
+  const { data: latestData, isLoading: latestLoading } = trpc.research.list.useQuery(
+    selectedTopic === "all" ? { limit: 20 } : { limit: 20, topic: selectedTopic }
+  );
+  const { data: weekData } = trpc.research.thisWeek.useQuery();
+  const { data: topicsData } = trpc.research.topics.useQuery();
+  const { data: mostReadData } = trpc.research.mostRead.useQuery({ limit: 5 });
+  const { data: mostImpactfulData } = trpc.research.mostImpactful.useQuery({ limit: 5 });
+
+  const studies = latestData?.studies ?? [];
+  const totalStudies = latestData?.total ?? 0;
+
+  return (
+    <div className="min-h-screen bg-background" dir={isAr ? "rtl" : "ltr"}>
+      {/* Hero Header */}
+      <header className="relative bg-gradient-to-br from-[#0a1628] via-[#132240] to-[#1a3a5c] py-20 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-blue-500 rounded-full blur-[100px] animate-pulse" />
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-emerald-500 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
+        </div>
+
+        <div className="container relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/80 text-sm mb-6 border border-white/10">
+            <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <span>{isAr ? "مدعوم بالذكاء الاصطناعي" : "AI-Powered Research Summaries"}</span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+            {isAr ? "مركز الأبحاث العلمية" : "Health Science Hub"}
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-4">
+            {isAr
+              ? "أحدث الدراسات العلمية من أفضل الجامعات والمجلات العالمية — مبسطة ومترجمة لتفهمها في 30 ثانية أو 3 دقائق"
+              : "Latest scientific studies from top universities and journals — simplified so you can understand them in 30 seconds or 3 minutes"}
+          </p>
+          <div className="flex items-center justify-center gap-4 text-sm text-gray-400">
+            <span className="flex items-center gap-1">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              {totalStudies} {isAr ? "دراسة" : "studies"}
+            </span>
+            <span>•</span>
+            <span>{isAr ? "تحديث يومي" : "Updated daily"}</span>
+            <span>•</span>
+            <span>{isAr ? "مصادر موثقة" : "Verified sources"}</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Disclaimer Banner */}
+      <div className="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/30">
+        <div className="container py-3 text-center text-sm text-amber-800 dark:text-amber-200">
+          <span className="font-medium">⚠️ {isAr ? "تنبيه:" : "Disclaimer:"}</span>{" "}
+          {isAr
+            ? "المحتوى تعليمي وليس تشخيصاً طبياً. الدراسات الأولية على الحيوانات أو الخلايا لا تُعد إثباتاً على البشر. استشر طبيبك دائماً."
+            : "This content is educational, not medical advice. Preliminary animal/cell studies are not proof in humans. Always consult your doctor."}
+        </div>
+      </div>
+
+      <main className="container py-10">
+        {/* Topic Filter */}
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-2">
+            {TOPICS.map((topic) => (
+              <button
+                key={topic.id}
+                onClick={() => setSelectedTopic(topic.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  selectedTopic === topic.id
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {isAr ? topic.labelAr : topic.labelEn}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+          <TabsList className="grid w-full max-w-lg grid-cols-4">
+            <TabsTrigger value="latest">{isAr ? "الأحدث" : "Latest"}</TabsTrigger>
+            <TabsTrigger value="week">{isAr ? "هذا الأسبوع" : "This Week"}</TabsTrigger>
+            <TabsTrigger value="popular">{isAr ? "الأكثر قراءة" : "Most Read"}</TabsTrigger>
+            <TabsTrigger value="impactful">{isAr ? "الأكثر تأثيراً" : "Most Impactful"}</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="latest" className="mt-6">
+            {latestLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => <StudyCardSkeleton key={i} />)}
+              </div>
+            ) : studies.length === 0 ? (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">🔬</div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {isAr ? "لا توجد دراسات بعد" : "No studies yet"}
+                </h3>
+                <p className="text-muted-foreground">
+                  {isAr ? "سيتم إضافة دراسات جديدة قريباً" : "New studies will be added soon"}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {studies.map((study: any) => (
+                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="week" className="mt-6">
+            {weekData && weekData.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {weekData.map((study: any) => (
+                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-muted-foreground">{isAr ? "لا توجد دراسات هذا الأسبوع" : "No studies this week"}</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="popular" className="mt-6">
+            {mostReadData && mostReadData.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mostReadData.map((study: any) => (
+                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-muted-foreground">{isAr ? "لا توجد بيانات بعد" : "No data yet"}</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="impactful" className="mt-6">
+            {mostImpactfulData && mostImpactfulData.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mostImpactfulData.map((study: any) => (
+                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-muted-foreground">{isAr ? "لا توجد بيانات بعد" : "No data yet"}</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        {/* Sidebar: Topics Distribution */}
+        {topicsData && topicsData.length > 0 && (
+          <section className="mt-12 p-6 bg-muted/30 rounded-2xl border border-border/50">
+            <h2 className="text-xl font-bold text-foreground mb-4">
+              {isAr ? "المواضيع المغطاة" : "Topics Covered"}
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {topicsData.map((t: any) => (
+                <button
+                  key={t.topic}
+                  onClick={() => setSelectedTopic(t.topic)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-background border border-border/50 hover:border-primary/50 transition-colors"
+                >
+                  <span className="text-sm font-medium">{t.topic}</span>
+                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{t.count}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Trust Section */}
+        <section className="mt-12 text-center">
+          <h2 className="text-xl font-bold text-foreground mb-6">
+            {isAr ? "مصادرنا العلمية" : "Our Scientific Sources"}
+          </h2>
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground opacity-70">
+            {["PubMed", "NIH", "Nature", "The Lancet", "JAMA", "BMJ", "Harvard", "Stanford", "Mayo Clinic", "WHO"].map((source) => (
+              <span key={source} className="font-medium">{source}</span>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      {/* Footer CTA */}
+      <section className="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 py-12 border-t">
+        <div className="container text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-3">
+            {isAr ? "ابقَ على اطلاع بأحدث الأبحاث" : "Stay Updated with Latest Research"}
+          </h2>
+          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+            {isAr
+              ? "نضيف دراسات جديدة يومياً من أفضل المجلات العلمية العالمية"
+              : "We add new studies daily from the world's top scientific journals"}
+          </p>
+          <Link href="/blog">
+            <span className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity">
+              {isAr ? "اقرأ مقالاتنا أيضاً" : "Read Our Blog Too"}
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAr ? "M19 12H5m0 0l7-7m-7 7l7 7" : "M5 12h14m0 0l-7-7m7 7l-7 7"} />
+              </svg>
+            </span>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}

@@ -46,13 +46,34 @@ async function startServer() {
   app.post("/api/scheduled/generateArticle", generateArticleHandler);
 
   // Seed article endpoint - bypasses cron auth for initial blog population
-  // This is a simplified version that generates articles directly
   app.post("/api/seed-article", async (req, res) => {
     try {
       const { seedArticleHandler } = await import("../scheduled/seedArticle");
       return seedArticleHandler(req, res);
     } catch (error: any) {
       console.error("[SeedArticle] Error:", error);
+      return res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
+  // Research discovery endpoint - discovers and summarizes new PubMed studies
+  app.post("/api/scheduled/discoverResearch", async (req, res) => {
+    try {
+      const { discoverResearchHandler } = await import("../scheduled/discoverResearch");
+      return discoverResearchHandler(req, res);
+    } catch (error: any) {
+      console.error("[ResearchDiscovery] Error:", error);
+      return res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
+  // Seed research endpoint - same as above but without cron auth
+  app.post("/api/seed-research", async (req, res) => {
+    try {
+      const { discoverResearchHandler } = await import("../scheduled/discoverResearch");
+      return discoverResearchHandler(req, res);
+    } catch (error: any) {
+      console.error("[ResearchDiscovery] Error:", error);
       return res.status(500).json({ error: error.message || "Unknown error" });
     }
   });

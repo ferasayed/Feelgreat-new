@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -543,6 +543,70 @@ export const appRouter = router({
       }),
   }),
 
+  // Research Hub (public)
+  research: router({
+    list: publicProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(50).optional(),
+        offset: z.number().min(0).optional(),
+        topic: z.string().optional(),
+        evidenceLevel: z.string().optional(),
+        period: z.enum(["week", "month", "all"]).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const limit = input?.limit ?? 20;
+        const offset = input?.offset ?? 0;
+        let studies;
+        if (input?.topic) {
+          studies = await getResearchByTopic(input.topic, limit);
+        } else if (input?.evidenceLevel) {
+          studies = await getResearchByEvidenceLevel(input.evidenceLevel, limit);
+        } else if (input?.period && input.period !== "all") {
+          studies = await getRecentResearchByPeriod(input.period);
+        } else {
+          studies = await getPublishedResearch(limit, offset);
+        }
+        const total = await getResearchCount();
+        return { studies, total };
+      }),
+
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const study = await getResearchBySlug(input.slug);
+        if (!study) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Research study not found" });
+        }
+        // Record view
+        await recordResearchView(input.slug);
+        return study;
+      }),
+
+    mostRead: publicProcedure
+      .input(z.object({ limit: z.number().optional() }).optional())
+      .query(async ({ input }) => {
+        return getMostReadResearch(input?.limit ?? 10);
+      }),
+
+    mostImpactful: publicProcedure
+      .input(z.object({ limit: z.number().optional() }).optional())
+      .query(async ({ input }) => {
+        return getMostImpactfulResearch(input?.limit ?? 10);
+      }),
+
+    topics: publicProcedure.query(async () => {
+      return getResearchTopics();
+    }),
+
+    thisWeek: publicProcedure.query(async () => {
+      return getRecentResearchByPeriod("week");
+    }),
+
+    thisMonth: publicProcedure.query(async () => {
+      return getRecentResearchByPeriod("month");
+    }),
+  }),
+
   // Schedule management (admin only)
   schedule: router({
     setup: adminProcedure.mutation(async ({ ctx }) => {
@@ -591,6 +655,21 @@ export const appRouter = router({
       } catch (e) {
         return { success: false, message: "Use the Schedules panel in Management UI to trigger manually" };
       }
+    }),
+
+    setupResearchDiscovery: adminProcedure.mutation(async ({ ctx }) => {
+      // Create research discovery cron job - runs twice daily at 7:00 and 15:00 UTC
+      const result = await createHeartbeatJob(
+        {
+          name: "research-discovery",
+          cron: "0 0 7,15 * * *",
+          path: "/api/scheduled/discoverResearch",
+          method: "POST",
+          description: "Automated research discovery: searches PubMed for new health studies, summarizes with AI, and publishes to Health Science Hub",
+        },
+        "" // empty string = project owner session
+      );
+      return { success: true, taskUid: result.taskUid, nextExecution: result.nextExecutionAt };
     }),
 
     list: adminProcedure.query(async () => {
