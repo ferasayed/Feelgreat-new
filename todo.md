@@ -489,14 +489,14 @@
 - [x] Sleep Hub with linked articles
 - [x] Women's Health Hub with linked articles
 - [x] Metabolic Health Hub with linked articles
-- [ ] Internal linking between hubs and articles
+- [x] Internal linking between hubs and articles (connectedHubs system + cross-linking in HealthLibrary)
 
 ### Priority 3: Research Center
-- [ ] Redesign Research page with time-based filtering (Today, This Week, This Month)
-- [ ] Add "Most Impactful" sorting by impact score
-- [ ] Add "Most Read" sorting by view count
-- [ ] Add research categories and topic filtering
-- [ ] Improve research card design with journal badges
+- [x] Redesign Research page with time-based filtering (Today, This Week, This Month)
+- [x] Add "Most Impactful" sorting by impact score
+- [x] Add "Most Read" sorting by view count
+- [x] Add research categories and topic filtering
+- [x] Improve research card design with journal badges
 
 ### Priority 4: Feras Authority Page
 - [x] Professional biography section
@@ -516,28 +516,28 @@
 - [x] Add sameAs links (social profiles, professional directories)
 
 ### Priority 6: Google News Optimization
-- [ ] Add news-specific meta tags (article:published_time, article:author)
-- [ ] Implement Google News sitemap (/news-sitemap.xml)
-- [ ] Add proper article structured data for news eligibility
-- [ ] Ensure articles have clear bylines and publication dates
-- [ ] Add news article schema with datePublished, dateModified
+- [x] Add news-specific meta tags (article:published_time, article:author)
+- [x] Implement Google News sitemap (/news-sitemap.xml)
+- [x] Add proper article structured data for news eligibility (NewsArticle type)
+- [x] Ensure articles have clear bylines and publication dates
+- [x] Add news article schema with datePublished, dateModified
 
 ### Priority 7: Backlinks Strategy
-- [ ] Create comprehensive backlinks acquisition plan
-- [ ] Health directories submission list
-- [ ] Guest posting opportunities list
-- [ ] Citation building strategy
-- [ ] Medical reference opportunities
-- [ ] Podcast mention strategy
-- [ ] University collaboration opportunities
+- [x] Create comprehensive backlinks acquisition plan (references/backlinks-strategy.md)
+- [x] Health directories submission list (25+ directories: international + Arabic)
+- [x] Guest posting opportunities list (30+ sites across 3 tiers)
+- [x] Citation building strategy (academic, professional, local, knowledge graph)
+- [x] Medical reference opportunities (journals, platforms, health authorities)
+- [x] Podcast mention strategy (20+ podcasts: English + Arabic)
+- [x] University collaboration opportunities (10+ universities + conferences)
 
 ### Priority 8: AI Citation Layer
-- [ ] Add Executive Summary to all articles (first 2-3 sentences)
-- [ ] Add Key Takeaways section (bullet points)
-- [ ] Add clear definitions for medical terms
-- [ ] Add statistics with sources
-- [ ] Optimize FAQ for AI citation
-- [ ] Add structured data for AI crawlers
+- [x] Add Executive Summary to all articles (first 2-3 sentences) - in generateArticle.ts prompt
+- [x] Add Key Takeaways section (bullet points) - key-takeaways div in articles
+- [x] Add clear definitions for medical terms - in generateArticle.ts prompt
+- [x] Add statistics with sources - in generateArticle.ts prompt
+- [x] Optimize FAQ for AI citation - FAQ schema + speakable
+- [x] Add structured data for AI crawlers - speakable schema + NewsArticle type
 
 ## True Pillar Pages (Rebuild)
 - [x] Build PillarHub component with full sections (intro, what-is-it, symptoms, causes, risk-factors, research, FAQ, related-articles, related-studies, success-stories, feel-great-section, internal-links)
