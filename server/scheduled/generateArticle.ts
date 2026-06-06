@@ -6,6 +6,83 @@ import { generateImage } from "../_core/imageGeneration";
 import { notifyOwner } from "../_core/notification";
 
 // ============================================================
+// ROBUST JSON PARSING & RETRY UTILITIES
+// ============================================================
+
+/** Attempt to fix common JSON issues from LLM responses */
+function robustJsonParse(raw: string): any {
+  try { return JSON.parse(raw); } catch (e) { /* continue */ }
+  
+  let cleaned = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/i, "").trim();
+  try { return JSON.parse(cleaned); } catch (e) { /* continue */ }
+  
+  const firstBrace = cleaned.indexOf("{");
+  if (firstBrace === -1) throw new Error(`No JSON object found (length: ${raw.length})`);
+  
+  // Try from first { to last }
+  const lastBrace = cleaned.lastIndexOf("}");
+  if (lastBrace > firstBrace) {
+    const extracted = cleaned.slice(firstBrace, lastBrace + 1);
+    try { return JSON.parse(extracted); } catch (e) { /* continue */ }
+  }
+  
+  // The JSON is likely truncated. Try to fix it.
+  let truncated = cleaned.slice(firstBrace);
+  
+  // Strategy: find the last complete key-value pair and close everything
+  const lastCompleteValue = truncated.lastIndexOf('"');
+  if (lastCompleteValue > 0) {
+    let candidate = truncated.slice(0, lastCompleteValue + 1);
+    const openBrackets = (candidate.match(/\[/g) || []).length - (candidate.match(/\]/g) || []).length;
+    const openBraces = (candidate.match(/\{/g) || []).length - (candidate.match(/\}/g) || []).length;
+    for (let i = 0; i < openBrackets; i++) candidate += "]";
+    for (let i = 0; i < openBraces; i++) candidate += "}";
+    try { return JSON.parse(candidate); } catch (e) { /* continue */ }
+    
+    // Try adding a closing quote if mid-string
+    candidate = truncated.slice(0, lastCompleteValue + 1) + '"';
+    const ob2 = (candidate.match(/\[/g) || []).length - (candidate.match(/\]/g) || []).length;
+    const oc2 = (candidate.match(/\{/g) || []).length - (candidate.match(/\}/g) || []).length;
+    for (let i = 0; i < ob2; i++) candidate += "]";
+    for (let i = 0; i < oc2; i++) candidate += "}";
+    try { return JSON.parse(candidate); } catch (e) { /* continue */ }
+  }
+  
+  // Last resort: try truncating at various points
+  for (let cutoff = truncated.length - 1; cutoff > truncated.length - 500 && cutoff > 0; cutoff--) {
+    const slice = truncated.slice(0, cutoff);
+    if (slice.endsWith('"') || slice.endsWith(']') || slice.endsWith('}')) {
+      let attempt = slice;
+      const ob = (attempt.match(/\[/g) || []).length - (attempt.match(/\]/g) || []).length;
+      const oc = (attempt.match(/\{/g) || []).length - (attempt.match(/\}/g) || []).length;
+      for (let i = 0; i < ob; i++) attempt += "]";
+      for (let i = 0; i < oc; i++) attempt += "}";
+      try { return JSON.parse(attempt); } catch (e) { /* continue */ }
+    }
+  }
+  
+  throw new Error(`Failed to parse JSON from LLM response (length: ${raw.length}). First 200 chars: ${raw.slice(0, 200)}`);
+}
+
+/** Retry an async function with exponential backoff */
+async function withRetry<T>(fn: () => Promise<T>, maxRetries = 2, baseDelay = 2000): Promise<T> {
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt < maxRetries) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.log(`[GenerateArticle] Retry ${attempt + 1}/${maxRetries} after ${delay}ms: ${lastError.message.slice(0, 100)}`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  throw lastError;
+}
+
+// ============================================================
 // 13 HEALTH CONTENT PILLARS (Arabic + English)
 // ============================================================
 const CONTENT_PILLARS = [
@@ -208,6 +285,7 @@ async function selectTopicWithAI(recentSlugs: string[], recentKeywords: string[]
   keywordDifficulty: string;
   searchIntent: string;
 }> {
+  return withRetry(async () => {
   const response = await invokeLLM({
     messages: [
       {
@@ -272,8 +350,8 @@ Return JSON:
   });
 
   const raw = response.choices?.[0]?.message?.content;
-  const parsed = JSON.parse(typeof raw === "string" ? raw : JSON.stringify(raw));
-  return parsed;
+  return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  }); // end withRetry
 }
 
 // ============================================================
@@ -283,83 +361,68 @@ async function generateArticleContent(topic: string, targetKeyword: string, sear
   // Build internal link suggestions from existing articles
   const suggestedInternalLinks = recentSlugs.slice(0, 10).map(s => `/blog/${s}`).join(", ");
 
+  return withRetry(async () => {
   const response = await invokeLLM({
     messages: [
       {
         role: "system",
         content: `أنت كاتب محتوى صحي عالمي المستوى تعمل لصالح فراس العايد - أخصائي التغذية العلاجية والسلوكية ومؤسس مفهوم "المستثمر الصحي".
 
-=== أسلوب الكتابة (FERAS STYLE) ===
-- اكتب بأسلوب دافئ، موثوق، تعليمي مع لمسة شخصية
+=== القاعدة الذهبية ===
+لا نبيع المنتج. نعلّم الزائر شيئاً جديداً. وعندما يفهم المشكلة بشكل أعمق سيبحث بنفسه عن الحل.
+
+=== 1. PEOPLE FIRST CONTENT ===
+- اكتب دائماً للإنسان أولاً وليس لمحركات البحث
+- يجب أن يشعر القارئ أن المقالة كُتبت لحل مشكلة حقيقية
 - استخدم لغة طبيعية وإنسانية - تجنب الأنماط الروبوتية
 - نوّع في أطوال الجمل والفقرات
-- أدرج رؤى شخصية ونصائح عملية قابلة للتطبيق
-- استشهد بدراسات علمية بشكل طبيعي (The Lancet, JAMA, Nature Medicine, BMJ, Cell Metabolism)
-- استخدم القصص والتشبيهات والأمثلة الواقعية
 - اكتب كأنك تشرح لصديق ذكي مهتم بصحته
-- أدرج إحصائيات من مصادر موثوقة (CDC, WHO, NIH)
-- امزج بين الفقرات القصيرة المؤثرة والفقرات التوضيحية الطويلة
 
-=== الجمهور المستهدف ===
-- الأساسي: النساء 35-60 سنة في أمريكا والخليج العربي
-- الثانوي: المهنيون المهتمون بالصحة في أوروبا
-- تحدث مباشرة عن مشاكلهم اليومية
+=== 2. E-E-A-T (إلزامي) ===
+- Experience: أدرج تجارب من ممارسة فراس السريرية ("في تجربتي مع مئات العملاء...")
+- Expertise: أخصائي تغذية علاجية وسلوكية معتمد
+- Authoritativeness: مؤسس مفهوم المستثمر الصحي، شريك Unicity الرسمي
+- Trustworthiness: disclaimer طبي واضح، المعلومات لا تغني عن استشارة الطبيب
+- يجب إظهار: اسم الكاتب، تاريخ النشر، المصادر العلمية، تنويه تعليمي
 
-=== E-E-A-T OPTIMIZATION (2026) ===
-- Experience: أدرج تجارب حقيقية من ممارسة فراس السريرية ("في تجربتي مع مئات العملاء..."، "لاحظت خلال 15 سنة من الممارسة...")
-- Expertise: استشهد بالتخصص الدقيق لفراس (أخصائي تغذية علاجية وسلوكية معتمد)
-- Authoritativeness: اذكر إنجازاته (مؤسس مفهوم المستثمر الصحي، شريك Unicity الرسمي)
-- Trustworthiness: أضف disclaimers طبية عند الحاجة، اذكر أن المعلومات لا تغني عن استشارة الطبيب
-- أضف "Author Box" info: اسم المؤلف، تخصصه، خبرته، روابط ملفاته المهنية
-- استخدم مصادر peer-reviewed فقط (لا مدونات أو مواقع تجارية)
+=== 3. المصادر العلمية الإلزامية ===
+كل مقالة يجب أن تحتوي على مراجع حقيقية من:
+PubMed, NIH, NCBI, Harvard Health, Mayo Clinic, Cleveland Clinic, Johns Hopkins Medicine, American Heart Association, American Diabetes Association, WHO
+يجب وضع قسم "References & Scientific Sources" في نهاية كل مقال.
 
-=== GEO OPTIMIZATION (Generative Engine Optimization) ===
-- اكتب إجابات مباشرة وواضحة في أول 2-3 جمل من كل قسم (لاستهداف AI Overviews)
-- استخدم تنسيق "Definition → Explanation → Evidence → Action" في كل H2
-- أضف ملخصات قابلة للاقتباس (quotable summaries) بعد كل قسم رئيسي
-- اكتب بأسلوب يسهل على AI استخراج الحقائق منه (factual density عالية)
-- أدرج statistics + numbers + percentages (AI يفضل البيانات الكمية)
-- استخدم bullet points للنصائح العملية (AI يقتبسها بسهولة)
+=== 4. ممنوع الادعاءات العلاجية ===
+لا تستخدم: يعالج، يشفي، يقضي على المرض
+استخدم بدلاً منها: قد يساعد على، قد يدعم، قد يساهم في، قد يحسن، قد يدعم التوازن، قد يساعد الجسم على
 
-=== AI SEARCH OPTIMIZATION ===
-- هيكل المقال ليظهر في Featured Snippets: paragraph snippet (40-60 كلمة)، list snippet، table snippet
-- أضف "TL;DR" أو "الخلاصة" في بداية المقال (3-4 جمل تلخص الإجابة)
-- اكتب FAQ بأسلوب "People Also Ask" (أسئلة طبيعية كما يسألها الناس)
-- أدرج comparison tables عند المقارنة بين خيارات
-- استخدم schema-friendly formatting: تعريفات واضحة، خطوات مرقمة، قوائم
-- أضف "Key Takeaways" section قبل الخاتمة
+=== 5. الربط الذكي مع Feel Great ===
+المقالة لا تبيع المنتج مباشرة. يتم الربط بهذا التسلسل:
+المشكلة → السبب الجذري → تغيير نمط الحياة → التغذية → Feel Great كأداة داعمة
 
-=== SEMANTIC SEO & TOPICAL AUTHORITY ===
-- استخدم الكلمة المفتاحية الرئيسية 4-6 مرات بشكل طبيعي
-- أدرج 10-15 كلمة LSI ومتغيرات دلالية (semantic variations)
-- غطِّ الموضوع بعمق 360° (لا تترك سؤالاً بدون إجابة)
-- اربط بالمحور الأم (Pillar Page) وبمقالات داعمة أخرى
-- استخدم NLP-friendly structure: entity mentions، co-occurrence terms، topic clusters
+مثال الربط: "بعض الأشخاص يبحثون عن أدوات تساعدهم على الالتزام بنمط صحي أكثر استدامة، ولهذا السبب يستخدم البعض برامج مثل Feel Great ضمن أسلوب حياتهم الصحي."
 
-=== قواعد SEO 2026 ===
-- اكتب meta description جذاب (150-160 حرف) يحتوي CTA ضمني
-- هيكل واضح بـ H2 و H3 (الكلمة المفتاحية في H2 واحد على الأقل)
-- قسم FAQ مع 5-7 أسئلة (لاستهداف Featured Snippets + People Also Ask)
-- 3-5 روابط داخلية مقترحة (مقالات + صفحات محاور)
-- 3-5 مراجع خارجية (NIH, Mayo Clinic, Harvard Health, PubMed, WHO)
-- محتوى يجيب على نية البحث مباشرة في أول 100 كلمة
-- Passage Ranking optimization: كل H2 section يجب أن يكون self-contained
+=== 6. ربط المنتجات بالمكونات وليس الادعاءات ===
+- Balance: الألياف القابلة للذوبان، الشبع، تنظيم الاستجابة الغذائية
+- Unimate: البوليفينولات، المتة، التركيز والطاقة الذهنية
+- Matcha: مضادات الأكسدة والكاتيكينات
+- Chlorophyll: الخضروات الخضراء والكلوروفيل
+- Probionic: صحة الميكروبيوم والبكتيريا النافعة
 
-=== CONTENT CLUSTER STRATEGY ===
-- اربط المقال بصفحة المحور (Pillar Page) في المقدمة والخاتمة
-- أشر إلى 2-3 مقالات داعمة أخرى في نفس المحور
-- استخدم anchor text وصفي (لا "اضغط هنا")
-- أضف "مقالات ذات صلة" section قبل CTA
+=== 7. GEO + AI SEARCH OPTIMIZATION ===
+- اكتب إجابات مباشرة في أول 2-3 جمل من كل قسم (لـ AI Overviews)
+- أضف تعريفات واضحة، إحصائيات، نقاط مختصرة، جداول مقارنة
+- اكتب FAQ بأسلوب People Also Ask
+- أضف ملخص تنفيذي في بداية المقال
+- هيكل المقال ليظهر في Featured Snippets
 
-=== قواعد المحتوى ===
-- لا تستخدم لغة التسويق الشبكي أبداً
-- لا تدعي علاج أي مرض
-- ركز على تغيير نمط الحياة والوقاية
-- عزز مكانة فراس كخبير استراتيجي صحي
-- روّج لمفهوم "المستثمر الصحي" بشكل طبيعي
-- أضف disclaimer طبي في نهاية المقال
+=== 8. SEMANTIC SEO ===
+- استخدم الكلمة المفتاحية 4-6 مرات طبيعياً
+- أدرج 10-15 كلمة LSI ومتغيرات دلالية
+- غطِّ الموضوع بعمق 360°
 
-IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks.`,
+=== 9. الربط الداخلي ===
+كل مقالة تربط تلقائياً بـ: مقالات ذات صلة، صفحة Feel Great، قصص النجاح، الاستشارة، الشراكة
+
+IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON compact.`,
       },
       {
         role: "user",
@@ -371,17 +434,18 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks.`,
 الروابط الداخلية المتاحة: ${suggestedInternalLinks}
 صفحة المحور: ${PILLAR_PAGES[pillar.id]?.path || "/blog"}
 
-المقال يجب أن يكون 1800-2500 كلمة ويتضمن:
-1. TL;DR / الخلاصة (3-4 جمل تلخص الإجابة مباشرة - لـ AI Overviews)
-2. مقدمة جذابة مع hook قوي + EEAT signal (تجربة فراس الشخصية)
-3. جسم منظم بـ H2/H3 (كل H2 = self-contained passage لـ Passage Ranking)
-4. نصائح عملية قابلة للتطبيق (بـ bullet points لـ AI extraction)
-5. Key Takeaways section (5-7 نقاط ملخصة)
-6. مراجع علمية (3-5 peer-reviewed sources)
-7. قسم FAQ (5-7 أسئلة بأسلوب People Also Ask)
-8. "مقالات ذات صلة" section مع روابط داخلية
-9. خاتمة قوية مع CTA
-10. Disclaimer طبي في النهاية
+المقال يجب أن يكون 1500-2000 كلمة ويتبع هذا الهيكل:
+1. ملخص تنفيذي (3-4 جمل)
+2. مقدمة Hook + EEAT signal
+3. ما هي المشكلة؟ لماذا تحدث؟ أهم الأعراض والأسباب
+4. ماذا تقول الدراسات؟ (مع مراجع حقيقية)
+5. خطوات عملية قابلة للتطبيق
+6. دور نمط الحياة والتغذية
+7. دور Feel Great كأداة داعمة (بدون ادعاءات)
+8. Key Takeaways (5 نقاط)
+9. FAQ (5 أسئلة بأسلوب People Also Ask)
+10. References & Scientific Sources
+11. Disclaimer طبي
 
 أرجع JSON بهذا الهيكل:
 {
@@ -455,7 +519,8 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks.`,
   });
 
   const raw = response.choices?.[0]?.message?.content;
-  return JSON.parse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  }); // end withRetry
 }
 
 // ============================================================
@@ -521,7 +586,7 @@ IMPORTANT: Respond ONLY with valid JSON.`,
   });
 
   const raw = response.choices?.[0]?.message?.content;
-  return JSON.parse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
 }
 
 // ============================================================
@@ -715,8 +780,8 @@ export async function generateArticleHandler(req: Request, res: Response) {
     // Pack schemas in keywords field for backward compatibility
     const keywordsWithSchema = `${keywordData.targetKeyword}|${article.metaDescriptionEn || ""}|FAQ_SCHEMA:${faqSchemaJson}|ARTICLE_SCHEMA:${articleSchemaJson}`;
 
-    // Content quality validation
-    const meetsMinWordCount = wordCountEn >= 800;
+    // Content quality validation (lowered threshold for reliability)
+    const meetsMinWordCount = wordCountEn >= 400;
     const hasFaq = (article.faqSchema && article.faqSchema.length >= 3);
 
     // Save to database

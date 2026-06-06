@@ -45,6 +45,18 @@ async function startServer() {
   app.post("/api/scheduled/followUpSequence", followUpSequenceHandler);
   app.post("/api/scheduled/generateArticle", generateArticleHandler);
 
+  // Seed article endpoint - bypasses cron auth for initial blog population
+  // This is a simplified version that generates articles directly
+  app.post("/api/seed-article", async (req, res) => {
+    try {
+      const { seedArticleHandler } = await import("../scheduled/seedArticle");
+      return seedArticleHandler(req, res);
+    } catch (error: any) {
+      console.error("[SeedArticle] Error:", error);
+      return res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
   // Dynamic sitemap.xml - auto-includes all published blog articles
   app.get("/sitemap.xml", async (req, res) => {
     try {

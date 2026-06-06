@@ -391,3 +391,10 @@
 - [x] Generate more articles in high-performing categories (double down strategy)
 - [x] Expand successful topics into sub-topics and related angles
 - [x] Performance dashboard showing which categories attract most readers
+
+## Bug Fix: Empty Blog - Article Generation Failing
+- [x] Fix JSON parsing error in generateArticle.ts (LLM response truncation causing "Unterminated string in JSON")
+- [x] Add retry logic with exponential backoff for LLM calls
+- [x] Add robust JSON parsing with cleanup/recovery
+- [x] Generate initial seed articles to populate the blog
+- [x] Verify cron jobs produce articles successfully
