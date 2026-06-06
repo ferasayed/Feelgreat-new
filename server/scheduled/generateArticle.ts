@@ -780,31 +780,79 @@ export async function generateArticleHandler(req: Request, res: Response) {
     // Pack schemas in keywords field for backward compatibility
     const keywordsWithSchema = `${keywordData.targetKeyword}|${article.metaDescriptionEn || ""}|FAQ_SCHEMA:${faqSchemaJson}|ARTICLE_SCHEMA:${articleSchemaJson}`;
 
-    // Content quality validation
+    // ============================================================
+    // QUALITY CONTROL ENGINE - Pre-publish validation
+    // ============================================================
+    const { validateArticleQuality, autoFixArticle } = await import("./qualityControl");
+
+    // Run Quality Control checks
+    console.log("[GenerateArticle] Running Quality Control validation...");
+    const qcResult = validateArticleQuality({
+      contentEn: article.contentEn || "",
+      contentAr: article.contentAr || "",
+      titleEn: article.titleEn || "",
+      titleAr: article.titleAr || "",
+      faqSchema: article.faqSchema,
+      internalLinks: article.internalLinks,
+      keywords: keywordsWithSchema,
+    });
+
+    console.log(`[GenerateArticle] QC Score: ${qcResult.score}/100 | Passed: ${qcResult.passed}`);
+    if (qcResult.criticalFailures.length > 0) {
+      console.warn(`[GenerateArticle] QC Critical Failures: ${qcResult.criticalFailures.join(", ")}`);
+    }
+    if (qcResult.warnings.length > 0) {
+      console.warn(`[GenerateArticle] QC Warnings: ${qcResult.warnings.join(", ")}`);
+    }
+
+    // Auto-fix any issues
+    const fixResult = autoFixArticle({
+      contentEn: article.contentEn || "",
+      contentAr: article.contentAr || "",
+    });
+    article.contentEn = fixResult.contentEn;
+    article.contentAr = fixResult.contentAr;
+    if (fixResult.fixes.length > 0) {
+      console.log(`[GenerateArticle] QC Auto-fixes applied: ${fixResult.fixes.join(", ")}`);
+    }
+
+    // Final quality gates
     const meetsMinWordCount = wordCountEn >= 400;
     const hasFaq = (article.faqSchema && article.faqSchema.length >= 3);
+    const passesQC = qcResult.passed || qcResult.score >= 50; // Allow if score >= 50 after auto-fix
 
-    // === REFERENCES VALIDATION ===
-    // Check that the article contains a References/Sources section
-    const hasReferencesEn = /references|scientific sources|sources|citations/i.test(article.contentEn || "");
-    const hasReferencesAr = /المراجع|المصادر العلمية|المصادر/i.test(article.contentAr || "");
-    const hasReferences = hasReferencesEn || hasReferencesAr;
+    if (!passesQC) {
+      console.warn(`[GenerateArticle] ⚠️ Article failed QC (score: ${qcResult.score}). Saving as draft for review.`);
+    }
+
+    // ============================================================
+    // CONTENT CLUSTER ENGINE - Auto-generate internal links
+    // ============================================================
+    const { generateInternalLinks, identifyCluster } = await import("./contentCluster");
     
-    if (!hasReferences) {
-      console.warn("[GenerateArticle] ⚠️ Article missing References section - attempting to add one...");
-      // Auto-append a generic references section if missing
-      const referencesAr = `\n<h2>المراجع والمصادر العلمية</h2>\n<p><em>تم الاستناد إلى مصادر علمية موثوقة من PubMed وNIH وHarvard Health. للاطلاع على الدراسات المحددة المذكورة في هذا المقال، يرجى التواصل معنا.</em></p>`;
-      const referencesEn = `\n<h2>References & Scientific Sources</h2>\n<p><em>This article references peer-reviewed research from PubMed, NIH, and Harvard Health. For specific studies cited, please contact us.</em></p>`;
-      article.contentAr = (article.contentAr || "") + referencesAr;
-      article.contentEn = (article.contentEn || "") + referencesEn;
-    } else {
-      console.log("[GenerateArticle] ✅ References section validated");
-    }
-
-    // === MINIMUM WORD COUNT ENFORCEMENT WITH RETRY ===
-    if (wordCountEn < 400) {
-      console.warn(`[GenerateArticle] ⚠️ Article below minimum word count (${wordCountEn} words). Saving as draft.`);
-    }
+    // Get existing articles for cross-linking
+    const existingArticleSlugs = await getRecentArticleSlugs(20);
+    const existingArticlesForLinks = existingArticleSlugs.map((s: string) => ({
+      slug: s,
+      titleEn: s.replace(/-/g, ' '),
+      titleAr: s.replace(/-/g, ' '),
+      category: pillar.id,
+    }));
+    
+    // Generate cluster-based internal links
+    const clusterLinks = generateInternalLinks(
+      article.contentEn || "",
+      pillar.id,
+      existingArticlesForLinks
+    );
+    
+    // Merge LLM-generated links with cluster engine links
+    const mergedInternalLinks = [
+      ...(article.internalLinks || []),
+      ...clusterLinks.map(cl => ({ slug: cl.url, title: cl.anchorTextEn })),
+    ].slice(0, 10); // Keep max 10 links
+    
+    console.log(`[GenerateArticle] Content Cluster: ${pillar.id} | Internal links: ${mergedInternalLinks.length}`);
 
     // Save to database
     console.log("[GenerateArticle] Saving to database...");
@@ -837,13 +885,13 @@ export async function generateArticleHandler(req: Request, res: Response) {
       keywordVolume: keywordData.keywordVolume,
       keywordDifficulty: keywordData.keywordDifficulty,
       wordCount,
-      status: meetsMinWordCount ? "published" : "draft",
+      status: (meetsMinWordCount && passesQC) ? "published" : "draft",
       language: "both",
       faqSchema: article.faqSchema,
-      internalLinks: article.internalLinks,
-      publishedAt: meetsMinWordCount ? new Date() : null,
+      internalLinks: mergedInternalLinks,
+      publishedAt: (meetsMinWordCount && passesQC) ? new Date() : null,
       readTimeMinutes,
-      isPublished: meetsMinWordCount,
+      isPublished: meetsMinWordCount && passesQC,
     });
 
     // Notify owner with comprehensive report

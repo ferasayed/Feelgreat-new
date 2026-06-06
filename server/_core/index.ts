@@ -78,11 +78,12 @@ async function startServer() {
     }
   });
 
-  // Dynamic sitemap.xml - auto-includes all published blog articles
+  // Dynamic sitemap.xml - auto-includes all published blog articles AND research studies
   app.get("/sitemap.xml", async (req, res) => {
     try {
-      const { getPublishedArticles } = await import("../db");
+      const { getPublishedArticles, getPublishedResearch } = await import("../db");
       const articles = await getPublishedArticles(1000, 0);
+      const researchStudies = await getPublishedResearch(1000, 0);
       const baseUrl = "https://feelgreat.us.com";
       const languages = ["ar", "en", "fr", "es", "de", "tr"];
 
@@ -92,6 +93,8 @@ async function startServer() {
         { path: "/partner", changefreq: "monthly", priority: "0.9" },
         { path: "/founder", changefreq: "monthly", priority: "0.8" },
         { path: "/blog", changefreq: "daily", priority: "0.9" },
+        { path: "/research", changefreq: "daily", priority: "0.9" },
+        { path: "/today-in-health-science", changefreq: "daily", priority: "0.9" },
         { path: "/faq", changefreq: "monthly", priority: "0.8" },
         { path: "/health", changefreq: "weekly", priority: "0.9" },
         { path: "/about", changefreq: "monthly", priority: "0.8" },
@@ -140,6 +143,17 @@ async function startServer() {
         xml += `  </url>\n`;
       }
 
+      // Dynamic research studies
+      for (const study of researchStudies) {
+        const lastmod = study.createdAt;
+        xml += `  <url>\n`;
+        xml += `    <loc>${baseUrl}/research/${study.slug}</loc>\n`;
+        xml += `    <lastmod>${new Date(lastmod).toISOString().split("T")[0]}</lastmod>\n`;
+        xml += `    <changefreq>monthly</changefreq>\n`;
+        xml += `    <priority>0.7</priority>\n`;
+        xml += `  </url>\n`;
+      }
+
       xml += `</urlset>`;
 
       res.set("Content-Type", "application/xml");
@@ -169,6 +183,55 @@ Sitemap: https://feelgreat.us.com/sitemap.xml
   app.get("/indexnow-key.txt", (req, res) => {
     res.set("Content-Type", "text/plain");
     res.send("feelgreat-indexnow-2026");
+  });
+
+  // IndexNow batch submission endpoint - submits multiple URLs at once
+  app.post("/api/indexnow/batch", async (req, res) => {
+    try {
+      const { getPublishedArticles, getPublishedResearch } = await import("../db");
+      const baseUrl = "https://feelgreat.us.com";
+      const key = "feelgreat-indexnow-2026";
+
+      // Collect all publishable URLs
+      const articles = await getPublishedArticles(100, 0);
+      const research = await getPublishedResearch(100, 0);
+
+      const urlList = [
+        ...articles.map(a => `${baseUrl}/blog/${a.slug}`),
+        ...research.map(r => `${baseUrl}/research/${r.slug}`),
+        `${baseUrl}/`,
+        `${baseUrl}/blog`,
+        `${baseUrl}/research`,
+        `${baseUrl}/today-in-health-science`,
+      ];
+
+      // IndexNow batch API
+      const batchPayload = {
+        host: "feelgreat.us.com",
+        key,
+        keyLocation: `${baseUrl}/indexnow-key.txt`,
+        urlList: urlList.slice(0, 10000), // IndexNow max 10k per batch
+      };
+
+      const indexNowRes = await fetch("https://api.indexnow.org/indexnow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(batchPayload),
+        signal: AbortSignal.timeout(15000),
+      });
+
+      // Also ping Google sitemap
+      await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(`${baseUrl}/sitemap.xml`)}`, {
+        method: "GET",
+        signal: AbortSignal.timeout(10000),
+      }).catch(() => {});
+
+      console.log(`[IndexNow] Batch submitted ${urlList.length} URLs, status: ${indexNowRes.status}`);
+      res.json({ ok: true, urlsSubmitted: urlList.length, indexNowStatus: indexNowRes.status });
+    } catch (error: any) {
+      console.error("[IndexNow] Batch error:", error);
+      res.status(500).json({ ok: false, error: error.message });
+    }
   });
 
   // IP-based geolocation endpoint for auto language detection

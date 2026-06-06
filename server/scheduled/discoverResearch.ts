@@ -19,6 +19,49 @@ const RESEARCH_TOPICS = [
 ];
 
 // ============================================================
+// MULTI-SOURCE CONFIGURATION
+// ============================================================
+interface ResearchSource {
+  name: string;
+  type: "pubmed" | "rss" | "api";
+  baseUrl: string;
+  journalFilter?: string;
+}
+
+const RESEARCH_SOURCES: ResearchSource[] = [
+  // PubMed/NCBI (primary - covers NIH, NCBI, and most journals)
+  { name: "PubMed", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils" },
+  // Nature journals via PubMed filter
+  { name: "Nature", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Nature[Journal]" },
+  // The Lancet via PubMed filter
+  { name: "The Lancet", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Lancet[Journal]" },
+  // JAMA via PubMed filter
+  { name: "JAMA", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "JAMA[Journal]" },
+  // BMJ via PubMed filter
+  { name: "BMJ", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "BMJ[Journal]" },
+  // Science via PubMed filter
+  { name: "Science", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Science[Journal]" },
+  // Cell via PubMed filter
+  { name: "Cell", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Cell[Journal]" },
+  // Harvard Health via PubMed affiliation filter
+  { name: "Harvard", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Harvard[Affiliation]" },
+  // Mayo Clinic via PubMed affiliation filter
+  { name: "Mayo Clinic", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Mayo Clinic[Affiliation]" },
+  // Cleveland Clinic via PubMed affiliation filter
+  { name: "Cleveland Clinic", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Cleveland Clinic[Affiliation]" },
+  // Stanford via PubMed affiliation filter
+  { name: "Stanford", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Stanford[Affiliation]" },
+  // Johns Hopkins via PubMed affiliation filter
+  { name: "Johns Hopkins", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Johns Hopkins[Affiliation]" },
+  // Oxford via PubMed affiliation filter
+  { name: "Oxford", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Oxford[Affiliation]" },
+  // American Diabetes Association
+  { name: "ADA", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Diabetes Care[Journal]" },
+  // American Heart Association
+  { name: "AHA", type: "pubmed", baseUrl: "https://eutils.ncbi.nlm.nih.gov/entrez/eutils", journalFilter: "Circulation[Journal]" },
+];
+
+// ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
 
@@ -72,10 +115,10 @@ function robustJsonParse(raw: string): any {
 }
 
 // ============================================================
-// PUBMED API INTEGRATION
+// MULTI-SOURCE PUBMED SEARCH
 // ============================================================
 
-async function searchPubMed(query: string, maxResults = 5): Promise<Array<{
+interface PubMedResult {
   pmid: string;
   title: string;
   abstract: string;
@@ -83,34 +126,37 @@ async function searchPubMed(query: string, maxResults = 5): Promise<Array<{
   journal: string;
   publishDate: string;
   doi: string;
-}>> {
+  source: string; // Which source found this
+}
+
+async function searchPubMedWithSource(
+  query: string,
+  source: ResearchSource,
+  maxResults = 5
+): Promise<PubMedResult[]> {
   try {
-    // Search PubMed for recent articles
-    const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&retmax=${maxResults}&sort=date&retmode=json&datetype=pdat&reldate=90`;
-    const searchRes = await fetch(searchUrl);
+    // Build search query with optional journal/affiliation filter
+    let searchQuery = query;
+    if (source.journalFilter) {
+      searchQuery = `(${query}) AND ${source.journalFilter}`;
+    }
+
+    const searchUrl = `${source.baseUrl}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(searchQuery)}&retmax=${maxResults}&sort=date&retmode=json&datetype=pdat&reldate=90`;
+    const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(15000) });
     const searchData = await searchRes.json();
     
     const ids = searchData?.esearchresult?.idlist;
     if (!ids || ids.length === 0) return [];
     
     // Fetch details for found articles
-    const fetchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=${ids.join(",")}&retmode=xml`;
-    const fetchRes = await fetch(fetchUrl);
+    const fetchUrl = `${source.baseUrl}/efetch.fcgi?db=pubmed&id=${ids.join(",")}&retmode=xml`;
+    const fetchRes = await fetch(fetchUrl, { signal: AbortSignal.timeout(20000) });
     const xmlText = await fetchRes.text();
     
     // Parse XML to extract key fields
-    const articles: Array<{
-      pmid: string;
-      title: string;
-      abstract: string;
-      authors: string;
-      journal: string;
-      publishDate: string;
-      doi: string;
-    }> = [];
-    
-    // Simple XML parsing for PubMed articles
+    const articles: PubMedResult[] = [];
     const articleBlocks = xmlText.split("<PubmedArticle>");
+    
     for (let i = 1; i < articleBlocks.length && i <= maxResults; i++) {
       const block = articleBlocks[i];
       
@@ -136,15 +182,51 @@ async function searchPubMed(query: string, maxResults = 5): Promise<Array<{
       const publishDate = `${year}-${monthNum}-${day.padStart(2, "0")}`;
       
       if (title && (abstractText.length > 100 || title.length > 20)) {
-        articles.push({ pmid, title, abstract: abstractText, authors, journal, publishDate, doi });
+        articles.push({ pmid, title, abstract: abstractText, authors, journal, publishDate, doi, source: source.name });
       }
     }
     
     return articles;
   } catch (error) {
-    console.error(`[ResearchDiscovery] PubMed search error for "${query}":`, error);
+    console.error(`[ResearchDiscovery] ${source.name} search error for "${query}":`, error);
     return [];
   }
+}
+
+/**
+ * Search across multiple sources for a given topic.
+ * Rotates through sources to ensure diversity.
+ */
+async function searchMultipleSources(topic: string): Promise<PubMedResult[]> {
+  // Pick 3-4 random sources to query (to avoid rate limiting)
+  const shuffled = [...RESEARCH_SOURCES].sort(() => Math.random() - 0.5);
+  const selectedSources = shuffled.slice(0, 4);
+  
+  console.log(`[ResearchDiscovery] Searching ${selectedSources.length} sources: ${selectedSources.map(s => s.name).join(", ")}`);
+  
+  const allResults: PubMedResult[] = [];
+  
+  for (const source of selectedSources) {
+    try {
+      const results = await searchPubMedWithSource(topic, source, 3);
+      allResults.push(...results);
+      console.log(`[ResearchDiscovery] ${source.name}: found ${results.length} results`);
+      // Small delay between requests to be polite to NCBI
+      await new Promise(r => setTimeout(r, 500));
+    } catch (e) {
+      console.warn(`[ResearchDiscovery] ${source.name} failed, continuing...`);
+    }
+  }
+  
+  // Deduplicate by DOI
+  const seen = new Set<string>();
+  const unique = allResults.filter(r => {
+    if (!r.doi || seen.has(r.doi)) return false;
+    seen.add(r.doi);
+    return true;
+  });
+  
+  return unique;
 }
 
 // ============================================================
@@ -158,12 +240,13 @@ async function summarizeStudyPhase1(study: {
   authors: string;
   doi: string;
   publishDate: string;
+  source: string;
 }): Promise<any> {
   const response = await invokeLLM({
     messages: [
       {
         role: "system",
-        content: `You are a scientific health communicator. Classify and briefly summarize research studies. NEVER make therapeutic claims. Return ONLY valid JSON.`,
+        content: `You are a scientific health communicator. Classify and briefly summarize research studies. NEVER make therapeutic claims. If the study is a press release, animal study, or in-vitro study only, you MUST flag it clearly. Return ONLY valid JSON.`,
       },
       {
         role: "user",
@@ -173,10 +256,16 @@ Title: ${study.title}
 Journal: ${study.journal}
 Authors: ${study.authors}
 Published: ${study.publishDate}
+Source: ${study.source}
 Abstract: ${study.abstract.slice(0, 800)}
 
+IMPORTANT RULES:
+- If this is an animal study or cell/in-vitro study, set isPreliminary=true and isHumanStudy=false
+- If this is a press release without peer review, set evidenceLevel="preliminary"
+- NEVER present preliminary findings as proven facts on humans
+
 Return JSON:
-{"titleEn":"short engaging title","titleAr":"عنوان عربي قصير","studyType":"meta-analysis|RCT|cohort|case-control|cross-sectional|animal|in-vitro|review","evidenceLevel":"high|moderate|low|preliminary","isPreliminary":false,"isHumanStudy":true,"participantCount":null,"university":"institution or null","primaryTopic":"main topic","topics":["t1","t2"],"summary30sEn":"2 sentences","summary30sAr":"جملتان","summary1minEn":"4 sentences","summary1minAr":"4 جمل","keyFindings":[{"findingEn":"f1","findingAr":"ن1"}],"impactScore":5,"heroImagePrompt":"scientific illustration prompt"}`,
+{"titleEn":"short engaging title","titleAr":"عنوان عربي قصير","studyType":"meta-analysis|RCT|cohort|case-control|cross-sectional|animal|in-vitro|review|press-release","evidenceLevel":"high|moderate|low|preliminary","isPreliminary":false,"isHumanStudy":true,"participantCount":null,"university":"institution or null","primaryTopic":"main topic","topics":["t1","t2"],"summary30sEn":"2 sentences","summary30sAr":"جملتان","summary1minEn":"4 sentences","summary1minAr":"4 جمل","keyFindings":[{"findingEn":"f1","findingAr":"ن1"}],"impactScore":5,"heroImagePrompt":"scientific illustration prompt","sourceInstitution":"${study.source}"}`,
       },
     ],
   });
@@ -189,12 +278,13 @@ async function summarizeStudyPhase2(study: {
   title: string;
   abstract: string;
   journal: string;
+  source: string;
 }, phase1: any): Promise<any> {
   const response = await invokeLLM({
     messages: [
       {
         role: "system",
-        content: `You are a scientific health communicator writing detailed analysis. NEVER make therapeutic claims. Use "may support", "suggests" language. If animal/cell study, state it clearly. Return ONLY valid JSON.`,
+        content: `You are a scientific health communicator writing detailed analysis. NEVER make therapeutic claims. Use "may support", "suggests" language. If animal/cell study, state it clearly. If press release or preliminary, explicitly warn the reader. Return ONLY valid JSON.`,
       },
       {
         role: "user",
@@ -202,11 +292,16 @@ async function summarizeStudyPhase2(study: {
 
 Title: ${study.title}
 Journal: ${study.journal}
+Source: ${study.source}
 Abstract: ${study.abstract.slice(0, 800)}
 Key findings: ${phase1.keyFindings?.map((f: any) => f.findingEn).join("; ")}
+Is Preliminary: ${phase1.isPreliminary}
+Is Human Study: ${phase1.isHumanStudy}
+
+IMPORTANT: If isPreliminary=true or isHumanStudy=false, you MUST include a clear disclaimer in the summaries stating this is NOT proven in humans yet.
 
 Return JSON:
-{"summary3minEn":"200 word summary with context","summary3minAr":"ملخص 200 كلمة مع السياق","fullAnalysisEn":"300 word analysis: discovery, importance, application, limitations","fullAnalysisAr":"تحليل 300 كلمة","healthImplicationsEn":"100 words connecting to daily habits","healthImplicationsAr":"100 كلمة عن الآثار الصحية اليومية","strengthsWeaknesses":{"strengths":["s1","s2"],"weaknesses":["w1","w2"]},"feelGreatConnection":"subtle connection to fiber/polyphenols/gut health if relevant, else empty","feelGreatConnectionAr":"ربط ذكي بالألياف/البوليفينولات/صحة الأمعاء إن كان مناسباً","metaTitleEn":"SEO title 60 chars","metaTitleAr":"عنوان 60 حرف","metaDescriptionEn":"SEO desc 155 chars","metaDescriptionAr":"وصف 155 حرف"}`,
+{"summary3minEn":"200 word summary with context","summary3minAr":"ملخص 200 كلمة مع السياق","fullAnalysisEn":"300 word analysis: discovery, importance, application, limitations","fullAnalysisAr":"تحليل 300 كلمة","healthImplicationsEn":"100 words connecting to daily habits","healthImplicationsAr":"100 كلمة عن الآثار الصحية اليومية","strengthsWeaknesses":{"strengths":["s1","s2"],"weaknesses":["w1","w2"]},"feelGreatConnection":"subtle connection to fiber/polyphenols/gut health if relevant, else empty","feelGreatConnectionAr":"ربط ذكي بالألياف/البوليفينولات/صحة الأمعاء إن كان مناسباً","metaTitleEn":"SEO title 60 chars","metaTitleAr":"عنوان 60 حرف","metaDescriptionEn":"SEO desc 155 chars","metaDescriptionAr":"وصف 155 حرف","preliminaryDisclaimer":"${phase1.isPreliminary || !phase1.isHumanStudy ? 'This study was conducted on animals/cells and has not been replicated in humans. Results should be interpreted with caution.' : ''}","preliminaryDisclaimerAr":"${phase1.isPreliminary || !phase1.isHumanStudy ? 'هذه الدراسة أُجريت على حيوانات/خلايا ولم تُكرر على البشر. يجب تفسير النتائج بحذر.' : ''}"}`,
       },
     ],
   });
@@ -215,17 +310,10 @@ Return JSON:
   return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
 }
 
-async function summarizeStudy(study: {
-  title: string;
-  abstract: string;
-  journal: string;
-  authors: string;
-  doi: string;
-  publishDate: string;
-}): Promise<any> {
+async function summarizeStudy(study: PubMedResult): Promise<any> {
   // Phase 1: Classification + short summaries
   const phase1 = await summarizeStudyPhase1(study);
-  console.log(`[ResearchDiscovery] Phase 1 complete: "${phase1.titleEn}"`);
+  console.log(`[ResearchDiscovery] Phase 1 complete: "${phase1.titleEn}" [${phase1.studyType}] [${phase1.evidenceLevel}]`);
   
   // Phase 2: Detailed analysis
   const phase2 = await summarizeStudyPhase2(study, phase1);
@@ -236,12 +324,41 @@ async function summarizeStudy(study: {
 }
 
 // ============================================================
+// INDEXNOW PING FOR RESEARCH ARTICLES
+// ============================================================
+async function pingIndexNowResearch(slug: string): Promise<void> {
+  const baseUrl = "https://feelgreat.us.com";
+  const articleUrl = `${baseUrl}/research/${slug}`;
+  const key = "feelgreat-indexnow-2026";
+
+  try {
+    await fetch(`https://api.indexnow.org/indexnow?url=${encodeURIComponent(articleUrl)}&key=${key}`, {
+      method: "GET",
+      signal: AbortSignal.timeout(10000),
+    });
+    console.log(`[IndexNow] Research pinged: ${articleUrl}`);
+  } catch (e) {
+    console.error("[IndexNow] Research ping failed:", e);
+  }
+
+  // Google sitemap ping
+  try {
+    await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(`${baseUrl}/sitemap.xml`)}`, {
+      method: "GET",
+      signal: AbortSignal.timeout(10000),
+    });
+  } catch (e) {
+    // silent
+  }
+}
+
+// ============================================================
 // MAIN DISCOVERY HANDLER
 // ============================================================
 
 export async function discoverResearchHandler(req: Request, res: Response) {
   try {
-    console.log("[ResearchDiscovery] Starting research discovery...");
+    console.log("[ResearchDiscovery] Starting multi-source research discovery...");
     
     // Get existing DOIs to avoid duplicates
     const existingDOIs = await getExistingResearchDOIs();
@@ -249,11 +366,11 @@ export async function discoverResearchHandler(req: Request, res: Response) {
     
     // Pick a random topic to search
     const topic = RESEARCH_TOPICS[Math.floor(Math.random() * RESEARCH_TOPICS.length)];
-    console.log(`[ResearchDiscovery] Searching PubMed for: "${topic}"`);
+    console.log(`[ResearchDiscovery] Searching for: "${topic}"`);
     
-    // Search PubMed
-    const results = await searchPubMed(topic, 5);
-    console.log(`[ResearchDiscovery] Found ${results.length} results from PubMed`);
+    // Search across multiple sources
+    const results = await searchMultipleSources(topic);
+    console.log(`[ResearchDiscovery] Found ${results.length} unique results across sources`);
     
     if (results.length === 0) {
       res.json({ ok: true, message: "No new studies found", topic });
@@ -269,9 +386,9 @@ export async function discoverResearchHandler(req: Request, res: Response) {
       return;
     }
     
-    // Process the first new study
+    // Process the first new study (to avoid timeout)
     const study = newStudies[0];
-    console.log(`[ResearchDiscovery] Processing: "${study.title}"`);
+    console.log(`[ResearchDiscovery] Processing: "${study.title}" from ${study.source}`);
     
     // AI Summarization with retry
     let summary: any;
@@ -310,7 +427,7 @@ export async function discoverResearchHandler(req: Request, res: Response) {
       pubmedId: study.pmid,
       sourceUrl: study.doi ? `https://doi.org/${study.doi}` : `https://pubmed.ncbi.nlm.nih.gov/${study.pmid}/`,
       journal: study.journal,
-      university: summary.university || null,
+      university: summary.university || summary.sourceInstitution || study.source,
       authors: study.authors,
       publishDate: study.publishDate as unknown as Date,
       studyType: summary.studyType,
@@ -345,7 +462,10 @@ export async function discoverResearchHandler(req: Request, res: Response) {
       isPublished: true,
     });
     
-    console.log(`[ResearchDiscovery] ✅ Study saved: ${slug}`);
+    console.log(`[ResearchDiscovery] ✅ Study saved: ${slug} (source: ${study.source})`);
+    
+    // Ping IndexNow for the new research article
+    pingIndexNowResearch(slug).catch(e => console.error("[IndexNow] Research ping error:", e));
     
     res.json({
       ok: true,
@@ -357,6 +477,8 @@ export async function discoverResearchHandler(req: Request, res: Response) {
       studyType: summary.studyType,
       isPreliminary: summary.isPreliminary,
       journal: study.journal,
+      source: study.source,
+      sourcesSearched: 4,
     });
   } catch (error: any) {
     console.error("[ResearchDiscovery] Handler error:", error?.message || error);

@@ -36,6 +36,8 @@ const ContentEngine = lazy(() => import("./pages/ContentEngine"));
 const TargetedLanding = lazy(() => import("./pages/TargetedLanding"));
 const ResearchHub = lazy(() => import("./pages/ResearchHub"));
 const ResearchStudyDetail = lazy(() => import("./pages/ResearchStudyDetail"));
+const AuthorPage = lazy(() => import("./pages/AuthorPage"));
+const TodayInHealthScience = lazy(() => import("./pages/TodayInHealthScience"));
 import ExitIntentPopup from "./components/ExitIntentPopup";
 import HreflangTags from "./components/HreflangTags";
 
@@ -86,6 +88,8 @@ function AppRoutes() {
         <Route path={"/for-gut-health"} component={TargetedLanding} />
         <Route path={"/research"} component={ResearchHub} />
         <Route path={"/research/:slug"} component={ResearchStudyDetail} />
+        <Route path={"/author/feras-alayed"} component={AuthorPage} />
+        <Route path={"/today-in-health-science"} component={TodayInHealthScience} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
