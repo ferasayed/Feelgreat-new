@@ -434,3 +434,8 @@
 - [x] Build Content Cluster engine with 13 topic clusters and auto-linking
 - [x] Integrate cluster engine into article generation pipeline
 - [x] Add auto-fix capability for missing references and medical claims
+
+## E-E-A-T Visual Enhancement (June 2026)
+- [x] Upload Feras real photos and use in author section (BlogArticle, AuthorPage)
+- [x] Implement real "last updated" system (update timestamp on manual edit)
+- [x] Add interactive Table of Contents to long blog articles

@@ -2,7 +2,7 @@ import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 export default function BlogArticle() {
   const { slug } = useParams<{ slug: string }>();
@@ -287,9 +287,11 @@ export default function BlogArticle() {
           {/* Author & EEAT Section */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-6 pt-6 border-t border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#c8a951] flex items-center justify-center text-[#0a1628] font-bold text-sm">
-                FA
-              </div>
+              <img
+                src="/manus-storage/feras-professional_115956a2.png"
+                alt="Feras Alayed"
+                className="w-10 h-10 rounded-full object-cover object-top"
+              />
               <div>
                 <p className="text-white font-medium text-sm">
                   {isAr ? "فراس العايد" : "Feras Alayed"}
@@ -326,6 +328,9 @@ export default function BlogArticle() {
           </div>
         </div>
       </header>
+
+      {/* Table of Contents */}
+      {content && <TableOfContents content={content} isAr={isAr} />}
 
       {/* Article Content */}
       <article className="container max-w-3xl py-12">
@@ -434,6 +439,122 @@ export default function BlogArticle() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Interactive Table of Contents Component
+// ============================================================
+function TableOfContents({ content, isAr }: { content: string; isAr: boolean }) {
+  const [isOpen, setIsOpen] = useState(true);
+  const [activeId, setActiveId] = useState<string>("");
+
+  // Extract headings from HTML content
+  const headings = useMemo(() => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const elements = doc.querySelectorAll("h2, h3");
+    return Array.from(elements).map((el, index) => {
+      const text = el.textContent || "";
+      const id = `heading-${index}`;
+      const level = el.tagName === "H2" ? 2 : 3;
+      return { id, text, level };
+    });
+  }, [content]);
+
+  // Add IDs to headings in the article after render
+  useEffect(() => {
+    const articleEl = document.querySelector(".article-content");
+    if (!articleEl) return;
+    const elements = articleEl.querySelectorAll("h2, h3");
+    elements.forEach((el, index) => {
+      el.id = `heading-${index}`;
+    });
+  }, [content]);
+
+  // Track active heading on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-80px 0px -70% 0px", threshold: 0 }
+    );
+
+    const articleEl = document.querySelector(".article-content");
+    if (articleEl) {
+      const elements = articleEl.querySelectorAll("h2, h3");
+      elements.forEach((el) => observer.observe(el));
+    }
+
+    return () => observer.disconnect();
+  }, [content]);
+
+  if (headings.length < 3) return null; // Only show TOC for articles with 3+ headings
+
+  const scrollToHeading = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  return (
+    <div className="container max-w-3xl pt-8">
+      <nav
+        className="rounded-xl border bg-muted/20 overflow-hidden transition-all duration-200"
+        aria-label="Table of Contents"
+      >
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-[#c8a951]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            <span className="font-semibold text-sm text-foreground">
+              {isAr ? "محتويات المقال" : "Table of Contents"}
+            </span>
+            <span className="text-xs text-muted-foreground">({headings.length})</span>
+          </div>
+          <svg
+            className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {isOpen && (
+          <div className="px-5 pb-4 border-t border-border/50">
+            <ol className="space-y-1 pt-3">
+              {headings.map((heading) => (
+                <li
+                  key={heading.id}
+                  className={`${heading.level === 3 ? (isAr ? "pr-4" : "pl-4") : ""}`}
+                >
+                  <button
+                    onClick={() => scrollToHeading(heading.id)}
+                    className={`w-full text-start text-sm py-1.5 px-2 rounded-md transition-all duration-150 hover:bg-muted/50 ${
+                      activeId === heading.id
+                        ? "text-[#1a5276] font-medium bg-[#1a5276]/5 border-s-2 border-[#c8a951]"
+                        : "text-muted-foreground hover:text-foreground"
+                    } ${heading.level === 3 ? "text-xs" : "font-medium"}`}
+                  >
+                    {heading.text}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+      </nav>
     </div>
   );
 }

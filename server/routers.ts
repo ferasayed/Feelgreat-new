@@ -482,6 +482,8 @@ export const appRouter = router({
           updateData.publishedAt = new Date();
           updateData.status = "published";
         }
+        // Track last updated date for E-E-A-T display
+        updateData.updatedAt = new Date();
         await updateArticle(id, updateData);
         return { success: true };
       }),
