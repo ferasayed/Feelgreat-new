@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import compression from "compression";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -12,6 +13,8 @@ import { followUpHandler } from "../scheduled/followUp";
 import { followUpSequenceHandler } from "../scheduled/followUpSequence";
 import { generateArticleHandler } from "../scheduled/generateArticle";
 import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
+import { performanceMiddleware } from "../seo/performance";
+import { prerenderMiddleware } from "../seo/prerender";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,6 +38,16 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // Compression - gzip/brotli for all responses
+  app.use(compression());
+
+  // Performance middleware - cache headers, preload hints, security headers
+  app.use(performanceMiddleware());
+
+  // Prerender middleware - serves pre-rendered HTML to search engine bots
+  app.use(prerenderMiddleware());
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
