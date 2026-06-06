@@ -327,28 +327,12 @@ async function summarizeStudy(study: PubMedResult): Promise<any> {
 // INDEXNOW PING FOR RESEARCH ARTICLES
 // ============================================================
 async function pingIndexNowResearch(slug: string): Promise<void> {
-  const baseUrl = "https://feelgreat.us.com";
-  const articleUrl = `${baseUrl}/research/${slug}`;
-  const key = "feelgreat-indexnow-2026";
-
   try {
-    await fetch(`https://api.indexnow.org/indexnow?url=${encodeURIComponent(articleUrl)}&key=${key}`, {
-      method: "GET",
-      signal: AbortSignal.timeout(10000),
-    });
-    console.log(`[IndexNow] Research pinged: ${articleUrl}`);
+    const { notifyNewResearch } = await import("../seo/indexing");
+    await notifyNewResearch(slug);
+    console.log(`[IndexNow] All search engines notified for: /research/${slug}`);
   } catch (e) {
-    console.error("[IndexNow] Research ping failed:", e);
-  }
-
-  // Google sitemap ping
-  try {
-    await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(`${baseUrl}/sitemap.xml`)}`, {
-      method: "GET",
-      signal: AbortSignal.timeout(10000),
-    });
-  } catch (e) {
-    // silent
+    console.error("[IndexNow] Research notification failed:", e);
   }
 }
 

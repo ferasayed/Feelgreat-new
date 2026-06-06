@@ -12,6 +12,7 @@ import { serveStatic, setupVite } from "./vite";
 import { followUpHandler } from "../scheduled/followUp";
 import { followUpSequenceHandler } from "../scheduled/followUpSequence";
 import { generateArticleHandler } from "../scheduled/generateArticle";
+import { autoIndexHandler, manualIndexHandler } from "../scheduled/autoIndex";
 import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
@@ -57,6 +58,8 @@ async function startServer() {
   app.post("/api/scheduled/followUp", followUpHandler);
   app.post("/api/scheduled/followUpSequence", followUpSequenceHandler);
   app.post("/api/scheduled/generateArticle", generateArticleHandler);
+  app.post("/api/scheduled/autoIndex", autoIndexHandler);
+  app.post("/api/manual-index", manualIndexHandler);
 
   // Seed article endpoint - bypasses cron auth for initial blog population
   app.post("/api/seed-article", async (req, res) => {
@@ -145,14 +148,14 @@ async function startServer() {
         xml += `  </url>\n`;
       }
 
-      // Dynamic blog articles
+      // Dynamic blog articles (use updatedAt for accurate lastmod)
       for (const article of articles) {
-        const lastmod = article.publishedAt || article.createdAt;
+        const lastmod = article.updatedAt || article.publishedAt || article.createdAt;
         xml += `  <url>\n`;
         xml += `    <loc>${baseUrl}/blog/${article.slug}</loc>\n`;
         xml += `    <lastmod>${new Date(lastmod).toISOString().split("T")[0]}</lastmod>\n`;
-        xml += `    <changefreq>monthly</changefreq>\n`;
-        xml += `    <priority>0.7</priority>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
+        xml += `    <priority>0.8</priority>\n`;
         xml += `  </url>\n`;
       }
 
@@ -178,17 +181,34 @@ async function startServer() {
     }
   });
 
-  // Robots.txt - dynamic to include sitemap URL
+  // Robots.txt - comprehensive with all sitemaps and crawl directives
   app.get("/robots.txt", (req, res) => {
-    const robotsTxt = `User-agent: *
+    const robotsTxt = `# Robots.txt for feelgreat.us.com
+# Last updated: ${new Date().toISOString().split("T")[0]}
+
+User-agent: *
 Allow: /
 Disallow: /dashboard
 Disallow: /api/
 Disallow: /content-engine
+Disallow: /__manus__/
+Disallow: /admin/
 
+# Sitemaps
 Sitemap: https://feelgreat.us.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+User-agent: AhrefsBot
+Crawl-delay: 2
+
+User-agent: SemrushBot
+Crawl-delay: 2
+
+User-agent: MJ12bot
+Crawl-delay: 5
 `;
     res.set("Content-Type", "text/plain");
+    res.set("Cache-Control", "public, max-age=86400");
     res.send(robotsTxt);
   });
 
@@ -318,9 +338,11 @@ async function initArticleGenJobs() {
     const existingNames = existing.jobs.map((j) => j.name);
 
     const schedules = [
-      { name: "article-gen-morning", cron: "0 0 6 * * *", description: "Morning SEO article generation (6:00 UTC)" },
-      { name: "article-gen-afternoon", cron: "0 0 12 * * *", description: "Afternoon SEO article generation (12:00 UTC)" },
-      { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation (18:00 UTC)" },
+      { name: "article-gen-morning", cron: "0 0 6 * * *", description: "Morning SEO article generation (6:00 UTC)", path: "/api/scheduled/generateArticle" },
+      { name: "article-gen-afternoon", cron: "0 0 12 * * *", description: "Afternoon SEO article generation (12:00 UTC)", path: "/api/scheduled/generateArticle" },
+      { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation (18:00 UTC)", path: "/api/scheduled/generateArticle" },
+      { name: "auto-index-daily", cron: "0 30 7 * * *", description: "Daily auto-indexing: submit all URLs to IndexNow + ping Google/Bing (7:30 UTC)", path: "/api/scheduled/autoIndex" },
+      { name: "auto-index-evening", cron: "0 30 19 * * *", description: "Evening auto-indexing: submit new content to search engines (19:30 UTC)", path: "/api/scheduled/autoIndex" },
     ];
 
     for (const schedule of schedules) {
@@ -329,7 +351,7 @@ async function initArticleGenJobs() {
           {
             name: schedule.name,
             cron: schedule.cron,
-            path: "/api/scheduled/generateArticle",
+            path: schedule.path,
             method: "POST",
             description: schedule.description,
           },

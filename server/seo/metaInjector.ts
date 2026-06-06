@@ -343,9 +343,10 @@ async function resolveMetaForPath(path: string): Promise<MetaData | null> {
 function injectMetaIntoHtml(html: string, meta: MetaData): string {
   const metaTags: string[] = [];
 
-  // Title
+  // Title - handle both regular titles and {{project_title}} placeholder
   if (meta.title) {
     html = html.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
+    html = html.replace(/<title>\{\{project_title\}\}<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
   }
 
   // Description
