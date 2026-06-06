@@ -17,6 +17,16 @@ import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
 
+// XML escape utility for RSS feeds
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
     const server = net.createServer();
@@ -216,6 +226,134 @@ Crawl-delay: 5
   app.get("/indexnow-key.txt", (req, res) => {
     res.set("Content-Type", "text/plain");
     res.send("feelgreat-indexnow-2026");
+  });
+
+  // RSS Feed for blog articles
+  app.get("/feed.xml", async (req, res) => {
+    try {
+      const { getPublishedArticles } = await import("../db");
+      const articles = await getPublishedArticles(50, 0);
+      const baseUrl = "https://feelgreat.us.com";
+      const now = new Date().toUTCString();
+
+      let rss = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      rss += `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">\n`;
+      rss += `<channel>\n`;
+      rss += `  <title>Feel Great Health Blog by Feras Alayed</title>\n`;
+      rss += `  <link>${baseUrl}/blog</link>\n`;
+      rss += `  <description>Science-backed health articles on sustainable health, insulin resistance, gut health, weight management, and behavioral nutrition by Feras Alayed - Therapeutic &amp; Behavioral Nutrition Specialist.</description>\n`;
+      rss += `  <language>en</language>\n`;
+      rss += `  <lastBuildDate>${now}</lastBuildDate>\n`;
+      rss += `  <atom:link href="${baseUrl}/feed.xml" rel="self" type="application/rss+xml" />\n`;
+      rss += `  <image>\n`;
+      rss += `    <url>${baseUrl}/manus-storage/feel-great-complete_44bb8752.png</url>\n`;
+      rss += `    <title>Feel Great Health Blog</title>\n`;
+      rss += `    <link>${baseUrl}/blog</link>\n`;
+      rss += `  </image>\n`;
+      rss += `  <managingEditor>feras@feelgreat.us.com (Feras Alayed)</managingEditor>\n`;
+      rss += `  <webMaster>feras@feelgreat.us.com (Feras Alayed)</webMaster>\n`;
+      rss += `  <copyright>Copyright ${new Date().getFullYear()} Feel Great by Feras Alayed. All rights reserved.</copyright>\n`;
+      rss += `  <category>Health</category>\n`;
+      rss += `  <category>Nutrition</category>\n`;
+      rss += `  <category>Wellness</category>\n`;
+      rss += `  <ttl>60</ttl>\n`;
+
+      for (const article of articles) {
+        const pubDate = new Date(article.publishedAt || article.createdAt).toUTCString();
+        const link = `${baseUrl}/blog/${article.slug}`;
+        rss += `  <item>\n`;
+        rss += `    <title>${escapeXml(article.titleEn || article.titleAr || "")}</title>\n`;
+        rss += `    <link>${link}</link>\n`;
+        rss += `    <guid isPermaLink="true">${link}</guid>\n`;
+        rss += `    <pubDate>${pubDate}</pubDate>\n`;
+        rss += `    <dc:creator>Feras Alayed</dc:creator>\n`;
+        if (article.metaDescriptionEn) {
+          rss += `    <description>${escapeXml(article.metaDescriptionEn)}</description>\n`;
+        }
+        if (article.category) {
+          rss += `    <category>${escapeXml(article.category)}</category>\n`;
+        }
+        if (article.heroImageUrl) {
+          rss += `    <enclosure url="${baseUrl}${article.heroImageUrl}" type="image/png" length="0" />\n`;
+        }
+        rss += `  </item>\n`;
+      }
+
+      rss += `</channel>\n</rss>`;
+
+      res.set("Content-Type", "application/rss+xml; charset=utf-8");
+      res.set("Cache-Control", "public, max-age=3600");
+      res.send(rss);
+    } catch (error) {
+      console.error("[RSS] Error generating feed:", error);
+      res.status(500).send("Error generating RSS feed");
+    }
+  });
+
+  // RSS Feed for research studies
+  app.get("/research-feed.xml", async (req, res) => {
+    try {
+      const { getPublishedResearch } = await import("../db");
+      const studies = await getPublishedResearch(50, 0);
+      const baseUrl = "https://feelgreat.us.com";
+      const now = new Date().toUTCString();
+
+      let rss = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      rss += `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">\n`;
+      rss += `<channel>\n`;
+      rss += `  <title>Feel Great Research Hub - Latest Health Science</title>\n`;
+      rss += `  <link>${baseUrl}/research</link>\n`;
+      rss += `  <description>Latest peer-reviewed health research summaries from PubMed, Nature, JAMA, Lancet, and top universities. Curated by Feras Alayed.</description>\n`;
+      rss += `  <language>en</language>\n`;
+      rss += `  <lastBuildDate>${now}</lastBuildDate>\n`;
+      rss += `  <atom:link href="${baseUrl}/research-feed.xml" rel="self" type="application/rss+xml" />\n`;
+      rss += `  <managingEditor>feras@feelgreat.us.com (Feras Alayed)</managingEditor>\n`;
+      rss += `  <copyright>Copyright ${new Date().getFullYear()} Feel Great Research Hub. All rights reserved.</copyright>\n`;
+      rss += `  <category>Health Science</category>\n`;
+      rss += `  <category>Medical Research</category>\n`;
+      rss += `  <ttl>120</ttl>\n`;
+
+      for (const study of studies) {
+        const pubDate = new Date(study.createdAt).toUTCString();
+        const link = `${baseUrl}/research/${study.slug}`;
+        rss += `  <item>\n`;
+        rss += `    <title>${escapeXml(study.titleEn || study.titleAr || "")}</title>\n`;
+        rss += `    <link>${link}</link>\n`;
+        rss += `    <guid isPermaLink="true">${link}</guid>\n`;
+        rss += `    <pubDate>${pubDate}</pubDate>\n`;
+        rss += `    <dc:creator>Feras Alayed</dc:creator>\n`;
+        if (study.summary30sEn) {
+          rss += `    <description>${escapeXml(study.summary30sEn)}</description>\n`;
+        }
+        if (study.journal) {
+          rss += `    <category>${escapeXml(study.journal)}</category>\n`;
+        }
+        if (study.topics) {
+          const topics = typeof study.topics === "string" ? JSON.parse(study.topics) : study.topics;
+          if (Array.isArray(topics)) {
+            for (const t of topics.slice(0, 3)) {
+              rss += `    <category>${escapeXml(t)}</category>\n`;
+            }
+          }
+        }
+        rss += `  </item>\n`;
+      }
+
+      rss += `</channel>\n</rss>`;
+
+      res.set("Content-Type", "application/rss+xml; charset=utf-8");
+      res.set("Cache-Control", "public, max-age=7200");
+      res.send(rss);
+    } catch (error) {
+      console.error("[RSS] Error generating research feed:", error);
+      res.status(500).send("Error generating research RSS feed");
+    }
+  });
+
+  // Google Search Console verification - HTML meta tag approach
+  app.get("/google-site-verification.html", (req, res) => {
+    res.set("Content-Type", "text/html");
+    res.send(`<html><head><meta name="google-site-verification" content="numeric-habitat-277102" /></head><body>Google Search Console Verification</body></html>`);
   });
 
   // IndexNow batch submission endpoint - submits multiple URLs at once
