@@ -373,3 +373,21 @@
 - [x] Improved internal linking algorithm (link to related articles + pillar pages)
 - [x] Focus on 10 health domains: insulin resistance, diabetes, weight, fatty liver, gut health, women's health, behavioral nutrition, sleep & energy, chronic inflammation, sustainable health
 - [x] Multiple cron runs per day for 1-3 articles (3 Heartbeat jobs auto-created on deploy)
+
+## Targeted Landing Pages + Smart Article Performance System
+### Landing Pages for Key Segments
+- [x] /for-women - Women's health landing page (30-50, weight, energy, hormones)
+- [x] /for-diabetics - Diabetes & insulin resistance landing page
+- [x] /for-entrepreneurs - Business opportunity & partnership landing page
+- [x] /for-weight-loss - Weight management landing page
+- [x] /for-gut-health - Gut health & digestive wellness landing page
+- [x] Each page with tailored messaging, CTA, and testimonials section
+
+### Smart Article Performance Tracking
+- [x] Track article views/engagement in database (view count per article)
+- [x] Track which health pillar/category gets most views
+- [x] Weekly performance analysis: identify top-performing topics
+- [x] Auto-adjust article generation weights based on performance data
+- [x] Generate more articles in high-performing categories (double down strategy)
+- [x] Expand successful topics into sub-topics and related angles
+- [x] Performance dashboard showing which categories attract most readers

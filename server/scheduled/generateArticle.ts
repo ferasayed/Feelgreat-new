@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { sdk } from "../_core/sdk";
-import { createBlogArticle, getRecentArticleSlugs, getRecentArticleKeywords } from "../db";
+import { createBlogArticle, getRecentArticleSlugs, getRecentArticleKeywords, getPillarWeights, getTopPerformingPillars } from "../db";
 import { invokeLLM } from "../_core/llm";
 import { generateImage } from "../_core/imageGeneration";
 import { notifyOwner } from "../_core/notification";
@@ -557,29 +557,53 @@ export async function generateArticleHandler(req: Request, res: Response) {
       getRecentArticleKeywords(50),
     ]);
 
-    // Smart pillar selection: prioritize the 10 requested domains with weighted rotation
-    // Priority pillars (user requested): insulin-resistance, diabetes, weight-management, 
-    // fatty-liver, gut-health, womens-health, behavioral-nutrition, sleep-energy, 
-    // chronic-inflammation, sustainable-health
+    // PERFORMANCE-BASED SMART PILLAR SELECTION
+    // Uses real view data to double down on winning topics
     const PRIORITY_PILLAR_IDS = [
       "insulin-resistance", "diabetes", "weight-management", "fatty-liver",
       "gut-health", "womens-health", "behavioral-nutrition", "sleep-energy",
       "chronic-inflammation", "sustainable-health"
     ];
     
-    // Use hour-based rotation for multiple articles per day
-    const hourOfDay = new Date().getUTCHours();
-    const dayOfYear = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
-    const rotationIndex = (dayOfYear * 3 + Math.floor(hourOfDay / 8)) % CONTENT_PILLARS.length;
+    // Get performance weights from actual article views
+    const performanceWeights = await getPillarWeights();
+    const topPillars = await getTopPerformingPillars(30);
     
-    // 80% chance to pick from priority pillars, 20% from all pillars
-    const usePriority = Math.random() < 0.8;
+    console.log(`[GenerateArticle] Performance weights:`, JSON.stringify(performanceWeights).slice(0, 200));
+    if (topPillars.length > 0) {
+      console.log(`[GenerateArticle] Top performing pillar: ${topPillars[0].pillarId} (avg ${topPillars[0].avgViews} views)`);
+    }
+    
+    // Weighted random selection based on performance data
     let pillar: typeof CONTENT_PILLARS[0];
-    if (usePriority) {
-      const priorityIndex = rotationIndex % PRIORITY_PILLAR_IDS.length;
-      pillar = CONTENT_PILLARS.find(p => p.id === PRIORITY_PILLAR_IDS[priorityIndex]) || CONTENT_PILLARS[rotationIndex];
+    const priorityPillars = CONTENT_PILLARS.filter(p => PRIORITY_PILLAR_IDS.includes(p.id));
+    
+    if (Object.keys(performanceWeights).length > 0) {
+      // Use performance data: assign weights to each pillar
+      const weightedPillars = priorityPillars.map(p => ({
+        pillar: p,
+        weight: performanceWeights[p.id] || 1.0,
+      }));
+      
+      // Weighted random selection
+      const totalWeight = weightedPillars.reduce((sum, wp) => sum + wp.weight, 0);
+      let random = Math.random() * totalWeight;
+      pillar = weightedPillars[0].pillar; // fallback
+      for (const wp of weightedPillars) {
+        random -= wp.weight;
+        if (random <= 0) {
+          pillar = wp.pillar;
+          break;
+        }
+      }
+      console.log(`[GenerateArticle] Performance-based selection: ${pillar.nameEn} (weight: ${performanceWeights[pillar.id]?.toFixed(2) || '1.0'})`);
     } else {
-      pillar = CONTENT_PILLARS[rotationIndex];
+      // No performance data yet: use rotation-based selection
+      const hourOfDay = new Date().getUTCHours();
+      const dayOfYear = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
+      const rotationIndex = (dayOfYear * 3 + Math.floor(hourOfDay / 8)) % priorityPillars.length;
+      pillar = priorityPillars[rotationIndex];
+      console.log(`[GenerateArticle] Rotation-based selection (no perf data): ${pillar.nameEn}`);
     }
     console.log(`[GenerateArticle] Selected pillar: ${pillar.nameEn} (${pillar.id})`);
 

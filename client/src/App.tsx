@@ -33,6 +33,7 @@ const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const SuccessStoryDetail = lazy(() => import("./pages/SuccessStories").then(m => ({ default: m.SuccessStoryDetail })));
 const HealthCalculators = lazy(() => import("./pages/HealthCalculators"));
 const ContentEngine = lazy(() => import("./pages/ContentEngine"));
+const TargetedLanding = lazy(() => import("./pages/TargetedLanding"));
 import ExitIntentPopup from "./components/ExitIntentPopup";
 import HreflangTags from "./components/HreflangTags";
 
@@ -76,6 +77,11 @@ function AppRoutes() {
         <Route path={"/success-stories"} component={SuccessStories} />
         <Route path={"/success-stories/:id"} component={SuccessStoryDetail} />
         <Route path={"/calculators"} component={HealthCalculators} />
+        <Route path={"/for-women"} component={TargetedLanding} />
+        <Route path={"/for-diabetics"} component={TargetedLanding} />
+        <Route path={"/for-entrepreneurs"} component={TargetedLanding} />
+        <Route path={"/for-weight-loss"} component={TargetedLanding} />
+        <Route path={"/for-gut-health"} component={TargetedLanding} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

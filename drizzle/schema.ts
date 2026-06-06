@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, text, boolean, timestamp, json, mysqlEnum } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, boolean, timestamp, json, mysqlEnum, decimal, date, index, uniqueIndex } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -96,6 +96,7 @@ export const blogArticles = mysqlTable("blog_articles", {
   keywordVolume: int("keyword_volume"),
   keywordDifficulty: varchar("keyword_difficulty", { length: 20 }),
   wordCount: int("word_count").default(0),
+  viewCount: int("view_count").default(0).notNull(),
   // Article status and metadata
   status: varchar("status", { length: 20 }).default("published"),
   language: varchar("language", { length: 10 }).default("both"),
@@ -112,6 +113,40 @@ export const blogArticles = mysqlTable("blog_articles", {
 
 export type BlogArticle = typeof blogArticles.$inferSelect;
 export type InsertBlogArticle = typeof blogArticles.$inferInsert;
+
+/**
+ * Article views tracking table - records each page view for performance analysis
+ */
+export const articleViews = mysqlTable("article_views", {
+  id: int("id").autoincrement().primaryKey(),
+  articleId: int("article_id").notNull(),
+  visitorId: varchar("visitor_id", { length: 64 }),
+  referrer: varchar("referrer", { length: 500 }),
+  country: varchar("country", { length: 10 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type ArticleView = typeof articleViews.$inferSelect;
+export type InsertArticleView = typeof articleViews.$inferInsert;
+
+/**
+ * Pillar performance tracking - weekly aggregated performance data per health pillar
+ */
+export const pillarPerformance = mysqlTable("pillar_performance", {
+  id: int("id").autoincrement().primaryKey(),
+  pillarId: varchar("pillar_id", { length: 100 }).notNull(),
+  periodStart: date("period_start").notNull(),
+  periodEnd: date("period_end").notNull(),
+  totalViews: int("total_views").default(0).notNull(),
+  totalArticles: int("total_articles").default(0).notNull(),
+  avgViewsPerArticle: decimal("avg_views_per_article", { precision: 10, scale: 2 }).default("0"),
+  topKeyword: varchar("top_keyword", { length: 255 }),
+  weightScore: decimal("weight_score", { precision: 5, scale: 2 }).default("1.0"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type PillarPerformance = typeof pillarPerformance.$inferSelect;
+export type InsertPillarPerformance = typeof pillarPerformance.$inferInsert;
 
 /**
  * Customer reviews/testimonials table

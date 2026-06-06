@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -404,6 +404,36 @@ export const appRouter = router({
       .input(z.object({ category: z.string(), limit: z.number().optional() }))
       .query(async ({ input }) => {
         return getArticlesByCategory(input.category, input.limit ?? 10);
+      }),
+
+    // Track article view (called from BlogArticle page)
+    recordView: publicProcedure
+      .input(z.object({
+        articleId: z.number(),
+        visitorId: z.string().optional(),
+        referrer: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        await recordArticleView({
+          articleId: input.articleId,
+          visitorId: input.visitorId,
+          referrer: input.referrer,
+          country: (ctx as any).country || undefined,
+        });
+        return { success: true };
+      }),
+
+    // Admin: get performance analytics
+    performance: adminProcedure
+      .input(z.object({ days: z.number().min(1).max(90).optional() }).optional())
+      .query(async ({ input }) => {
+        const days = input?.days ?? 30;
+        const [topPillars, topArticles, viewsByPillar] = await Promise.all([
+          getTopPerformingPillars(days),
+          getTopPerformingArticles(10),
+          getArticleViewsByPillar(days),
+        ]);
+        return { topPillars, topArticles, viewsByPillar };
       }),
 
     // Admin: get all articles (published + drafts)

@@ -1,7 +1,7 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -435,4 +435,156 @@ export async function getArticleStats(): Promise<{
   }
   
   return { total: all.length, published: published.length, drafts: drafts.length, byCluster, byLanguage, totalWords };
+}
+
+
+// ===== Article View Tracking =====
+
+export async function recordArticleView(data: { articleId: number; visitorId?: string; referrer?: string; country?: string }) {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Record the view
+  await db.insert(articleViews).values({
+    articleId: data.articleId,
+    visitorId: data.visitorId || null,
+    referrer: data.referrer || null,
+    country: data.country || null,
+  });
+  
+  // Increment view count on the article
+  await db.update(blogArticles)
+    .set({ viewCount: sql`${blogArticles.viewCount} + 1` })
+    .where(eq(blogArticles.id, data.articleId));
+}
+
+export async function getTopPerformingPillars(days = 30): Promise<Array<{ pillarId: string; totalViews: number; articleCount: number; avgViews: number }>> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  
+  // Get articles with their views from the last N days
+  const articles = await db.select({
+    pillarId: blogArticles.pillarId,
+    viewCount: blogArticles.viewCount,
+  })
+    .from(blogArticles)
+    .where(and(
+      sql`${blogArticles.pillarId} IS NOT NULL`,
+      sql`${blogArticles.publishedAt} >= ${cutoff}`
+    ));
+  
+  // Aggregate by pillar
+  const pillarMap: Record<string, { totalViews: number; articleCount: number }> = {};
+  for (const article of articles) {
+    const pid = article.pillarId || "unknown";
+    if (!pillarMap[pid]) pillarMap[pid] = { totalViews: 0, articleCount: 0 };
+    pillarMap[pid].totalViews += article.viewCount || 0;
+    pillarMap[pid].articleCount += 1;
+  }
+  
+  return Object.entries(pillarMap)
+    .map(([pillarId, data]) => ({
+      pillarId,
+      totalViews: data.totalViews,
+      articleCount: data.articleCount,
+      avgViews: data.articleCount > 0 ? Math.round(data.totalViews / data.articleCount) : 0,
+    }))
+    .sort((a, b) => b.avgViews - a.avgViews);
+}
+
+export async function getTopPerformingArticles(limit = 10): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(blogArticles)
+    .where(eq(blogArticles.isPublished, true))
+    .orderBy(desc(blogArticles.viewCount))
+    .limit(limit);
+}
+
+export async function getPillarWeights(): Promise<Record<string, number>> {
+  const db = await getDb();
+  if (!db) return {};
+  
+  // Get all published articles with their views grouped by pillar
+  const articles = await db.select({
+    pillarId: blogArticles.pillarId,
+    viewCount: blogArticles.viewCount,
+    createdAt: blogArticles.createdAt,
+  })
+    .from(blogArticles)
+    .where(and(
+      eq(blogArticles.isPublished, true),
+      sql`${blogArticles.pillarId} IS NOT NULL`
+    ));
+  
+  if (articles.length === 0) return {};
+  
+  // Calculate performance score per pillar
+  // Score = (total views / article count) * recency_boost
+  const pillarData: Record<string, { totalViews: number; count: number; recentViews: number }> = {};
+  const now = Date.now();
+  const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
+  
+  for (const article of articles) {
+    const pid = article.pillarId || "unknown";
+    if (!pillarData[pid]) pillarData[pid] = { totalViews: 0, count: 0, recentViews: 0 };
+    pillarData[pid].totalViews += article.viewCount || 0;
+    pillarData[pid].count += 1;
+    // Recent articles get extra weight
+    if (article.createdAt && article.createdAt.getTime() > thirtyDaysAgo) {
+      pillarData[pid].recentViews += article.viewCount || 0;
+    }
+  }
+  
+  // Calculate weights: combine avg views with recency
+  const weights: Record<string, number> = {};
+  let maxScore = 0;
+  
+  for (const [pid, data] of Object.entries(pillarData)) {
+    const avgViews = data.count > 0 ? data.totalViews / data.count : 0;
+    const recencyBoost = data.recentViews > 0 ? 1.5 : 1.0;
+    const score = avgViews * recencyBoost;
+    weights[pid] = score;
+    if (score > maxScore) maxScore = score;
+  }
+  
+  // Normalize weights to 0.5 - 3.0 range (minimum 0.5 so no pillar is completely ignored)
+  if (maxScore > 0) {
+    for (const pid of Object.keys(weights)) {
+      weights[pid] = 0.5 + (weights[pid] / maxScore) * 2.5;
+    }
+  }
+  
+  return weights;
+}
+
+export async function getArticleViewsByPillar(days = 7): Promise<Array<{ pillarId: string; views: number; articles: number }>> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  
+  const results = await db.select({
+    pillarId: blogArticles.pillarId,
+    viewCount: blogArticles.viewCount,
+  })
+    .from(blogArticles)
+    .where(and(
+      eq(blogArticles.isPublished, true),
+      sql`${blogArticles.pillarId} IS NOT NULL`
+    ));
+  
+  const pillarMap: Record<string, { views: number; articles: number }> = {};
+  for (const r of results) {
+    const pid = r.pillarId || "unknown";
+    if (!pillarMap[pid]) pillarMap[pid] = { views: 0, articles: 0 };
+    pillarMap[pid].views += r.viewCount || 0;
+    pillarMap[pid].articles += 1;
+  }
+  
+  return Object.entries(pillarMap)
+    .map(([pillarId, data]) => ({ pillarId, ...data }))
+    .sort((a, b) => b.views - a.views);
 }

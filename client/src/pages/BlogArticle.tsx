@@ -2,7 +2,7 @@ import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function BlogArticle() {
   const { slug } = useParams<{ slug: string }>();
@@ -13,6 +13,22 @@ export default function BlogArticle() {
     { slug: slug || "" },
     { enabled: !!slug }
   );
+
+  // Track article view (once per session per article)
+  const viewTracked = useRef<string | null>(null);
+  const recordView = trpc.blog.recordView.useMutation();
+  useEffect(() => {
+    if (article && viewTracked.current !== article.slug) {
+      viewTracked.current = article.slug;
+      const visitorId = localStorage.getItem("fg-visitor-id") || `v_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      if (!localStorage.getItem("fg-visitor-id")) localStorage.setItem("fg-visitor-id", visitorId);
+      recordView.mutate({
+        articleId: article.id,
+        visitorId,
+        referrer: document.referrer || undefined,
+      });
+    }
+  }, [article]);
 
   // Update page title and meta when article loads
   useEffect(() => {
