@@ -286,7 +286,7 @@ export default function About() {
               name: "Feras Al-Ayed",
               jobTitle: "Global Trainer & Health Strategist",
               description: "International trainer, leadership mentor, and health strategist dedicated to helping people create transformation in both health and life.",
-              url: "https://feelgreat.us.com/about",
+              url: "https://feelgreat.us.com/feras-alayed",
               image: "/manus-storage/feras-portrait-1_d1f8a83f.png",
               sameAs: [
                 "https://www.instagram.com/use2lose",

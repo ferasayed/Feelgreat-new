@@ -38,7 +38,10 @@ const ResearchHub = lazy(() => import("./pages/ResearchHub"));
 const ResearchStudyDetail = lazy(() => import("./pages/ResearchStudyDetail"));
 const AuthorPage = lazy(() => import("./pages/AuthorPage"));
 const TodayInHealthScience = lazy(() => import("./pages/TodayInHealthScience"));
-import ExitIntentPopup from "./components/ExitIntentPopup";
+const ExitIntentPopup = lazy(() => import("./components/ExitIntentPopup"));
+const HealthLibrary = lazy(() => import("./pages/HealthLibrary"));
+const FerasKnowledgeHub = lazy(() => import("./pages/FerasKnowledgeHub"));
+const HealthLibraryHub = lazy(() => import("./pages/HealthLibrary").then(m => ({ default: m.HealthLibraryHub })));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -89,7 +92,10 @@ function AppRoutes() {
         <Route path={"/research"} component={ResearchHub} />
         <Route path={"/research/:slug"} component={ResearchStudyDetail} />
         <Route path={"/author/feras-alayed"} component={AuthorPage} />
+        <Route path={"/feras-alayed"} component={FerasKnowledgeHub} />
         <Route path={"/today-in-health-science"} component={TodayInHealthScience} />
+        <Route path={"/health-library"} component={HealthLibrary} />
+        <Route path={"/health-library/:slug"} component={HealthLibraryHub} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
@@ -119,7 +125,7 @@ function App() {
             <Toaster />
             <HreflangTags />
             <LanguageRouter />
-            <ExitIntentPopup />
+            <Suspense fallback={null}><ExitIntentPopup /></Suspense>
           </TooltipProvider>
         </LanguageProvider>
       </ThemeProvider>

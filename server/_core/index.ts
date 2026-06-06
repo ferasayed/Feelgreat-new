@@ -138,6 +138,16 @@ async function startServer() {
         { path: "/health/pcos", changefreq: "monthly", priority: "0.8" },
         { path: "/health/cholesterol", changefreq: "monthly", priority: "0.8" },
         { path: "/health/hypertension", changefreq: "monthly", priority: "0.8" },
+        // Health Library Pillar Pages (high priority - independent ranking pages)
+        { path: "/health-library", changefreq: "weekly", priority: "0.9" },
+        { path: "/health-library/sustainable-health", changefreq: "weekly", priority: "0.95" },
+        { path: "/health-library/insulin-resistance", changefreq: "weekly", priority: "0.9" },
+        { path: "/health-library/gut-health", changefreq: "weekly", priority: "0.9" },
+        { path: "/health-library/weight-loss", changefreq: "weekly", priority: "0.9" },
+        { path: "/health-library/sleep", changefreq: "weekly", priority: "0.9" },
+        { path: "/health-library/womens-health", changefreq: "weekly", priority: "0.9" },
+        { path: "/health-library/metabolic-health", changefreq: "weekly", priority: "0.9" },
+        { path: "/feras-alayed", changefreq: "weekly", priority: "1.0" },
       ];
 
       let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;

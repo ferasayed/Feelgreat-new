@@ -468,3 +468,106 @@
 - [x] Add Google Search Console HTML meta tag verification
 - [x] Verify all automation systems work without GSC service account
 - [x] Generate final automation status report
+
+## Global Authority Transformation (June 2026)
+
+### Priority 1: PageSpeed Optimization (Target: >90 mobile/desktop)
+- [x] Implement aggressive code splitting for all route components
+- [x] Add static page generation for key SEO pages (prerender middleware)
+- [x] Optimize image loading (lazy load below-fold, preload hero)
+- [x] Minimize JavaScript bundle size (terser, tree shaking, dynamic imports)
+- [x] Add edge caching headers for static content (30-day storage, 1-year hashed)
+- [x] Optimize CSS delivery (cssCodeSplit, deferred fonts)
+- [x] Reduce TTFB from 4.68s to <0.1s (in-memory URL cache + compression)
+
+### Priority 2: Health Library Hubs
+- [x] Create Health Library main page (/health-library)
+- [x] Insulin Resistance Hub with linked articles
+- [x] Gut Health Hub with linked articles
+- [x] Sustainable Health Hub with linked articles
+- [x] Weight Loss Hub with linked articles
+- [x] Sleep Hub with linked articles
+- [x] Women's Health Hub with linked articles
+- [x] Metabolic Health Hub with linked articles
+- [ ] Internal linking between hubs and articles
+
+### Priority 3: Research Center
+- [ ] Redesign Research page with time-based filtering (Today, This Week, This Month)
+- [ ] Add "Most Impactful" sorting by impact score
+- [ ] Add "Most Read" sorting by view count
+- [ ] Add research categories and topic filtering
+- [ ] Improve research card design with journal badges
+
+### Priority 4: Feras Authority Page
+- [x] Professional biography section
+- [x] Years of experience and countries worked
+- [x] Lectures and training programs
+- [x] Success stories showcase
+- [x] Interviews and media appearances
+- [x] Published articles count and links
+- [x] Professional certifications and credentials
+
+### Priority 5: Person Knowledge Graph
+- [x] Complete Person schema for Feras Alayed
+- [x] Connect all articles to author entity
+- [x] Connect research summaries to author
+- [x] Connect success stories to author
+- [x] Connect health programs to author
+- [x] Add sameAs links (social profiles, professional directories)
+
+### Priority 6: Google News Optimization
+- [ ] Add news-specific meta tags (article:published_time, article:author)
+- [ ] Implement Google News sitemap (/news-sitemap.xml)
+- [ ] Add proper article structured data for news eligibility
+- [ ] Ensure articles have clear bylines and publication dates
+- [ ] Add news article schema with datePublished, dateModified
+
+### Priority 7: Backlinks Strategy
+- [ ] Create comprehensive backlinks acquisition plan
+- [ ] Health directories submission list
+- [ ] Guest posting opportunities list
+- [ ] Citation building strategy
+- [ ] Medical reference opportunities
+- [ ] Podcast mention strategy
+- [ ] University collaboration opportunities
+
+### Priority 8: AI Citation Layer
+- [ ] Add Executive Summary to all articles (first 2-3 sentences)
+- [ ] Add Key Takeaways section (bullet points)
+- [ ] Add clear definitions for medical terms
+- [ ] Add statistics with sources
+- [ ] Optimize FAQ for AI citation
+- [ ] Add structured data for AI crawlers
+
+## True Pillar Pages (Rebuild)
+- [x] Build PillarHub component with full sections (intro, what-is-it, symptoms, causes, risk-factors, research, FAQ, related-articles, related-studies, success-stories, feel-great-section, internal-links)
+- [x] Create Sustainable Health Hub as main authority pillar page
+- [x] Create Insulin Resistance Hub pillar page
+- [x] Create Gut Health Hub pillar page
+- [x] Create Weight Loss Hub pillar page
+- [x] Create Sleep Hub pillar page
+- [x] Create Women's Health Hub pillar page
+- [x] Create Metabolic Health Hub pillar page
+- [x] Generate live verification report with actual URLs and proof
+
+## Feras Alayed Knowledge Hub & Entity Architecture
+- [x] Build Feras Alayed Knowledge Hub page (/feras-alayed)
+- [x] Mission & Vision section
+- [x] Specialization (Therapeutic & Behavioral Nutrition)
+- [x] Health Philosophy section
+- [x] Research & Scientific Commentary section
+- [x] Lectures & Workshops section
+- [x] Countries worked in section
+- [x] Media Interviews section
+- [x] Success Stories section
+- [x] Health Library connection section
+- [x] Latest Articles section (live from DB)
+- [x] Latest Research section (live from DB)
+- [x] Certifications & Credentials section
+- [x] Sustainable Health section
+- [x] Entity-based authority architecture (all content → Feras entity)
+- [x] Person Knowledge Graph JSON-LD on authority page
+- [x] Author entity links from all blog articles
+- [x] Author entity links from all research pages
+- [x] Author entity links from all pillar pages
+- [x] sameAs links to social profiles

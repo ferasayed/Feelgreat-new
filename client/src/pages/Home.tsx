@@ -176,6 +176,9 @@ function HeroSection() {
           alt="Feras Alayed - Sustainable Health Expert"
           className="w-full h-full object-cover opacity-[0.12] scale-110"
           style={{ filter: 'grayscale(30%) blur(1px)' }}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-900/40 to-slate-950/80"></div>
       </div>
@@ -366,6 +369,8 @@ function ProductsSection() {
             src="/manus-storage/feel-great-system_b22dc6e2.png"
             alt="Feel Great Pack - Unimate + Balance"
             className="w-64 md:w-80 rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            decoding="async"
           />
         </div>
 
@@ -374,7 +379,7 @@ function ProductsSection() {
             <div className="h-3 bg-gradient-to-r from-green-500 to-emerald-600"></div>
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
-                <img src="/manus-storage/unimate-product_c205b611.png" alt="Unimate" className="w-24 h-24 object-contain rounded-xl" />
+                <img src="/manus-storage/unimate-product_c205b611.png" alt="Unimate" className="w-24 h-24 object-contain rounded-xl" loading="lazy" decoding="async" />
                 <div>
                   <h3 className="text-2xl font-bold">{t("products.unimate.title")}</h3>
                   <p className="text-sm text-green-600 font-medium">Energy | Performance | Attitude</p>
@@ -398,7 +403,7 @@ function ProductsSection() {
             <div className="h-3 gradient-blue"></div>
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
-                <img src="/manus-storage/balance-product_c1f1843f.png" alt="Balance" className="w-24 h-24 object-contain rounded-xl" />
+                <img src="/manus-storage/balance-product_c1f1843f.png" alt="Balance" className="w-24 h-24 object-contain rounded-xl" loading="lazy" decoding="async" />
                 <div>
                   <h3 className="text-2xl font-bold">{t("products.balance.title")}</h3>
                   <p className="text-sm text-primary font-medium">Fiber | Metabolism | Wellness</p>
@@ -1120,7 +1125,7 @@ function SchemaMarkup() {
         "@type": "Person",
         name: "Feras Alayed",
         jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
-        url: "https://feelgreat.us.com/founder",
+        url: "https://feelgreat.us.com/feras-alayed",
         sameAs: [
           "https://www.instagram.com/use2lose",
           "https://www.tiktok.com/@feras.alayed"

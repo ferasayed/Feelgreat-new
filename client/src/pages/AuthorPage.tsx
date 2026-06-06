@@ -66,7 +66,7 @@ export default function AuthorPage() {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://feelgreat.us.com/" },
-      { "@type": "ListItem", "position": 2, "name": "Authors", "item": "https://feelgreat.us.com/about" },
+      { "@type": "ListItem", "position": 2, "name": "Authors", "item": "https://feelgreat.us.com/feras-alayed" },
       { "@type": "ListItem", "position": 3, "name": "Feras Alayed", "item": "https://feelgreat.us.com/author/feras-alayed" }
     ]
   };

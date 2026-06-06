@@ -56,9 +56,10 @@ export default function BlogArticle() {
         image: article.heroImageUrl || undefined,
         author: {
           "@type": "Person",
+          "@id": "https://feelgreat.us.com/#feras-alayed",
           name: "Feras Alayed",
-          jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
-          url: "https://feelgreat.us.com/founder",
+          jobTitle: "Global Health Educator, Therapeutic & Behavioral Nutrition Specialist, Leadership Mentor",
+          url: "https://feelgreat.us.com/feras-alayed",
           sameAs: [
             "https://www.instagram.com/use2lose",
             "https://www.tiktok.com/@feras.alayed"
@@ -129,12 +130,13 @@ export default function BlogArticle() {
       const authorSchema = {
         "@context": "https://schema.org",
         "@type": "Person",
+        "@id": "https://feelgreat.us.com/#feras-alayed",
         name: "Feras Alayed",
         alternateName: "فراس العايد",
-        jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
-        description: "Founder of the Health Investor concept, Presidential Sapphire partner at Unicity International. Specializes in sustainable health, behavioral nutrition, and metabolic health optimization.",
-        url: "https://feelgreat.us.com/founder",
-        image: "https://feelgreat.us.com/founder",
+        jobTitle: "Global Health Educator, Therapeutic & Behavioral Nutrition Specialist, Leadership Mentor",
+        description: "Global educator, speaker, entrepreneur, therapeutic and behavioral nutrition specialist, and leadership mentor dedicated to helping people create meaningful transformation in health, mindset, leadership, and financial future.",
+        url: "https://feelgreat.us.com/feras-alayed",
+        image: "https://feelgreat.us.com/manus-storage/feras-professional_115956a2.png",
         sameAs: [
           "https://www.instagram.com/use2lose",
           "https://www.tiktok.com/@feras.alayed"

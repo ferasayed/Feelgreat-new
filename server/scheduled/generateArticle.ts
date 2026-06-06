@@ -765,9 +765,10 @@ export async function generateArticleHandler(req: Request, res: Response) {
       image: heroImageUrl || undefined,
       author: {
         "@type": "Person",
+        "@id": "https://feelgreat.us.com/#feras-alayed",
         name: "Feras Alayed",
-        url: "https://feelgreat.us.com/about",
-        jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
+        url: "https://feelgreat.us.com/feras-alayed",
+        jobTitle: "Global Health Educator, Therapeutic & Behavioral Nutrition Specialist, Leadership Mentor",
       },
       publisher: { "@type": "Organization", name: "Feel Great Partner", url: "https://feelgreat.us.com" },
       datePublished: new Date().toISOString(),

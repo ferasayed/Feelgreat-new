@@ -140,6 +140,7 @@ export default function ResearchHub() {
     selectedTopic === "all" ? { limit: 20 } : { limit: 20, topic: selectedTopic }
   );
   const { data: weekData } = trpc.research.thisWeek.useQuery();
+  const { data: monthData } = trpc.research.thisMonth.useQuery();
   const { data: topicsData } = trpc.research.topics.useQuery();
   const { data: mostReadData } = trpc.research.mostRead.useQuery({ limit: 5 });
   const { data: mostImpactfulData } = trpc.research.mostImpactful.useQuery({ limit: 5 });
@@ -220,9 +221,10 @@ export default function ResearchHub() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="grid w-full max-w-lg grid-cols-4">
+          <TabsList className="grid w-full max-w-2xl grid-cols-5">
             <TabsTrigger value="latest">{isAr ? "الأحدث" : "Latest"}</TabsTrigger>
             <TabsTrigger value="week">{isAr ? "هذا الأسبوع" : "This Week"}</TabsTrigger>
+            <TabsTrigger value="month">{isAr ? "هذا الشهر" : "This Month"}</TabsTrigger>
             <TabsTrigger value="popular">{isAr ? "الأكثر قراءة" : "Most Read"}</TabsTrigger>
             <TabsTrigger value="impactful">{isAr ? "الأكثر تأثيراً" : "Most Impactful"}</TabsTrigger>
           </TabsList>
@@ -261,6 +263,20 @@ export default function ResearchHub() {
             ) : (
               <div className="text-center py-20">
                 <p className="text-muted-foreground">{isAr ? "لا توجد دراسات هذا الأسبوع" : "No studies this week"}</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="month" className="mt-6">
+            {monthData && monthData.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {monthData.map((study: any) => (
+                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-muted-foreground">{isAr ? "لا توجد دراسات هذا الشهر" : "No studies this month"}</p>
               </div>
             )}
           </TabsContent>

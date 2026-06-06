@@ -94,6 +94,32 @@ const STATIC_META: Record<string, MetaData> = {
     description: "فراس العايد - أخصائي التغذية العلاجية والسلوكية، Presidential Sapphire في يونيسيتي. خبير في مقاومة الإنسولين والصحة الأيضية.",
     ogType: "profile",
   },
+  "/health-library": {
+    title: "Health Library - Comprehensive Knowledge Hubs | Feel Great",
+    description: "Explore our comprehensive health library: Insulin Resistance, Gut Health, Sustainable Health, Weight Loss, Sleep, Women's Health, and Metabolic Health hubs with 100+ research-backed articles.",
+    ogType: "website",
+  },
+  "/feras-alayed": {
+    title: "Feras Alayed | Knowledge Hub - Sustainable Health, Leadership, Human Empowerment",
+    description: "فراس العايد - مُثقف عالمي، أخصائي تغذية علاجية وسلوكية، مرشد قيادة. بناء حياة أفضل من خلال الصحة، القيادة، النمو، والإمكانات البشرية.",
+    ogType: "profile",
+    ogImage: "/manus-storage/feras-professional_115956a2.png",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": "https://feelgreat.us.com/#feras-alayed",
+      "name": "Feras Alayed",
+      "alternateName": ["فراس العايد", "Feras Al-Ayed"],
+      "jobTitle": "Global Health Educator, Therapeutic & Behavioral Nutrition Specialist, Leadership Mentor",
+      "description": "Global educator, speaker, entrepreneur, therapeutic and behavioral nutrition specialist, and leadership mentor dedicated to helping people create meaningful transformation in health, mindset, leadership, and financial future.",
+      "url": "https://feelgreat.us.com/feras-alayed",
+      "image": "https://feelgreat.us.com/manus-storage/feras-professional_115956a2.png",
+      "sameAs": ["https://www.instagram.com/use2lose", "https://www.tiktok.com/@feras.alayed"],
+      "knowsAbout": ["Sustainable Health", "Behavioral Nutrition", "Metabolic Health", "Leadership Development", "Personal Growth", "Entrepreneurship", "Financial Empowerment", "Human Performance", "Insulin Resistance", "Gut Health"],
+      "worksFor": { "@type": "Organization", "name": "Feel Great", "url": "https://feelgreat.us.com" },
+      "nationality": { "@type": "Country", "name": "Saudi Arabia" }
+    },
+  },
 };
 
 // Pillar pages meta data
@@ -325,6 +351,29 @@ async function resolveMetaForPath(path: string): Promise<MetaData | null> {
   if (topicMatch && PILLAR_META[topicMatch[1]]) {
     const meta = PILLAR_META[topicMatch[1]];
     return { ...meta, canonicalUrl: `${BASE_URL}${cleanPath}`, ogUrl: `${BASE_URL}${cleanPath}`, ogType: "article" };
+  }
+
+  // Health Library hub pages: /health-library/:slug
+  const libraryMatch = cleanPath.match(/^\/health-library\/([^/]+)$/);
+  if (libraryMatch) {
+    const hubSlug = libraryMatch[1];
+    const hubNames: Record<string, string> = {
+      "insulin-resistance": "Insulin Resistance Hub",
+      "gut-health": "Gut Health Hub",
+      "sustainable-health": "Sustainable Health Hub",
+      "weight-loss": "Weight Loss Hub",
+      "sleep": "Sleep & Energy Hub",
+      "womens-health": "Women's Health Hub",
+      "metabolic-health": "Metabolic Health Hub",
+    };
+    const hubName = hubNames[hubSlug] || `${hubSlug} Hub`;
+    return {
+      title: `${hubName} | Health Library | ${SITE_NAME}`,
+      description: `Explore our ${hubName} with research-backed articles on ${hubSlug.replace(/-/g, ' ')}. Evidence-based health information from Feel Great.`,
+      canonicalUrl: `${BASE_URL}${cleanPath}`,
+      ogUrl: `${BASE_URL}${cleanPath}`,
+      ogType: "website",
+    };
   }
 
   // Health condition pages: /health/:slug

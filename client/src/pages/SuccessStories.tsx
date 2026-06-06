@@ -625,7 +625,7 @@ export function SuccessStoryDetail() {
         "@type": "Person",
         name: "Feras Alayed",
         jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
-        url: "https://feelgreat.us.com/about",
+        url: "https://feelgreat.us.com/feras-alayed",
       },
       publisher: {
         "@type": "Organization",
