@@ -156,6 +156,9 @@ function generateWelcomeHtml(data: WelcomeEmailData): string {
       </div>
       <!-- Footer -->
       <div style="background:#f8fafc;padding:20px;text-align:center;border-top:1px solid #e2e8f0;">
+        <p style="color:#3b82f6;font-size:13px;margin:0 0 12px;">
+          <a href="${SITE_URL}/comparison" style="color:#3b82f6;text-decoration:underline;">${isAr ? "لماذا Feel Great؟ قارن بنفسك" : "Why Feel Great? Compare Now"}</a>
+        </p>
         <p style="color:#94a3b8;font-size:12px;margin:0 0 8px;">
           <a href="${SITE_URL}" style="color:#64748b;text-decoration:none;">feelgreat.us.com</a>
         </p>
@@ -247,6 +250,7 @@ export function generateDay3Html(data: WelcomeEmailData): string {
       </div>
       <div style="padding:32px;direction:${dir};">${body}</div>
       <div style="background:#f8fafc;padding:16px;text-align:center;border-top:1px solid #e2e8f0;">
+        <p style="margin:0 0 8px;"><a href="${SITE_URL}/comparison" style="color:#3b82f6;font-size:12px;text-decoration:underline;">${isAr ? "لماذا Feel Great؟ قارن بنفسك" : "Why Feel Great? Compare Now"}</a></p>
         <a href="${SITE_URL}/unsubscribe?email=${encodeURIComponent(data.email)}" style="color:#94a3b8;font-size:11px;">${isAr ? "إلغاء الاشتراك" : "Unsubscribe"}</a>
       </div>
     </div>

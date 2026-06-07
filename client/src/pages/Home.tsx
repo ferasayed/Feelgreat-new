@@ -56,12 +56,12 @@ function Navbar() {
   }, []);
 
   const navLabels: Record<string, Record<string, string>> = {
-    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", opportunity: "الشراكة", register: "سجّل الآن" },
-    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", opportunity: "Partnership", register: "Register" },
-    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", opportunity: "Partenariat", register: "S'inscrire" },
-    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", opportunity: "Asociación", register: "Regístrate" },
-    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", opportunity: "Partnerschaft", register: "Registrieren" },
-    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", opportunity: "Ortaklık", register: "Kaydol" },
+    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", compare: "لماذا نحن؟", opportunity: "الشراكة", register: "سجّل الآن" },
+    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", compare: "Why Us?", opportunity: "Partnership", register: "Register" },
+    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", compare: "Pourquoi nous?", opportunity: "Partenariat", register: "S'inscrire" },
+    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", compare: "¿Por qué nosotros?", opportunity: "Asociación", register: "Regístrate" },
+    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", compare: "Warum wir?", opportunity: "Partnerschaft", register: "Registrieren" },
+    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", compare: "Neden biz?", opportunity: "Ortaklık", register: "Kaydol" },
   };
   const nav = navLabels[lang] || navLabels.en;
 
@@ -77,6 +77,7 @@ function Navbar() {
           <a href="/research" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.research}</a>
           <a href="/health-library" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.library}</a>
           <a href="/feras-alayed" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.knowledgeHub}</a>
+          <a href="/comparison" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.compare}</a>
           <a href="#partnership" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.opportunity}</a>
           <a href="#register" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.register}</a>
         </div>
@@ -103,6 +104,7 @@ function Navbar() {
           <a href="/research" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.research}</a>
           <a href="/health-library" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.library}</a>
           <a href="/feras-alayed" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.knowledgeHub}</a>
+          <a href="/comparison" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.compare}</a>
           <a href="#partnership" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.opportunity}</a>
           <a href="#register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.register}</a>
         </div>
@@ -903,6 +905,15 @@ function RegistrationForm() {
     onSuccess: () => {
       setSubmitted(true);
       toast.success(t("form.success"));
+      // Track conversion events for retargeting pixels
+      if (typeof window !== 'undefined') {
+        if ((window as any).fbq) {
+          (window as any).fbq('track', 'Lead', { content_name: 'Feel Great Registration', content_category: formData.interestPath || 'undecided' });
+        }
+        if ((window as any).gtag) {
+          (window as any).gtag('event', 'generate_lead', { event_category: 'registration', event_label: formData.interestPath || 'undecided' });
+        }
+      }
     },
     onError: () => {
       toast.error(t("form.error"));

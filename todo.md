@@ -728,3 +728,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Create comparison page (/comparison) - Feel Great vs competitors with 6-language support
 - [x] Welcome email sequence triggered automatically on lead registration
 - [x] All CTAs connected to referral link with path-appropriate messaging
+
+## Enhancement Suggestions - June 7, 2026
+- [x] Add comparison page link to main navigation menu (nav.compare in Navbar)
+- [x] Add comparison page link in follow-up emails (followUpSequence.ts + welcomeSequence.ts)
+- [x] Create weekly performance report (registrations, conversion rate, best path) - weeklyReport.ts
+- [x] Add Meta Pixel for retargeting visitors who didn't register (VITE_META_PIXEL_ID env var)
+- [x] Add Google Ads Remarketing tag for retargeting (VITE_GOOGLE_ADS_ID env var)
+- [x] Track registration as conversion event in both pixels (Lead + generate_lead events)

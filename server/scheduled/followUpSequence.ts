@@ -203,6 +203,9 @@ export async function followUpSequenceHandler(req: Request, res: Response) {
                 <div style="text-align: center; margin-top: 30px;">
                   <a href="https://ufeelgreat.com/c/GBP556" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">ابدأ الآن | Start Now</a>
                 </div>
+                <div style="text-align: center; margin-top: 15px;">
+                  <a href="https://feelgreat.us.com/comparison" style="color: #3b82f6; font-size: 14px; text-decoration: underline;">لماذا Feel Great؟ قارن بنفسك | Why Feel Great? Compare Now</a>
+                </div>
                 <hr style="margin-top: 30px; border: none; border-top: 1px solid #e5e7eb;" />
                 <p style="text-align: center; font-size: 12px; color: #9ca3af;"><a href="${unsubscribeUrl}" style="color: #9ca3af;">إلغاء الاشتراك | Unsubscribe</a></p>
               </div>`,

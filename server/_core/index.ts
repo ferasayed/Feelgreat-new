@@ -16,6 +16,7 @@ import { autoIndexHandler, manualIndexHandler } from "../scheduled/autoIndex";
 import { healthMonitorHandler } from "../scheduled/healthMonitor";
 import { handleTranslateContent } from "../scheduled/translateContent";
 import { weeklyNewsletterHandler } from "../scheduled/weeklyNewsletter";
+import { weeklyReportHandler } from "../scheduled/weeklyReport";
 import { resendWebhookHandler } from "../emailAnalytics";
 import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
@@ -76,6 +77,7 @@ async function startServer() {
   app.post("/api/scheduled/healthMonitor", healthMonitorHandler);
   app.post("/api/scheduled/translateContent", handleTranslateContent);
   app.post("/api/scheduled/weeklyNewsletter", weeklyNewsletterHandler);
+  app.post("/api/scheduled/weeklyReport", weeklyReportHandler);
   app.post("/api/manual-index", manualIndexHandler);
   // Resend webhook for email analytics (opens, clicks, bounces)
   app.post("/api/webhooks/resend", resendWebhookHandler);
