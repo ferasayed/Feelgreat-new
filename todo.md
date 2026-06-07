@@ -750,3 +750,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Inject infographic images inside article content (after 2nd H2)
 - [x] Inject product images before CTA section
 - [x] Write vitest tests for image injection logic (10 tests passing)
+
+## Batch Image Regeneration for All Content - June 7, 2026
+- [x] Create scheduled handler to find all content without images (articles + research)
+- [x] Process in batches (3 at a time to avoid rate limits)
+- [x] Register heartbeat job to run daily at 3:00 UTC until all content has images
+- [x] Add admin trigger button ("توليد صور المحتوى") in ContentEngine page
+- [x] Send notification when batch is complete with summary
+- [x] Regenerate images for research studies (heroImageUrl)

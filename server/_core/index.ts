@@ -18,6 +18,7 @@ import { handleTranslateContent } from "../scheduled/translateContent";
 import { weeklyNewsletterHandler } from "../scheduled/weeklyNewsletter";
 import { weeklyReportHandler } from "../scheduled/weeklyReport";
 import { resendWebhookHandler } from "../emailAnalytics";
+import { batchImageRegenHandler } from "../scheduled/batchImageRegen";
 import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
@@ -78,6 +79,7 @@ async function startServer() {
   app.post("/api/scheduled/translateContent", handleTranslateContent);
   app.post("/api/scheduled/weeklyNewsletter", weeklyNewsletterHandler);
   app.post("/api/scheduled/weeklyReport", weeklyReportHandler);
+  app.post("/api/scheduled/batchImageRegen", batchImageRegenHandler);
   app.post("/api/manual-index", manualIndexHandler);
   // Resend webhook for email analytics (opens, clicks, bounces)
   app.post("/api/webhooks/resend", resendWebhookHandler);
@@ -568,6 +570,7 @@ async function initArticleGenJobs() {
       { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation (18:00 UTC)", path: "/api/scheduled/generateArticle" },
       { name: "auto-index-daily", cron: "0 30 7 * * *", description: "Daily auto-indexing: submit all URLs to IndexNow + ping Google/Bing (7:30 UTC)", path: "/api/scheduled/autoIndex" },
       { name: "auto-index-evening", cron: "0 30 19 * * *", description: "Evening auto-indexing: submit new content to search engines (19:30 UTC)", path: "/api/scheduled/autoIndex" },
+      { name: "batch-image-regen", cron: "0 0 3 * * *", description: "Batch image regeneration: generate images for all content without images (3:00 UTC daily)", path: "/api/scheduled/batchImageRegen" },
     ];
 
     for (const schedule of schedules) {

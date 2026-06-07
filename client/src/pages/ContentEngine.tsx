@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   FileText, TrendingUp, Image, Share2, BarChart3,
   Eye, EyeOff, Copy, ExternalLink, Calendar, Target,
-  Zap, Globe, BookOpen, Sparkles, Clock, Instagram, Send, Play
+  Zap, Globe, BookOpen, Sparkles, Clock, Instagram, Send, Play, ImagePlus
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -191,6 +191,36 @@ function PublishToInstagramButton({ articleId }: { articleId: number }) {
   );
 }
 
+function BatchImageRegenButton() {
+  const batchMutation = trpc.blog.batchRegenerateImages.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleBatchRegen = async () => {
+    setIsLoading(true);
+    try {
+      const result = await batchMutation.mutateAsync();
+      toast.success(result.message || "تم بدء إعادة توليد الصور", { duration: 5000 });
+    } catch (e: any) {
+      toast.error("فشل في بدء إعادة توليد الصور");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="gap-1"
+      onClick={handleBatchRegen}
+      disabled={isLoading}
+    >
+      <ImagePlus className="h-3 w-3" />
+      {isLoading ? "جاري التوليد..." : "توليد صور المحتوى"}
+    </Button>
+  );
+}
+
 function ManualTriggerButton() {
   const triggerMutation = trpc.schedule.triggerArticleGen.useMutation();
   const [isLoading, setIsLoading] = useState(false);
@@ -277,6 +307,7 @@ export default function ContentEngine() {
           <p className="text-muted-foreground mt-1">نظام توليد ونشر المقالات الصحية الأوتوماتيكي</p>
         </div>
         <div className="flex items-center gap-2">
+          <BatchImageRegenButton />
           <ManualTriggerButton />
           <Badge variant="outline" className="gap-1">
             <Clock className="h-3 w-3" />

@@ -622,6 +622,25 @@ export const appRouter = router({
           productImage: !!imageSet.product?.url,
         };
       }),
+
+    // Admin: trigger batch image regeneration for all content without images
+    batchRegenerateImages: adminProcedure
+      .mutation(async () => {
+        // Trigger the batch handler asynchronously
+        const baseUrl = process.env.NODE_ENV === "production"
+          ? "https://feelgreat.us.com"
+          : `http://localhost:${process.env.PORT || 3000}`;
+
+        fetch(`${baseUrl}/api/scheduled/batchImageRegen`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }).catch((err) => console.error("[BatchImageRegen] Trigger failed:", err));
+
+        return {
+          success: true,
+          message: "تم بدء عملية إعادة توليد الصور. ستصلك إشعار عند الانتهاء.",
+        };
+      }),
   }),
 
   // Research Hub (public)
