@@ -696,3 +696,5 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add article comments system (schema, API, UI)
 - [x] Build weekly newsletter notification system for subscribers (runs every Sunday 8:00 UTC)
 - [x] Register health monitor heartbeat job (every 6 hours)
+- [x] Integrate Resend email service for sending weekly newsletter (newsletter@feelgreat.us.com)
+- [x] Validate Resend API key with vitest (98 tests passing)
