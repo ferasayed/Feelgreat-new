@@ -28,6 +28,8 @@ export const leads = mysqlTable("leads", {
   phone: varchar("phone", { length: 50 }).notNull(),
   country: varchar("country", { length: 100 }).notNull(),
   source: varchar("source", { length: 50 }).default("form").notNull(),
+  interestPath: mysqlEnum("interest_path", ["consumer", "investor", "undecided"]).default("undecided").notNull(),
+  language: varchar("language", { length: 10 }).default("ar").notNull(),
   notes: text("notes"),
   followUpStatus: mysqlEnum("followUpStatus", ["pending", "contacted", "converted", "lost"]).default("pending").notNull(),
   followUpCount: int("followUpCount").default(0).notNull(),

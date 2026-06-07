@@ -105,6 +105,8 @@ describe("leads.register", () => {
       phone: "+966501234567",
       country: "sa",
       source: "form",
+      interestPath: "undecided",
+      language: "ar",
     });
   });
 

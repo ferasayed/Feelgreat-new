@@ -718,3 +718,13 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Auto-determine winner after 2 hours and send to remaining 80% (setTimeout)
 - [x] Add A/B test results view in admin dashboard (ABTestResults component)
 - [x] Add tRPC procedure for fetching A/B test history (dashboard.abTestHistory)
+
+## Conversion Funnel Enhancement - June 7, 2026
+- [x] Build welcome email sequence (5 emails over 10 days) with consumer/investor paths (server/welcomeSequence.ts)
+- [x] Add path classification question (consumer vs investor) in registration form (Home.tsx)
+- [x] Direct CTA to Unicity referral link (https://ufeelgreat.com/c/GBP556) after registration
+- [x] Income calculator already exists in Partner page (IncomeCalculator component)
+- [x] Follow-up sequence now sends actual emails via Resend (followUpSequence.ts updated)
+- [x] Create comparison page (/comparison) - Feel Great vs competitors with 6-language support
+- [x] Welcome email sequence triggered automatically on lead registration
+- [x] All CTAs connected to referral link with path-appropriate messaging

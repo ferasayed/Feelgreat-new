@@ -4,6 +4,7 @@ import { getDb } from "../db";
 import { leads } from "../../drizzle/schema";
 import { invokeLLM } from "../_core/llm";
 import { notifyOwner } from "../_core/notification";
+import { sendEmail } from "../email";
 import { eq, and, lte, isNull, or, sql } from "drizzle-orm";
 
 /**
@@ -189,6 +190,24 @@ export async function followUpSequenceHandler(req: Request, res: Response) {
 
           const content = response.choices?.[0]?.message?.content;
           const message = typeof content === "string" ? content : "Follow-up generated";
+
+          // Send actual email via Resend
+          if (lead.email) {
+            const unsubscribeUrl = `https://feelgreat.us.com/unsubscribe?email=${encodeURIComponent(lead.email)}&token=${Buffer.from(lead.email).toString('base64')}`;
+            await sendEmail({
+              to: lead.email,
+              subject: step.subject,
+              html: `<div style="font-family: 'Segoe UI', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; direction: rtl;">
+                <div style="text-align: center; margin-bottom: 20px;"><h2 style="color: #1e40af;">Feel Great</h2></div>
+                <div style="white-space: pre-wrap; line-height: 1.8; font-size: 15px;">${message.replace(/\n/g, '<br>')}</div>
+                <div style="text-align: center; margin-top: 30px;">
+                  <a href="https://ufeelgreat.com/c/GBP556" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">ابدأ الآن | Start Now</a>
+                </div>
+                <hr style="margin-top: 30px; border: none; border-top: 1px solid #e5e7eb;" />
+                <p style="text-align: center; font-size: 12px; color: #9ca3af;"><a href="${unsubscribeUrl}" style="color: #9ca3af;">إلغاء الاشتراك | Unsubscribe</a></p>
+              </div>`,
+            }).catch(e => console.error(`[FollowUpSequence] Email send failed for ${lead.email}:`, e));
+          }
 
           // Update lead follow-up status
           await db

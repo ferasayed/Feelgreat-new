@@ -896,7 +896,7 @@ function TestimonialsSection() {
 
 function RegistrationForm() {
   const { t, lang } = useLanguage();
-  const [formData, setFormData] = useState({ fullName: "", email: "", phone: "", country: "" });
+  const [formData, setFormData] = useState({ fullName: "", email: "", phone: "", country: "", interestPath: "" as "consumer" | "investor" | "" });
   const [submitted, setSubmitted] = useState(false);
 
   const registerMutation = trpc.leads.register.useMutation({
@@ -912,12 +912,60 @@ function RegistrationForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName || !formData.email || !formData.phone || !formData.country) return;
-    registerMutation.mutate({ ...formData, source: `landing-${lang}` });
+    registerMutation.mutate({
+      ...formData,
+      source: `landing-${lang}`,
+      interestPath: formData.interestPath || "undecided",
+      language: lang,
+    });
   };
 
   const countries = ["sa", "ae", "eg", "jo", "us", "uk", "fr", "de", "es", "tr", "other"];
+  const pathLabels: Record<string, { consumer: string; investor: string; question: string }> = {
+    ar: { consumer: "\ud83c\udf3f \u0623\u0631\u064a\u062f \u062a\u062d\u0633\u064a\u0646 \u0635\u062d\u062a\u064a", investor: "\ud83d\udcbc \u0623\u0631\u064a\u062f \u0628\u0646\u0627\u0621 \u062f\u062e\u0644 \u0625\u0636\u0627\u0641\u064a", question: "\u0645\u0627 \u0647\u062f\u0641\u0643 \u0627\u0644\u0631\u0626\u064a\u0633\u064a\u061f" },
+    en: { consumer: "\ud83c\udf3f Improve my health", investor: "\ud83d\udcbc Build extra income", question: "What's your main goal?" },
+    fr: { consumer: "\ud83c\udf3f Am\u00e9liorer ma sant\u00e9", investor: "\ud83d\udcbc G\u00e9n\u00e9rer un revenu", question: "Quel est votre objectif?" },
+    es: { consumer: "\ud83c\udf3f Mejorar mi salud", investor: "\ud83d\udcbc Generar ingresos", question: "\u00bfCu\u00e1l es tu objetivo?" },
+    de: { consumer: "\ud83c\udf3f Gesundheit verbessern", investor: "\ud83d\udcbc Einkommen aufbauen", question: "Was ist Ihr Ziel?" },
+    tr: { consumer: "\ud83c\udf3f Sa\u011fl\u0131\u011f\u0131m\u0131 iyile\u015ftirmek", investor: "\ud83d\udcbc Gelir olu\u015fturmak", question: "Hedefiniz nedir?" },
+  };
+  const pl = pathLabels[lang] || pathLabels.en;
 
   if (submitted) {
+    const isInvestor = formData.interestPath === "investor";
+    const successLabels: Record<string, { title: string; subtitle: string; cta: string }> = {
+      ar: {
+        title: "\u062a\u0645 \u0627\u0644\u062a\u0633\u062c\u064a\u0644 \u0628\u0646\u062c\u0627\u062d! \ud83c\udf89",
+        subtitle: isInvestor ? "\u062a\u062d\u0642\u0642 \u0645\u0646 \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0644\u0644\u062d\u0635\u0648\u0644 \u0639\u0644\u0649 \u062a\u0641\u0627\u0635\u064a\u0644 \u062e\u0637\u0629 \u0627\u0644\u062f\u062e\u0644. \u0627\u0644\u062e\u0637\u0648\u0629 \u0627\u0644\u062a\u0627\u0644\u064a\u0629: \u0633\u062c\u0651\u0644 \u062d\u0633\u0627\u0628\u0643 \u0627\u0644\u0645\u062c\u0627\u0646\u064a" : "\u062a\u062d\u0642\u0642 \u0645\u0646 \u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a. \u0627\u0644\u062e\u0637\u0648\u0629 \u0627\u0644\u062a\u0627\u0644\u064a\u0629: \u0627\u0637\u0644\u0628 \u0645\u0646\u062a\u062c\u0627\u062a\u0643 \u0627\u0644\u0622\u0646",
+        cta: isInvestor ? "\u0633\u062c\u0651\u0644 \u0643\u0634\u0631\u064a\u0643 \u0627\u0644\u0622\u0646" : "\u0627\u0637\u0644\u0628 Feel Great \u0627\u0644\u0622\u0646",
+      },
+      en: {
+        title: "Registration Successful! \ud83c\udf89",
+        subtitle: isInvestor ? "Check your email for income plan details. Next step: Create your free account" : "Check your email. Next step: Order your products now",
+        cta: isInvestor ? "Register as Partner" : "Order Feel Great Now",
+      },
+      fr: {
+        title: "Inscription r\u00e9ussie! \ud83c\udf89",
+        subtitle: isInvestor ? "V\u00e9rifiez votre email. Prochaine \u00e9tape: Cr\u00e9ez votre compte" : "V\u00e9rifiez votre email. Prochaine \u00e9tape: Commandez vos produits",
+        cta: isInvestor ? "S'inscrire comme partenaire" : "Commander Feel Great",
+      },
+      es: {
+        title: "\u00a1Registro exitoso! \ud83c\udf89",
+        subtitle: isInvestor ? "Revisa tu email. Siguiente paso: Crea tu cuenta" : "Revisa tu email. Siguiente paso: Ordena tus productos",
+        cta: isInvestor ? "Reg\u00edstrate como socio" : "Ordenar Feel Great",
+      },
+      de: {
+        title: "Registrierung erfolgreich! \ud83c\udf89",
+        subtitle: isInvestor ? "Pr\u00fcfen Sie Ihre E-Mail. N\u00e4chster Schritt: Konto erstellen" : "Pr\u00fcfen Sie Ihre E-Mail. N\u00e4chster Schritt: Produkte bestellen",
+        cta: isInvestor ? "Als Partner registrieren" : "Feel Great bestellen",
+      },
+      tr: {
+        title: "Kay\u0131t ba\u015far\u0131l\u0131! \ud83c\udf89",
+        subtitle: isInvestor ? "E-postan\u0131z\u0131 kontrol edin. Sonraki ad\u0131m: Hesab\u0131n\u0131z\u0131 olu\u015fturun" : "E-postan\u0131z\u0131 kontrol edin. Sonraki ad\u0131m: \u00dcr\u00fcnlerinizi sipari\u015f edin",
+        cta: isInvestor ? "Ortak olarak kaydol" : "Feel Great sipari\u015f et",
+      },
+    };
+    const sl = successLabels[lang] || successLabels.en;
     return (
       <section id="register" className="py-24 gradient-section">
         <div className="container">
@@ -925,7 +973,13 @@ function RegistrationForm() {
             <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
               <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
             </div>
-            <h3 className="text-2xl font-bold mb-3">{t("form.success")}</h3>
+            <h3 className="text-2xl font-bold mb-3">{sl.title}</h3>
+            <p className="text-muted-foreground mb-6">{sl.subtitle}</p>
+            <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="text-lg px-8 py-6 gradient-gold text-foreground font-bold border-0 hover:opacity-90">
+                {sl.cta} <ArrowRight className="w-5 h-5 ms-2" />
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -944,6 +998,34 @@ function RegistrationForm() {
           <Card className="border-0 shadow-2xl">
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Path Classification */}
+                <div>
+                  <label className="block text-sm font-medium mb-3">{pl.question}</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setFormData(p => ({ ...p, interestPath: "consumer" }))}
+                      className={`p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                        formData.interestPath === "consumer"
+                          ? "border-green-500 bg-green-50 dark:bg-green-950/30 shadow-md scale-[1.02]"
+                          : "border-border hover:border-green-300 hover:bg-green-50/50 dark:hover:bg-green-950/10"
+                      }`}
+                    >
+                      <span className="text-sm font-medium">{pl.consumer}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData(p => ({ ...p, interestPath: "investor" }))}
+                      className={`p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                        formData.interestPath === "investor"
+                          ? "border-amber-500 bg-amber-50 dark:bg-amber-950/30 shadow-md scale-[1.02]"
+                          : "border-border hover:border-amber-300 hover:bg-amber-50/50 dark:hover:bg-amber-950/10"
+                      }`}
+                    >
+                      <span className="text-sm font-medium">{pl.investor}</span>
+                    </button>
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">{t("form.name")}</label>
                   <Input value={formData.fullName} onChange={e => setFormData(p => ({ ...p, fullName: e.target.value }))} placeholder={t("form.name")} required className="h-12" />

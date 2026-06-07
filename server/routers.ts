@@ -226,6 +226,8 @@ export const appRouter = router({
         phone: z.string().min(5),
         country: z.string().min(2),
         source: z.string().optional(),
+        interestPath: z.enum(["consumer", "investor", "undecided"]).optional(),
+        language: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
         const lead = await createLead({
@@ -234,6 +236,8 @@ export const appRouter = router({
           phone: input.phone,
           country: input.country,
           source: input.source ?? "form",
+          interestPath: input.interestPath ?? "undecided",
+          language: input.language ?? "ar",
         });
 
         if (!lead) {
@@ -243,10 +247,22 @@ export const appRouter = router({
           });
         }
 
+        // Send welcome email (best-effort, don't block the response)
+        import("./welcomeSequence").then(({ sendWelcomeEmail }) => {
+          sendWelcomeEmail({
+            fullName: input.fullName,
+            email: input.email,
+            country: input.country,
+            language: input.language ?? "ar",
+            path: input.interestPath ?? "undecided",
+          }).catch(e => console.error("[WelcomeEmail] Failed:", e));
+        }).catch(e => console.error("[WelcomeEmail] Import failed:", e));
+
         // Notify owner (best-effort, don't block the response)
+        const pathLabel = input.interestPath === "investor" ? "مستثمر/Investor" : input.interestPath === "consumer" ? "مستهلك/Consumer" : "غير محدد/Undecided";
         notifyOwner({
           title: "🎯 شريك محتمل جديد! / New Potential Partner!",
-          content: `تسجيل جديد / New Registration:\nالاسم/Name: ${input.fullName}\nالبريد/Email: ${input.email}\nالهاتف/Phone: ${input.phone}\nالدولة/Country: ${input.country}\nالمصدر/Source: ${input.source ?? "form"}`,
+          content: `تسجيل جديد / New Registration:\nالاسم/Name: ${input.fullName}\nالبريد/Email: ${input.email}\nالهاتف/Phone: ${input.phone}\nالدولة/Country: ${input.country}\nالمسار/Path: ${pathLabel}\nالمصدر/Source: ${input.source ?? "form"}`,
         }).catch(e => console.error("[Notification] Failed to notify owner about new lead:", e));
 
         return { success: true, lead };

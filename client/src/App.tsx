@@ -43,6 +43,7 @@ const HealthLibrary = lazy(() => import("./pages/HealthLibrary"));
 const FerasKnowledgeHub = lazy(() => import("./pages/FerasKnowledgeHub"));
 const HealthLibraryHub = lazy(() => import("./pages/HealthLibrary").then(m => ({ default: m.HealthLibraryHub })));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const Comparison = lazy(() => import("./pages/Comparison"));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -99,6 +100,7 @@ function AppRoutes() {
         <Route path={"/health-library"} component={HealthLibrary} />
         <Route path={"/health-library/:slug"} component={HealthLibraryHub} />
         <Route path={"/unsubscribe"} component={Unsubscribe} />
+        <Route path={"/comparison"} component={Comparison} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
