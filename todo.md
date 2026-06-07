@@ -679,3 +679,10 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Fix article generation JSON parsing failures (added retry with shorter prompt)
 - [x] Schedule research discovery heartbeat job (was missing - now runs 8:00 and 16:00 UTC)
 - [x] Remove duplicate daily-seo-article heartbeat job
+
+## Self-Healing Monitoring System
+- [ ] Create health check handler that tests all scheduled tasks
+- [ ] Implement auto-retry logic for failed tasks
+- [ ] Add failure detection and diagnosis using AI
+- [ ] Send owner notification with status report
+- [ ] Schedule monitoring job to run every 6 hours
