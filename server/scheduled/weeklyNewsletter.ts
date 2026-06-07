@@ -1,18 +1,19 @@
 import type { Request, Response } from "express";
 import { getActiveSubscribers, getRecentArticles } from "../db";
 import { getPublishedResearch } from "../db";
-import { invokeLLM } from "../_core/llm";
 import { notifyOwner } from "../_core/notification";
+import {
+  sendBatchEmails,
+  generateNewsletterHtml,
+  generateArticleSectionHtml,
+  generateResearchSectionHtml,
+  type BatchEmailItem,
+} from "../email";
 
 /**
  * Weekly Newsletter Handler
  * Runs once a week (Sunday 8:00 UTC) to send a digest of new articles and research
- * to all active subscribers via the notification system.
- * 
- * Since we don't have a direct email sending service, this:
- * 1. Generates a multilingual newsletter summary using AI
- * 2. Notifies the owner with the newsletter content for distribution
- * 3. Could be extended to integrate with email services in the future
+ * to all active subscribers via Resend email service.
  */
 
 const NEWSLETTER_LABELS: Record<string, {
@@ -21,7 +22,7 @@ const NEWSLETTER_LABELS: Record<string, {
 }> = {
   ar: {
     subject: "النشرة الأسبوعية - أحدث المقالات والأبحاث الصحية",
-    greeting: "مرحباً",
+    greeting: "مرحباً! إليك أحدث المقالات والأبحاث الصحية لهذا الأسبوع:",
     newArticles: "مقالات جديدة هذا الأسبوع",
     newResearch: "أبحاث جديدة هذا الأسبوع",
     readMore: "اقرأ المزيد",
@@ -29,7 +30,7 @@ const NEWSLETTER_LABELS: Record<string, {
   },
   en: {
     subject: "Weekly Digest - Latest Health Articles & Research",
-    greeting: "Hello",
+    greeting: "Hello! Here are the latest health articles and research from this week:",
     newArticles: "New Articles This Week",
     newResearch: "New Research This Week",
     readMore: "Read More",
@@ -37,7 +38,7 @@ const NEWSLETTER_LABELS: Record<string, {
   },
   fr: {
     subject: "Digest Hebdomadaire - Derniers Articles & Recherches Santé",
-    greeting: "Bonjour",
+    greeting: "Bonjour ! Voici les derniers articles et recherches santé de cette semaine :",
     newArticles: "Nouveaux Articles Cette Semaine",
     newResearch: "Nouvelles Recherches Cette Semaine",
     readMore: "Lire la suite",
@@ -45,7 +46,7 @@ const NEWSLETTER_LABELS: Record<string, {
   },
   es: {
     subject: "Resumen Semanal - Últimos Artículos e Investigaciones de Salud",
-    greeting: "Hola",
+    greeting: "¡Hola! Aquí tienes los últimos artículos e investigaciones de salud de esta semana:",
     newArticles: "Nuevos Artículos Esta Semana",
     newResearch: "Nuevas Investigaciones Esta Semana",
     readMore: "Leer más",
@@ -53,7 +54,7 @@ const NEWSLETTER_LABELS: Record<string, {
   },
   de: {
     subject: "Wöchentlicher Digest - Neueste Gesundheitsartikel & Forschung",
-    greeting: "Hallo",
+    greeting: "Hallo! Hier sind die neuesten Gesundheitsartikel und Forschungsergebnisse dieser Woche:",
     newArticles: "Neue Artikel Diese Woche",
     newResearch: "Neue Forschung Diese Woche",
     readMore: "Weiterlesen",
@@ -61,7 +62,7 @@ const NEWSLETTER_LABELS: Record<string, {
   },
   tr: {
     subject: "Haftalık Özet - En Son Sağlık Makaleleri ve Araştırmalar",
-    greeting: "Merhaba",
+    greeting: "Merhaba! İşte bu haftanın en son sağlık makaleleri ve araştırmaları:",
     newArticles: "Bu Haftanın Yeni Makaleleri",
     newResearch: "Bu Haftanın Yeni Araştırmaları",
     readMore: "Devamını Oku",
@@ -87,7 +88,7 @@ function getResearchTitle(study: any, lang: string): string {
 
 export async function weeklyNewsletterHandler(req: Request, res: Response) {
   try {
-    console.log("[WeeklyNewsletter] Starting weekly newsletter generation...");
+    console.log("[WeeklyNewsletter] Starting weekly newsletter...");
 
     // Get all active subscribers
     const subscribers = await getActiveSubscribers();
@@ -98,7 +99,7 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
 
     // Get recent articles (last 7 days)
     const recentArticles = await getRecentArticles(7);
-    
+
     // Get recent research (last 7 days)
     const recentResearch = await getPublishedResearch(10, 0);
     const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -119,67 +120,87 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       subscribersByLang[lang].push(sub);
     }
 
-    // Generate newsletter content for each language
-    const results: string[] = [];
     const baseUrl = "https://feelgreat.us.com";
+    const allEmails: BatchEmailItem[] = [];
+    const langStats: Record<string, number> = {};
 
     for (const [lang, subs] of Object.entries(subscribersByLang)) {
       const labels = NEWSLETTER_LABELS[lang] || NEWSLETTER_LABELS.en;
       const langPrefix = lang === "en" ? "" : `/${lang}`;
 
-      // Build article list
-      let articlesList = "";
-      if (recentArticles.length > 0) {
-        articlesList = `\n\n📰 **${labels.newArticles}:**\n`;
-        for (const article of recentArticles.slice(0, 5)) {
-          const title = getArticleTitle(article, lang);
-          if (title && title !== "Untitled") {
-            articlesList += `• [${title}](${baseUrl}${langPrefix}/blog/${article.slug})\n`;
-          }
-        }
+      // Build article items
+      const articleItems = recentArticles.slice(0, 5).map((article) => ({
+        title: getArticleTitle(article, lang),
+        url: `${baseUrl}${langPrefix}/blog/${article.slug}`,
+      })).filter((a) => a.title !== "Untitled");
+
+      // Build research items
+      const researchItems = weeklyResearch.slice(0, 5).map((study) => ({
+        title: getResearchTitle(study, lang),
+        url: `${baseUrl}${langPrefix}/research/${(study as any).slug}`,
+      })).filter((s) => s.title !== "Untitled");
+
+      const articlesHtml = generateArticleSectionHtml(articleItems, labels.newArticles);
+      const researchHtml = generateResearchSectionHtml(researchItems, labels.newResearch);
+
+      // Generate emails for each subscriber in this language group
+      for (const sub of subs) {
+        const unsubscribeUrl = `${baseUrl}/unsubscribe?email=${encodeURIComponent(sub.email)}`;
+        const html = generateNewsletterHtml({
+          greeting: labels.greeting,
+          articlesSection: articlesHtml,
+          researchSection: researchHtml,
+          unsubscribeUrl,
+          unsubscribeLabel: labels.unsubscribe,
+          lang,
+        });
+
+        allEmails.push({
+          to: sub.email,
+          subject: labels.subject,
+          html,
+          tags: [
+            { name: "type", value: "weekly-newsletter" },
+            { name: "language", value: lang },
+          ],
+          headers: {
+            "List-Unsubscribe": `<${unsubscribeUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
+        });
       }
 
-      // Build research list
-      let researchList = "";
-      if (weeklyResearch.length > 0) {
-        researchList = `\n\n🔬 **${labels.newResearch}:**\n`;
-        for (const study of weeklyResearch.slice(0, 5)) {
-          const title = getResearchTitle(study, lang);
-          if (title && title !== "Untitled") {
-            researchList += `• [${title}](${baseUrl}${langPrefix}/research/${study.slug})\n`;
-          }
-        }
-      }
-
-      const newsletterContent = `${labels.greeting}!\n${articlesList}${researchList}\n\n---\n${subs.length} ${lang === "ar" ? "مشترك" : "subscribers"} (${lang})`;
-      results.push(`[${lang}] ${subs.length} subscribers: ${recentArticles.length} articles, ${weeklyResearch.length} research`);
+      langStats[lang] = subs.length;
     }
 
-    // Notify owner with the newsletter summary
+    // Send all emails via Resend batch API
+    console.log(`[WeeklyNewsletter] Sending ${allEmails.length} emails...`);
+    const { sent, failed } = await sendBatchEmails(allEmails);
+
+    // Notify owner with results
     const summaryTitle = "📬 النشرة الأسبوعية - تقرير الإرسال";
     const summaryContent = [
-      `عدد المشتركين: ${subscribers.length}`,
-      `المقالات الجديدة: ${recentArticles.length}`,
-      `الأبحاث الجديدة: ${weeklyResearch.length}`,
+      `✅ تم إرسال: ${sent} رسالة`,
+      `❌ فشل: ${failed} رسالة`,
+      `📊 إجمالي المشتركين: ${subscribers.length}`,
+      `📰 المقالات الجديدة: ${recentArticles.length}`,
+      `🔬 الأبحاث الجديدة: ${weeklyResearch.length}`,
       ``,
       `التوزيع حسب اللغة:`,
-      ...Object.entries(subscribersByLang).map(([lang, subs]) => `  • ${lang}: ${subs.length} مشترك`),
-      ``,
-      `التفاصيل:`,
-      ...results,
+      ...Object.entries(langStats).map(([lang, count]) => `  • ${lang}: ${count} مشترك`),
     ].join("\n");
 
     await notifyOwner({ title: summaryTitle, content: summaryContent });
 
-    console.log(`[WeeklyNewsletter] Newsletter generated for ${subscribers.length} subscribers.`);
+    console.log(`[WeeklyNewsletter] Done. Sent: ${sent}, Failed: ${failed}`);
     return res.json({
       success: true,
+      sent,
+      failed,
       subscribersCount: subscribers.length,
       articlesCount: recentArticles.length,
       researchCount: weeklyResearch.length,
-      languageBreakdown: Object.fromEntries(
-        Object.entries(subscribersByLang).map(([lang, subs]) => [lang, subs.length])
-      ),
+      languageBreakdown: langStats,
     });
   } catch (error: any) {
     console.error("[WeeklyNewsletter] Error:", error.message);

@@ -16,6 +16,7 @@ import { autoIndexHandler, manualIndexHandler } from "../scheduled/autoIndex";
 import { healthMonitorHandler } from "../scheduled/healthMonitor";
 import { handleTranslateContent } from "../scheduled/translateContent";
 import { weeklyNewsletterHandler } from "../scheduled/weeklyNewsletter";
+import { resendWebhookHandler } from "../emailAnalytics";
 import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
@@ -76,6 +77,8 @@ async function startServer() {
   app.post("/api/scheduled/translateContent", handleTranslateContent);
   app.post("/api/scheduled/weeklyNewsletter", weeklyNewsletterHandler);
   app.post("/api/manual-index", manualIndexHandler);
+  // Resend webhook for email analytics (opens, clicks, bounces)
+  app.post("/api/webhooks/resend", resendWebhookHandler);
 
   // Seed article endpoint - bypasses cron auth for initial blog population
   app.post("/api/seed-article", async (req, res) => {

@@ -368,11 +368,22 @@ export const appRouter = router({
       };
     }),
 
-    conversations: adminProcedure.query(async () => {
+        conversations: adminProcedure.query(async () => {
       return getAllConversations();
     }),
+    emailAnalytics: adminProcedure
+      .input(z.object({ days: z.number().min(1).max(90).optional() }).optional())
+      .query(async ({ input }) => {
+        const { getEmailAnalyticsSummary, getDailyEmailStats, getTopClickedLinks } = await import("./emailAnalytics");
+        const days = input?.days || 30;
+        const [summary, daily, topLinks] = await Promise.all([
+          getEmailAnalyticsSummary(days),
+          getDailyEmailStats(days),
+          getTopClickedLinks(10),
+        ]);
+        return { summary, daily, topLinks };
+      }),
   }),
-
   // Blog articles (public)
   blog: router({
     list: publicProcedure
@@ -760,6 +771,37 @@ export const appRouter = router({
     }),
   }),
 
+  push: router({
+    subscribe: publicProcedure
+      .input(z.object({
+        endpoint: z.string().url(),
+        p256dh: z.string(),
+        auth: z.string(),
+        language: z.string().default("ar"),
+      }))
+      .mutation(async ({ input }) => {
+        const { savePushSubscription } = await import("./pushNotifications");
+        const result = await savePushSubscription({
+          endpoint: input.endpoint,
+          keys: { p256dh: input.p256dh, auth: input.auth },
+          language: input.language,
+        });
+        if (!result) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to save subscription" });
+        return { success: true };
+      }),
+    unsubscribe: publicProcedure
+      .input(z.object({ endpoint: z.string().url() }))
+      .mutation(async ({ input }) => {
+        const { removePushSubscription } = await import("./pushNotifications");
+        await removePushSubscription(input.endpoint);
+        return { success: true };
+      }),
+    stats: adminProcedure.query(async () => {
+      const { getPushSubscriptionCount } = await import("./pushNotifications");
+      const count = await getPushSubscriptionCount();
+      return { subscriberCount: count };
+    }),
+  }),
   comments: router({
     list: publicProcedure
       .input(z.object({ articleId: z.number() }))

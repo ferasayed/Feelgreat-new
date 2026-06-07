@@ -1097,6 +1097,10 @@ export async function generateArticleHandler(req: Request, res: Response) {
     // Ping IndexNow to notify search engines of new content
     if (meetsMinWordCount) {
       pingIndexNow(slug).catch((e) => console.error("[IndexNow] Ping failed:", e));
+      // Send push notifications to all subscribers about the new article
+      import("../pushNotifications").then(({ notifyNewArticle: pushNotify }) => {
+        pushNotify({ titleAr: article.titleAr, titleEn: article.titleEn, slug }).catch((e: any) => console.error("[Push] Notification failed:", e));
+      }).catch((e: any) => console.error("[Push] Import failed:", e));
     }
 
     return res.json({

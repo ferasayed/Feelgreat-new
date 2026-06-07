@@ -698,3 +698,14 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Register health monitor heartbeat job (every 6 hours)
 - [x] Integrate Resend email service for sending weekly newsletter (newsletter@feelgreat.us.com)
 - [x] Validate Resend API key with vitest (98 tests passing)
+
+## Unsubscribe, Push Notifications, Email Analytics - June 7, 2026
+- [x] Create /unsubscribe page with token-based unsubscribe link
+- [x] Add unsubscribe link to all newsletter emails (via weeklyNewsletter.ts Resend integration)
+- [x] Build browser push notifications system (service worker + VAPID + subscription)
+- [x] Send push notification when new article is published (in generateArticle.ts)
+- [x] Add email analytics tracking (open rate, click rate) via Resend webhooks (/api/webhooks/resend)
+- [x] Display email analytics in admin dashboard (dashboard.emailAnalytics procedure)
+- [x] Enable open_tracking and click_tracking on Resend domain
+- [x] Create PushNotificationButton component with 6-language support
+- [x] Add push notification button to NewsletterSection

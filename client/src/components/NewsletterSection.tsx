@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, CheckCircle, Loader2 } from "lucide-react";
+import PushNotificationButton from "@/components/PushNotificationButton";
 
 export function NewsletterSection() {
   const { lang } = useLanguage();
@@ -173,6 +174,11 @@ export function NewsletterSection() {
             <p className="text-xs text-muted-foreground mt-4">{l.privacy}</p>
           </CardContent>
         </Card>
+
+        {/* Push Notification opt-in */}
+        <div className="mt-6">
+          <PushNotificationButton />
+        </div>
       </div>
     </section>
   );
