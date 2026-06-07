@@ -246,6 +246,78 @@ export default function About() {
         </div>
       </section>
 
+      {/* Photo Gallery - Firas in Action */}
+      <section className="container max-w-6xl mx-auto px-4 py-16" id="gallery">
+        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "فراس في الميدان" : "Firas in Action"}</h2>
+        <p className="text-slate-400 text-center max-w-2xl mx-auto mb-12">
+          {isAr
+            ? "لقطات حقيقية من جلسات التدريب والمحاضرات وورش العمل حول العالم"
+            : "Real moments from training sessions, lectures, and workshops around the world"}
+        </p>
+
+        {/* Section 1: Speaker & Trainer */}
+        <div className="mb-12">
+          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "فراس كمتحدث ومدرّب" : "Speaker & Trainer"}</h3>
+          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور المسرح والمايكروفون والعروض" : "Stage, microphone, and presentations"}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <img src="/manus-storage/IMG_6338_a000f1b3.JPG" alt="Firas speaking on stage" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6339_cf6c0cde.JPG" alt="Firas with microphone" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6344_b48f8b1c.JPG" alt="Firas presenting" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6753_8a108a68.jpeg" alt="Firas at large venue" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+          </div>
+        </div>
+
+        {/* Section 2: Impact & Engagement */}
+        <div className="mb-12">
+          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "فراس وصناعة التأثير" : "Creating Impact"}</h3>
+          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور الجمهور المتفاعل ورفع الأيدي" : "Engaged audiences and interactive moments"}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <img src="/manus-storage/IMG_6340_3f7f858f.JPG" alt="Audience engagement" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6341_6893f63b.JPG" alt="Interactive session" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6342_d395a1b2.JPG" alt="Crowd interaction" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_5295_7ab0dde0.JPG" alt="Group engagement" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+          </div>
+        </div>
+
+        {/* Section 3: Diverse Environments */}
+        <div className="mb-12">
+          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "فراس في بيئات متنوعة" : "Diverse Environments"}</h3>
+          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور القاعات المختلفة والجمهور المتنوع" : "Different venues and diverse audiences"}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <img src="/manus-storage/IMG_6343_2d150838.JPG" alt="Training venue" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6345_d9d919cf.JPG" alt="Different environment" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6347_bc642836.JPG" alt="Diverse setting" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6346_beb62ff3.JPG" alt="Another venue" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+          </div>
+        </div>
+
+        {/* Section 4: Training Style */}
+        <div className="mb-12">
+          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "أسلوب فراس التدريبي" : "Training Style"}</h3>
+          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور الشرح، الإشارة، الحركة، والتفاعل المباشر" : "Explaining, gesturing, movement, and direct interaction"}</p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <img src="/manus-storage/IMG_5327_bf4b169f.JPG" alt="Training style" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/7725012a-64c1-4fb7-a6cd-6cf47ed2ec4e_b73ed242.jpg" alt="Direct interaction" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/ff21e6c0-f6ae-41f4-bf27-bcf823c646aa_7570af89.jpg" alt="Teaching moment" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_5333_6201f21c.jpeg" alt="Coaching" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_5320_da234748.jpeg" alt="Training session" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+          </div>
+        </div>
+
+        {/* Section 5: Credibility & Authority */}
+        <div className="mb-4">
+          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "المصداقية والسلطة المعرفية" : "Credibility & Authority"}</h3>
+          <p className="text-slate-400 text-sm mb-4">{isAr ? "الصور التي تظهر الحضور الكبير والتنظيم الرسمي" : "Large attendance and formal organization"}</p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <img src="/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_472123c9.jpg" alt="Large organized event" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_4955_32c556b6.PNG" alt="Professional authority" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/404bb448-c42c-48ca-98c8-49f7be351aa3_20b438be.jpg" alt="Formal setting" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_f4c031d4.jpg" alt="Large audience" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+            <img src="/manus-storage/IMG_6751_88a39e0b.JPG" alt="Authority presence" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
+          </div>
+        </div>
+      </section>
+
       {/* Why People Follow Feras */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-10 text-center">

@@ -758,3 +758,9 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add admin trigger button ("توليد صور المحتوى") in ContentEngine page
 - [x] Send notification when batch is complete with summary
 - [x] Regenerate images for research studies (heroImageUrl)
+
+## Firas Photo Gallery in About Page - June 7, 2026
+- [x] Upload 22 personal photos to webdev static assets
+- [x] Categorize photos into 5 sections (Speaker, Impact, Diverse, Training Style, Credibility)
+- [x] Add photo gallery section to About/Founder page with organized categories
+- [x] Add hover animations and responsive grid layout
