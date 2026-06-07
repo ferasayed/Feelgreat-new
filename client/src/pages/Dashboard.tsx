@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MessageCircle, TrendingUp, AlertTriangle, ArrowLeft, ShieldAlert, Star, CheckCircle } from "lucide-react";
+import { Users, MessageCircle, TrendingUp, AlertTriangle, ArrowLeft, ShieldAlert, Star, CheckCircle, FlaskConical, Trophy, Clock, Mail } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 
@@ -200,6 +200,7 @@ function DashboardContent() {
             <TabsTrigger value="leads">Registered Leads</TabsTrigger>
             <TabsTrigger value="conversations">Chat Conversations</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            <TabsTrigger value="ab-tests">A/B Tests</TabsTrigger>
           </TabsList>
 
           <TabsContent value="leads">
@@ -331,9 +332,106 @@ function DashboardContent() {
           <TabsContent value="reviews">
             <ReviewsModeration />
           </TabsContent>
+
+          <TabsContent value="ab-tests">
+            <ABTestResults />
+          </TabsContent>
         </Tabs>
       </main>
     </div>
+  );
+}
+
+function ABTestResults() {
+  const { data: tests, isLoading } = trpc.dashboard.abTestHistory.useQuery();
+
+  if (isLoading) return <div className="py-8 text-center text-muted-foreground">Loading A/B tests...</div>;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FlaskConical className="w-5 h-5" />
+          A/B Test History ({tests?.length ?? 0})
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {!tests || tests.length === 0 ? (
+          <div className="text-center py-12">
+            <FlaskConical className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+            <p className="text-muted-foreground">No A/B tests have been run yet.</p>
+            <p className="text-sm text-muted-foreground mt-1">A/B tests will automatically run when you have 20+ subscribers.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {tests.map((test) => (
+              <div key={test.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FlaskConical className="w-4 h-4 text-primary" />
+                    <span className="font-medium text-sm">{test.testName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant={test.status === "completed" ? "default" : test.status === "failed" ? "destructive" : "secondary"}
+                      className={test.status === "completed" ? "bg-green-100 text-green-700" : ""}
+                    >
+                      {test.status === "completed" ? "Completed" : test.status === "waiting" ? "Waiting" : test.status === "sending_winner" ? "Sending Winner" : test.status === "sending_test" ? "Testing" : "Failed"}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(test.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Variant A */}
+                  <div className={`rounded-md p-3 border ${test.winner === "a" ? "border-green-300 bg-green-50" : "border-border"}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Mail className="w-3 h-3" />
+                      <span className="text-xs font-medium">Variant A {test.winner === "a" && "🏆"}</span>
+                    </div>
+                    <p className="text-sm text-foreground mb-2 line-clamp-2">{test.subjectA}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>Sent: {test.groupACount}</span>
+                      <span>Opens: {test.opensA}</span>
+                      <span className="font-medium text-foreground">Rate: {test.openRateA}%</span>
+                    </div>
+                  </div>
+
+                  {/* Variant B */}
+                  <div className={`rounded-md p-3 border ${test.winner === "b" ? "border-green-300 bg-green-50" : "border-border"}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Mail className="w-3 h-3" />
+                      <span className="text-xs font-medium">Variant B {test.winner === "b" && "🏆"}</span>
+                    </div>
+                    <p className="text-sm text-foreground mb-2 line-clamp-2">{test.subjectB}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>Sent: {test.groupBCount}</span>
+                      <span>Opens: {test.opensB}</span>
+                      <span className="font-medium text-foreground">Rate: {test.openRateB}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {test.status === "completed" && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 border-t">
+                    <Trophy className="w-3 h-3 text-amber-500" />
+                    <span>Winner sent to {test.remainingCount} remaining subscribers</span>
+                    {test.completedAt && (
+                      <span className="ml-auto flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(test.completedAt).toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 

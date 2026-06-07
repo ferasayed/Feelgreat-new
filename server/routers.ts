@@ -383,6 +383,12 @@ export const appRouter = router({
         ]);
         return { summary, daily, topLinks };
       }),
+    abTestHistory: adminProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).optional() }).optional())
+      .query(async ({ input }) => {
+        const { getABTestHistory } = await import("./abTesting");
+        return getABTestHistory(input?.limit || 20);
+      }),
   }),
   // Blog articles (public)
   blog: router({

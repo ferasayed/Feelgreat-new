@@ -9,11 +9,23 @@ import {
   generateResearchSectionHtml,
   type BatchEmailItem,
 } from "../email";
+import {
+  createABTest,
+  sendABTestEmails,
+  completeABTest,
+} from "../abTesting";
 
 /**
- * Weekly Newsletter Handler
- * Runs once a week (Sunday 8:00 UTC) to send a digest of new articles and research
- * to all active subscribers via Resend email service.
+ * Weekly Newsletter Handler with A/B Testing
+ * 
+ * Flow:
+ * 1. If enough subscribers (≥20): Run A/B test
+ *    - Send Subject A to 10% of subscribers
+ *    - Send Subject B to 10% of subscribers
+ *    - After 2 hours, send winning subject to remaining 80%
+ * 2. If < 20 subscribers: Send normally without A/B test
+ * 
+ * Runs once a week (Sunday 8:00 UTC)
  */
 
 const NEWSLETTER_LABELS: Record<string, {
@@ -86,6 +98,18 @@ function getResearchTitle(study: any, lang: string): string {
   return map[lang] || study.titleEn || study.titleAr || "Untitled";
 }
 
+/**
+ * Shuffle array using Fisher-Yates algorithm
+ */
+function shuffleArray<T>(arr: T[]): T[] {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export async function weeklyNewsletterHandler(req: Request, res: Response) {
   try {
     console.log("[WeeklyNewsletter] Starting weekly newsletter...");
@@ -112,6 +136,108 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       return res.json({ success: true, message: "No new content to share" });
     }
 
+    const baseUrl = "https://feelgreat.us.com";
+
+    // ============================================================
+    // A/B TEST PATH (≥20 subscribers)
+    // ============================================================
+    if (subscribers.length >= 20) {
+      console.log(`[WeeklyNewsletter] Running A/B test with ${subscribers.length} subscribers...`);
+
+      const abTest = await createABTest({
+        subscribers: subscribers.map((s) => ({ email: s.email, language: s.language || "ar", name: s.name || undefined })),
+        articles: recentArticles,
+        research: weeklyResearch,
+        baseUrl,
+      });
+
+      if (abTest) {
+        const { testId, subjectA, subjectB, groupACount, groupBCount, remainingCount } = abTest;
+
+        // Shuffle subscribers and split into groups
+        const shuffled = shuffleArray(subscribers);
+        const groupA = shuffled.slice(0, groupACount).map((s) => ({ email: s.email, language: s.language || "ar", name: s.name || undefined }));
+        const groupB = shuffled.slice(groupACount, groupACount + groupBCount).map((s) => ({ email: s.email, language: s.language || "ar", name: s.name || undefined }));
+        const remaining = shuffled.slice(groupACount + groupBCount).map((s) => ({ email: s.email, language: s.language || "ar", name: s.name || undefined }));
+
+        // Send variant A
+        console.log(`[WeeklyNewsletter] Sending variant A (${subjectA}) to ${groupA.length} subscribers...`);
+        const resultA = await sendABTestEmails(testId, "a", subjectA, groupA, recentArticles, weeklyResearch, baseUrl);
+
+        // Send variant B
+        console.log(`[WeeklyNewsletter] Sending variant B (${subjectB}) to ${groupB.length} subscribers...`);
+        const resultB = await sendABTestEmails(testId, "b", subjectB, groupB, recentArticles, weeklyResearch, baseUrl);
+
+        // Schedule winner determination after 2 hours
+        console.log(`[WeeklyNewsletter] A/B test sent. Winner will be determined in 2 hours.`);
+        setTimeout(async () => {
+          try {
+            const { winner, sent, failed } = await completeABTest(
+              testId, remaining, recentArticles, weeklyResearch, baseUrl
+            );
+            console.log(`[WeeklyNewsletter] A/B test ${testId} completed. Winner: ${winner}, Sent: ${sent}, Failed: ${failed}`);
+
+            // Notify owner about A/B test results
+            await notifyOwner({
+              title: "📊 نتائج A/B Test - النشرة الأسبوعية",
+              content: [
+                `🏆 الفائز: ${winner === "a" ? "العنوان A" : winner === "b" ? "العنوان B" : "تعادل (استخدم A)"}`,
+                ``,
+                `📝 العنوان A: ${subjectA}`,
+                `📝 العنوان B: ${subjectB}`,
+                ``,
+                `📊 النتائج:`,
+                `  • المجموعة A: ${resultA.sent} رسالة`,
+                `  • المجموعة B: ${resultB.sent} رسالة`,
+                `  • الباقي (الفائز): ${sent} رسالة`,
+                `  • فشل: ${resultA.failed + resultB.failed + failed}`,
+              ].join("\n"),
+            });
+          } catch (err: any) {
+            console.error("[WeeklyNewsletter] A/B completion error:", err.message);
+          }
+        }, 2 * 60 * 60 * 1000); // 2 hours
+
+        // Notify owner immediately about test start
+        await notifyOwner({
+          title: "📬 بدء A/B Test - النشرة الأسبوعية",
+          content: [
+            `🧪 تم بدء اختبار A/B لعنوان النشرة الأسبوعية`,
+            ``,
+            `📝 العنوان A (فضول): ${subjectA}`,
+            `📝 العنوان B (فائدة): ${subjectB}`,
+            ``,
+            `📊 التوزيع:`,
+            `  • المجموعة A: ${groupACount} مشترك`,
+            `  • المجموعة B: ${groupBCount} مشترك`,
+            `  • الباقي (ينتظر الفائز): ${remainingCount} مشترك`,
+            ``,
+            `⏰ سيتم تحديد الفائز بعد ساعتين وإرسال العنوان الأفضل للباقي`,
+          ].join("\n"),
+        });
+
+        return res.json({
+          success: true,
+          mode: "ab_test",
+          testId,
+          subjectA,
+          subjectB,
+          groupACount,
+          groupBCount,
+          remainingCount,
+          sentA: resultA.sent,
+          sentB: resultB.sent,
+          failedA: resultA.failed,
+          failedB: resultB.failed,
+        });
+      }
+    }
+
+    // ============================================================
+    // NORMAL PATH (< 20 subscribers or A/B test creation failed)
+    // ============================================================
+    console.log(`[WeeklyNewsletter] Sending normally to ${subscribers.length} subscribers...`);
+
     // Group subscribers by language
     const subscribersByLang: Record<string, typeof subscribers> = {};
     for (const sub of subscribers) {
@@ -120,7 +246,6 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       subscribersByLang[lang].push(sub);
     }
 
-    const baseUrl = "https://feelgreat.us.com";
     const allEmails: BatchEmailItem[] = [];
     const langStats: Record<string, number> = {};
 
@@ -128,13 +253,11 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       const labels = NEWSLETTER_LABELS[lang] || NEWSLETTER_LABELS.en;
       const langPrefix = lang === "en" ? "" : `/${lang}`;
 
-      // Build article items
       const articleItems = recentArticles.slice(0, 5).map((article) => ({
         title: getArticleTitle(article, lang),
         url: `${baseUrl}${langPrefix}/blog/${article.slug}`,
       })).filter((a) => a.title !== "Untitled");
 
-      // Build research items
       const researchItems = weeklyResearch.slice(0, 5).map((study) => ({
         title: getResearchTitle(study, lang),
         url: `${baseUrl}${langPrefix}/research/${(study as any).slug}`,
@@ -143,7 +266,6 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       const articlesHtml = generateArticleSectionHtml(articleItems, labels.newArticles);
       const researchHtml = generateResearchSectionHtml(researchItems, labels.newResearch);
 
-      // Generate emails for each subscriber in this language group
       for (const sub of subs) {
         const unsubscribeUrl = `${baseUrl}/unsubscribe?email=${encodeURIComponent(sub.email)}`;
         const html = generateNewsletterHtml({
@@ -173,11 +295,9 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       langStats[lang] = subs.length;
     }
 
-    // Send all emails via Resend batch API
     console.log(`[WeeklyNewsletter] Sending ${allEmails.length} emails...`);
     const { sent, failed } = await sendBatchEmails(allEmails);
 
-    // Notify owner with results
     const summaryTitle = "📬 النشرة الأسبوعية - تقرير الإرسال";
     const summaryContent = [
       `✅ تم إرسال: ${sent} رسالة`,
@@ -188,6 +308,8 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
       ``,
       `التوزيع حسب اللغة:`,
       ...Object.entries(langStats).map(([lang, count]) => `  • ${lang}: ${count} مشترك`),
+      ``,
+      `ℹ️ لم يتم تشغيل A/B Test (عدد المشتركين أقل من 20)`,
     ].join("\n");
 
     await notifyOwner({ title: summaryTitle, content: summaryContent });
@@ -195,6 +317,7 @@ export async function weeklyNewsletterHandler(req: Request, res: Response) {
     console.log(`[WeeklyNewsletter] Done. Sent: ${sent}, Failed: ${failed}`);
     return res.json({
       success: true,
+      mode: "normal",
       sent,
       failed,
       subscribersCount: subscribers.length,

@@ -709,3 +709,12 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Enable open_tracking and click_tracking on Resend domain
 - [x] Create PushNotificationButton component with 6-language support
 - [x] Add push notification button to NewsletterSection
+
+## A/B Testing for Newsletter Subject Lines - June 7, 2026
+- [x] Create ab_tests + ab_test_emails database tables
+- [x] Implement A/B split logic in weeklyNewsletter.ts (10% A, 10% B, 80% winner)
+- [x] Generate 2 subject line variants using LLM (curiosity vs benefit approach)
+- [x] Track opens per variant via Resend webhook email_id mapping (ab_test_emails table)
+- [x] Auto-determine winner after 2 hours and send to remaining 80% (setTimeout)
+- [x] Add A/B test results view in admin dashboard (ABTestResults component)
+- [x] Add tRPC procedure for fetching A/B test history (dashboard.abTestHistory)

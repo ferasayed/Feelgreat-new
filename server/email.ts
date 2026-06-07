@@ -48,9 +48,10 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ id: string
 /**
  * Send batch emails via Resend (up to 100 per batch)
  */
-export async function sendBatchEmails(emails: BatchEmailItem[]): Promise<{ sent: number; failed: number }> {
+export async function sendBatchEmails(emails: BatchEmailItem[]): Promise<{ sent: number; failed: number; emailIds: { to: string; id: string }[] }> {
   let sent = 0;
   let failed = 0;
+  const emailIds: { to: string; id: string }[] = [];
 
   // Resend batch API supports up to 100 emails per call
   const batchSize = 100;
@@ -73,6 +74,12 @@ export async function sendBatchEmails(emails: BatchEmailItem[]): Promise<{ sent:
         failed += batch.length;
       } else {
         sent += batch.length;
+        // Capture email IDs for tracking
+        const ids = (result.data as any)?.data || [];
+        for (let j = 0; j < batch.length; j++) {
+          const emailId = ids[j]?.id || "";
+          if (emailId) emailIds.push({ to: batch[j].to, id: emailId });
+        }
       }
     } catch (error: any) {
       console.error("[Email] Batch exception:", error.message);
@@ -80,7 +87,7 @@ export async function sendBatchEmails(emails: BatchEmailItem[]): Promise<{ sent:
     }
   }
 
-  return { sent, failed };
+  return { sent, failed, emailIds };
 }
 
 /**
