@@ -1,8 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Globe, Heart, Users, Award, BookOpen, Mic, Target, Zap, Shield, Star, CheckCircle, TrendingUp, Briefcase } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Lightbox, type LightboxImage } from "@/components/Lightbox";
 
 function AboutCounter({ end, suffix, label, icon: Icon, color }: { end: number; suffix: string; label: string; icon: any; color: string }) {
   const { count, ref } = useCountUp(end, 2200);
@@ -12,6 +13,142 @@ function AboutCounter({ end, suffix, label, icon: Icon, color }: { end: number; 
       <div className={`text-3xl font-bold ${color}`}>{count.toLocaleString()}{suffix}</div>
       <div className="text-sm text-slate-400">{label}</div>
     </div>
+  );
+}
+
+// Gallery photos data with captions
+const galleryPhotos: { section: string; sectionAr: string; desc: string; descAr: string; images: LightboxImage[] }[] = [
+  {
+    section: "Speaker & Trainer",
+    sectionAr: "فراس كمتحدث ومدرّب",
+    desc: "Stage, microphone, and presentations",
+    descAr: "صور المسرح والمايكروفون والعروض",
+    images: [
+      { src: "/manus-storage/IMG_6338_a000f1b3.JPG", alt: "Firas speaking on stage", caption: "فراس يلقي محاضرة أمام جمهور كبير — ورشة عمل تدريبية" },
+      { src: "/manus-storage/IMG_6339_cf6c0cde.JPG", alt: "Firas with microphone", caption: "فراس على المسرح يتفاعل مباشرة مع الحضور" },
+      { src: "/manus-storage/IMG_6344_b48f8b1c.JPG", alt: "Firas presenting", caption: "عرض تقديمي عن الصحة المستدامة وتغيير نمط الحياة" },
+      { src: "/manus-storage/IMG_6753_8a108a68.jpeg", alt: "Firas at large venue", caption: "مؤتمر دولي — فراس يقدم رؤيته للصحة والقيادة" },
+    ],
+  },
+  {
+    section: "Creating Impact",
+    sectionAr: "فراس وصناعة التأثير",
+    desc: "Engaged audiences and interactive moments",
+    descAr: "صور الجمهور المتفاعل ورفع الأيدي",
+    images: [
+      { src: "/manus-storage/IMG_6340_3f7f858f.JPG", alt: "Audience engagement", caption: "الجمهور يتفاعل بحماس مع المحتوى التدريبي" },
+      { src: "/manus-storage/IMG_6341_6893f63b.JPG", alt: "Interactive session", caption: "جلسة تفاعلية — المشاركون يرفعون أيديهم للمشاركة" },
+      { src: "/manus-storage/IMG_6342_d395a1b2.JPG", alt: "Crowd interaction", caption: "تفاعل مباشر مع الحضور أثناء التدريب" },
+      { src: "/manus-storage/IMG_5295_7ab0dde0.JPG", alt: "Group engagement", caption: "مجموعة متحمسة خلال ورشة عمل تطويرية" },
+    ],
+  },
+  {
+    section: "Diverse Environments",
+    sectionAr: "فراس في بيئات متنوعة",
+    desc: "Different venues and diverse audiences",
+    descAr: "صور القاعات المختلفة والجمهور المتنوع",
+    images: [
+      { src: "/manus-storage/IMG_6343_2d150838.JPG", alt: "Training venue", caption: "قاعة تدريب متخصصة — بيئة مهنية للتعلم" },
+      { src: "/manus-storage/IMG_6345_d9d919cf.JPG", alt: "Different environment", caption: "فعالية في بيئة مختلفة — تنوع الأماكن والجمهور" },
+      { src: "/manus-storage/IMG_6347_bc642836.JPG", alt: "Diverse setting", caption: "جلسة تدريبية في قاعة مؤتمرات" },
+      { src: "/manus-storage/IMG_6346_beb62ff3.JPG", alt: "Another venue", caption: "فراس يقدم محتوى تدريبي في بيئة متنوعة" },
+    ],
+  },
+  {
+    section: "Training Style",
+    sectionAr: "أسلوب فراس التدريبي",
+    desc: "Explaining, gesturing, movement, and direct interaction",
+    descAr: "صور الشرح، الإشارة، الحركة، والتفاعل المباشر",
+    images: [
+      { src: "/manus-storage/IMG_5327_bf4b169f.JPG", alt: "Training style", caption: "فراس يشرح مفهوماً صحياً بأسلوب مبسط وعملي" },
+      { src: "/manus-storage/7725012a-64c1-4fb7-a6cd-6cf47ed2ec4e_b73ed242.jpg", alt: "Direct interaction", caption: "تفاعل مباشر مع المتدربين — أسلوب شخصي وقريب" },
+      { src: "/manus-storage/ff21e6c0-f6ae-41f4-bf27-bcf823c646aa_7570af89.jpg", alt: "Teaching moment", caption: "لحظة تعليمية — الحركة والإشارة لتوصيل الفكرة" },
+      { src: "/manus-storage/IMG_5333_6201f21c.jpeg", alt: "Coaching", caption: "جلسة تدريب فردية — اهتمام بكل متدرب" },
+      { src: "/manus-storage/IMG_5320_da234748.jpeg", alt: "Training session", caption: "ورشة عمل تفاعلية — التعلم بالممارسة" },
+    ],
+  },
+  {
+    section: "Credibility & Authority",
+    sectionAr: "المصداقية والسلطة المعرفية",
+    desc: "Large attendance and formal organization",
+    descAr: "الصور التي تظهر الحضور الكبير والتنظيم الرسمي",
+    images: [
+      { src: "/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_472123c9.jpg", alt: "Large organized event", caption: "فعالية كبيرة منظمة — حضور مئات المشاركين" },
+      { src: "/manus-storage/IMG_4955_32c556b6.PNG", alt: "Professional authority", caption: "فراس في مؤتمر رسمي — سلطة معرفية معترف بها" },
+      { src: "/manus-storage/404bb448-c42c-48ca-98c8-49f7be351aa3_20b438be.jpg", alt: "Formal setting", caption: "إطار رسمي واحترافي — تنظيم عالمي المستوى" },
+      { src: "/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_f4c031d4.jpg", alt: "Large audience", caption: "جمهور كبير — تأثير يمتد لآلاف الأشخاص" },
+      { src: "/manus-storage/IMG_6751_88a39e0b.JPG", alt: "Authority presence", caption: "حضور قيادي ومصداقية مبنية على الخبرة" },
+    ],
+  },
+];
+
+function GallerySection({ isAr }: { isAr: boolean }) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Flatten all images for lightbox navigation
+  const allImages = galleryPhotos.flatMap((s) => s.images);
+
+  const openLightbox = useCallback((globalIndex: number) => {
+    setCurrentIndex(globalIndex);
+    setLightboxOpen(true);
+  }, []);
+
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+  const nextImage = useCallback(() => setCurrentIndex((i) => (i + 1) % allImages.length), [allImages.length]);
+  const prevImage = useCallback(() => setCurrentIndex((i) => (i - 1 + allImages.length) % allImages.length), [allImages.length]);
+
+  let globalIdx = 0;
+
+  return (
+    <>
+      <section className="container max-w-6xl mx-auto px-4 py-16" id="gallery">
+        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "فراس في الميدان" : "Firas in Action"}</h2>
+        <p className="text-slate-400 text-center max-w-2xl mx-auto mb-12">
+          {isAr
+            ? "لقطات حقيقية من جلسات التدريب والمحاضرات وورش العمل حول العالم"
+            : "Real moments from training sessions, lectures, and workshops around the world"}
+        </p>
+
+        {galleryPhotos.map((section, sIdx) => {
+          const sectionStart = globalIdx;
+          const items = section.images.map((img, iIdx) => {
+            const idx = sectionStart + iIdx;
+            return (
+              <div key={iIdx} className="group relative overflow-hidden rounded-xl cursor-pointer" onClick={() => openLightbox(idx)}>
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                  <p className="text-white text-xs font-medium">{img.caption}</p>
+                </div>
+              </div>
+            );
+          });
+          globalIdx += section.images.length;
+          return (
+            <div key={sIdx} className={sIdx < galleryPhotos.length - 1 ? "mb-12" : "mb-4"}>
+              <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? section.sectionAr : section.section}</h3>
+              <p className="text-slate-400 text-sm mb-4">{isAr ? section.descAr : section.desc}</p>
+              <div className={`grid grid-cols-2 ${section.images.length >= 5 ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-3`}>
+                {items}
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      <Lightbox
+        images={allImages}
+        currentIndex={currentIndex}
+        isOpen={lightboxOpen}
+        onClose={closeLightbox}
+        onNext={nextImage}
+        onPrev={prevImage}
+      />
+    </>
   );
 }
 
@@ -247,76 +384,7 @@ export default function About() {
       </section>
 
       {/* Photo Gallery - Firas in Action */}
-      <section className="container max-w-6xl mx-auto px-4 py-16" id="gallery">
-        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "فراس في الميدان" : "Firas in Action"}</h2>
-        <p className="text-slate-400 text-center max-w-2xl mx-auto mb-12">
-          {isAr
-            ? "لقطات حقيقية من جلسات التدريب والمحاضرات وورش العمل حول العالم"
-            : "Real moments from training sessions, lectures, and workshops around the world"}
-        </p>
-
-        {/* Section 1: Speaker & Trainer */}
-        <div className="mb-12">
-          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "فراس كمتحدث ومدرّب" : "Speaker & Trainer"}</h3>
-          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور المسرح والمايكروفون والعروض" : "Stage, microphone, and presentations"}</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <img src="/manus-storage/IMG_6338_a000f1b3.JPG" alt="Firas speaking on stage" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6339_cf6c0cde.JPG" alt="Firas with microphone" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6344_b48f8b1c.JPG" alt="Firas presenting" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6753_8a108a68.jpeg" alt="Firas at large venue" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-          </div>
-        </div>
-
-        {/* Section 2: Impact & Engagement */}
-        <div className="mb-12">
-          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "فراس وصناعة التأثير" : "Creating Impact"}</h3>
-          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور الجمهور المتفاعل ورفع الأيدي" : "Engaged audiences and interactive moments"}</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <img src="/manus-storage/IMG_6340_3f7f858f.JPG" alt="Audience engagement" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6341_6893f63b.JPG" alt="Interactive session" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6342_d395a1b2.JPG" alt="Crowd interaction" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_5295_7ab0dde0.JPG" alt="Group engagement" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-          </div>
-        </div>
-
-        {/* Section 3: Diverse Environments */}
-        <div className="mb-12">
-          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "فراس في بيئات متنوعة" : "Diverse Environments"}</h3>
-          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور القاعات المختلفة والجمهور المتنوع" : "Different venues and diverse audiences"}</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <img src="/manus-storage/IMG_6343_2d150838.JPG" alt="Training venue" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6345_d9d919cf.JPG" alt="Different environment" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6347_bc642836.JPG" alt="Diverse setting" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6346_beb62ff3.JPG" alt="Another venue" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-          </div>
-        </div>
-
-        {/* Section 4: Training Style */}
-        <div className="mb-12">
-          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "أسلوب فراس التدريبي" : "Training Style"}</h3>
-          <p className="text-slate-400 text-sm mb-4">{isAr ? "صور الشرح، الإشارة، الحركة، والتفاعل المباشر" : "Explaining, gesturing, movement, and direct interaction"}</p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <img src="/manus-storage/IMG_5327_bf4b169f.JPG" alt="Training style" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/7725012a-64c1-4fb7-a6cd-6cf47ed2ec4e_b73ed242.jpg" alt="Direct interaction" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/ff21e6c0-f6ae-41f4-bf27-bcf823c646aa_7570af89.jpg" alt="Teaching moment" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_5333_6201f21c.jpeg" alt="Coaching" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_5320_da234748.jpeg" alt="Training session" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-          </div>
-        </div>
-
-        {/* Section 5: Credibility & Authority */}
-        <div className="mb-4">
-          <h3 className="text-xl font-bold mb-2 text-amber-400">{isAr ? "المصداقية والسلطة المعرفية" : "Credibility & Authority"}</h3>
-          <p className="text-slate-400 text-sm mb-4">{isAr ? "الصور التي تظهر الحضور الكبير والتنظيم الرسمي" : "Large attendance and formal organization"}</p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <img src="/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_472123c9.jpg" alt="Large organized event" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_4955_32c556b6.PNG" alt="Professional authority" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/404bb448-c42c-48ca-98c8-49f7be351aa3_20b438be.jpg" alt="Formal setting" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_f4c031d4.jpg" alt="Large audience" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-            <img src="/manus-storage/IMG_6751_88a39e0b.JPG" alt="Authority presence" className="rounded-xl object-cover w-full h-48 hover:scale-105 transition-transform duration-300 cursor-pointer" />
-          </div>
-        </div>
-      </section>
+      <GallerySection isAr={isAr} />
 
       {/* Why People Follow Feras */}
       <section className="container max-w-5xl mx-auto px-4 py-12">

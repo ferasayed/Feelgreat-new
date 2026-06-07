@@ -541,6 +541,19 @@ export default function SuccessStories() {
         </div>
       </section>
 
+      {/* Firas Training Photos - Social Proof */}
+      <section className="container max-w-6xl mx-auto px-4 py-10">
+        <h3 className="text-xl font-bold text-white text-center mb-6">
+          {isRtl ? "من جلسات فراس التدريبية" : "From Firas's Training Sessions"}
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <img src="/manus-storage/IMG_6341_6893f63b.JPG" alt="Interactive training" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img src="/manus-storage/IMG_6344_b48f8b1c.JPG" alt="Presentation" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img src="/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_472123c9.jpg" alt="Large event" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img src="/manus-storage/IMG_5320_da234748.jpeg" alt="Workshop" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="container max-w-4xl mx-auto px-4 py-12">
         <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-8 text-center">

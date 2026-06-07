@@ -764,3 +764,9 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Categorize photos into 5 sections (Speaker, Impact, Diverse, Training Style, Credibility)
 - [x] Add photo gallery section to About/Founder page with organized categories
 - [x] Add hover animations and responsive grid layout
+
+## Photo Gallery Enhancements - June 7, 2026
+- [x] Create Lightbox component with full-screen view and navigation arrows
+- [x] Add captions/descriptions to all gallery photos (Arabic captions for each photo)
+- [x] Reuse photos in Partner With Feras page (6-photo strip after hero)
+- [x] Reuse photos in Success Stories page (4-photo section before CTA)
