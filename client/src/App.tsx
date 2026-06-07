@@ -94,6 +94,7 @@ function AppRoutes() {
         <Route path={"/author/feras-alayed"} component={AuthorPage} />
         <Route path={"/feras-alayed"} component={FerasKnowledgeHub} />
         <Route path={"/today-in-health-science"} component={TodayInHealthScience} />
+        <Route path={"/today-in-science"} component={TodayInHealthScience} />
         <Route path={"/health-library"} component={HealthLibrary} />
         <Route path={"/health-library/:slug"} component={HealthLibraryHub} />
         <Route path={"/404"} component={NotFound} />

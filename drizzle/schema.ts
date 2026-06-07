@@ -293,3 +293,27 @@ export const newsletterSubscribers = mysqlTable("newsletter_subscribers", {
 });
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 export type InsertNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;
+
+/**
+ * Article comments table - stores user comments on blog articles
+ * Supports nested replies, moderation, and multilingual display
+ */
+export const articleComments = mysqlTable("article_comments", {
+  id: int("id").autoincrement().primaryKey(),
+  articleId: int("article_id").notNull(),
+  parentId: int("parent_id"), // null = top-level, non-null = reply
+  authorName: varchar("author_name", { length: 255 }).notNull(),
+  authorEmail: varchar("author_email", { length: 320 }),
+  content: text("content").notNull(),
+  language: varchar("language", { length: 10 }).default("ar").notNull(),
+  isApproved: boolean("is_approved").default(true).notNull(), // auto-approve by default
+  isSpam: boolean("is_spam").default(false).notNull(),
+  likes: int("likes").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ([
+  index("idx_comments_article").on(table.articleId),
+  index("idx_comments_parent").on(table.parentId),
+]));
+
+export type ArticleComment = typeof articleComments.$inferSelect;
+export type InsertArticleComment = typeof articleComments.$inferInsert;

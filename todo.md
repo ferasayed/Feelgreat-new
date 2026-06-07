@@ -681,8 +681,18 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Remove duplicate daily-seo-article heartbeat job
 
 ## Self-Healing Monitoring System
-- [ ] Create health check handler that tests all scheduled tasks
-- [ ] Implement auto-retry logic for failed tasks
-- [ ] Add failure detection and diagnosis using AI
-- [ ] Send owner notification with status report
-- [ ] Schedule monitoring job to run every 6 hours
+- [x] Create health check handler that tests all scheduled tasks
+- [x] Implement auto-retry logic for failed tasks
+- [x] Add failure detection and diagnosis using AI
+- [x] Send owner notification with status report
+- [x] Schedule monitoring job to run every 6 hours
+
+## New Features - June 7, 2026 (Batch 2)
+- [x] Translate FerasKnowledgeHub page content to all 6 languages (sections, headings, descriptions)
+- [x] Build auto-translation system for articles (translate all fields to 6 languages)
+- [x] Build auto-translation system for research studies (translate all fields to 6 languages)
+- [x] Create daily heartbeat job to find and translate untranslated content (runs 5:00 and 17:00 UTC)
+- [x] Create "Today in Science" page (/today-in-science) with daily auto-summary (already existed at /today-in-health-science, added alias)
+- [x] Add article comments system (schema, API, UI)
+- [x] Build weekly newsletter notification system for subscribers (runs every Sunday 8:00 UTC)
+- [x] Register health monitor heartbeat job (every 6 hours)

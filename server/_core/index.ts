@@ -14,6 +14,8 @@ import { followUpSequenceHandler } from "../scheduled/followUpSequence";
 import { generateArticleHandler } from "../scheduled/generateArticle";
 import { autoIndexHandler, manualIndexHandler } from "../scheduled/autoIndex";
 import { healthMonitorHandler } from "../scheduled/healthMonitor";
+import { handleTranslateContent } from "../scheduled/translateContent";
+import { weeklyNewsletterHandler } from "../scheduled/weeklyNewsletter";
 import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
@@ -71,6 +73,8 @@ async function startServer() {
   app.post("/api/scheduled/generateArticle", generateArticleHandler);
   app.post("/api/scheduled/autoIndex", autoIndexHandler);
   app.post("/api/scheduled/healthMonitor", healthMonitorHandler);
+  app.post("/api/scheduled/translateContent", handleTranslateContent);
+  app.post("/api/scheduled/weeklyNewsletter", weeklyNewsletterHandler);
   app.post("/api/manual-index", manualIndexHandler);
 
   // Seed article endpoint - bypasses cron auth for initial blog population

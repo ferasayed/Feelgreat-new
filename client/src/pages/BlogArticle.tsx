@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useRef, useState, useMemo } from "react";
+import ArticleComments from "@/components/ArticleComments";
 
 // Helper to get multilingual article field
 function getField(article: any, field: string, lang: string): string {
@@ -454,6 +455,11 @@ export default function BlogArticle() {
             </a>
           </div>
         </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="container max-w-3xl pb-8">
+        <ArticleComments articleId={article.id} />
       </div>
 
       {/* Related Success Stories */}

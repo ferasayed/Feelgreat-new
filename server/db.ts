@@ -1,7 +1,7 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber, articleComments, ArticleComment, InsertArticleComment } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -764,4 +764,68 @@ export async function getNewsletterSubscriberCount(): Promise<number> {
   if (!db) return 0;
   const result = await db.select({ count: count() }).from(newsletterSubscribers).where(eq(newsletterSubscribers.isActive, true));
   return result[0]?.count || 0;
+}
+
+export async function getActiveSubscribers(): Promise<NewsletterSubscriber[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.isActive, true));
+}
+
+export async function getRecentArticles(days: number = 7): Promise<BlogArticle[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  return db.select().from(blogArticles)
+    .where(and(eq(blogArticles.status, 'published'), lte(blogArticles.publishedAt, new Date())))
+    .orderBy(desc(blogArticles.publishedAt))
+    .limit(10);
+}
+
+// ============================================================
+// ARTICLE COMMENTS
+// ============================================================
+
+export async function getCommentsByArticle(articleId: number): Promise<ArticleComment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(articleComments)
+    .where(and(eq(articleComments.articleId, articleId), eq(articleComments.isApproved, true), eq(articleComments.isSpam, false)))
+    .orderBy(desc(articleComments.createdAt));
+}
+
+export async function getCommentsCount(articleId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db
+    .select({ count: count() })
+    .from(articleComments)
+    .where(and(eq(articleComments.articleId, articleId), eq(articleComments.isApproved, true), eq(articleComments.isSpam, false)));
+  return result[0]?.count || 0;
+}
+
+export async function createComment(comment: InsertArticleComment): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(articleComments).values(comment);
+}
+
+export async function likeComment(commentId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .update(articleComments)
+    .set({ likes: sql`likes + 1` })
+    .where(eq(articleComments.id, commentId));
+}
+
+export async function deleteComment(commentId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .update(articleComments)
+    .set({ isApproved: false })
+    .where(eq(articleComments.id, commentId));
 }

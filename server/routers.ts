@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount, getCommentsByArticle, getCommentsCount, createComment, likeComment, deleteComment } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -758,6 +758,51 @@ export const appRouter = router({
     count: publicProcedure.query(async () => {
       return getNewsletterSubscriberCount();
     }),
+  }),
+
+  comments: router({
+    list: publicProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input }) => {
+        const comments = await getCommentsByArticle(input.articleId);
+        const count = await getCommentsCount(input.articleId);
+        return { comments, count };
+      }),
+
+    create: publicProcedure
+      .input(z.object({
+        articleId: z.number(),
+        parentId: z.number().optional(),
+        authorName: z.string().min(2).max(255),
+        authorEmail: z.string().email().optional(),
+        content: z.string().min(3).max(2000),
+        language: z.string().max(10).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await createComment({
+          articleId: input.articleId,
+          parentId: input.parentId || null,
+          authorName: input.authorName,
+          authorEmail: input.authorEmail || null,
+          content: input.content,
+          language: input.language || "ar",
+        });
+        return { success: true };
+      }),
+
+    like: publicProcedure
+      .input(z.object({ commentId: z.number() }))
+      .mutation(async ({ input }) => {
+        await likeComment(input.commentId);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ commentId: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteComment(input.commentId);
+        return { success: true };
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;
