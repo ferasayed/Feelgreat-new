@@ -736,3 +736,17 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add Meta Pixel for retargeting visitors who didn't register (VITE_META_PIXEL_ID env var)
 - [x] Add Google Ads Remarketing tag for retargeting (VITE_GOOGLE_ADS_ID env var)
 - [x] Track registration as conversion event in both pixels (Lead + generate_lead events)
+
+## AI Image Generation System - June 7, 2026
+- [x] Build image generation service for articles (infographics, product images, hero images)
+- [x] Integrate image generation into article publishing pipeline (auto-generate with each article)
+- [x] Use existing heroImageUrl/ogImageUrl/socialImageUrl fields (schema already supports it)
+- [x] Generate infographics for research pages (via articleImageGenerator.ts)
+- [x] Images generated via built-in generateImage API (stored automatically) to articles in DB
+- [x] Display generated images in article pages and blog listing
+- [x] Add hero image banner to BlogArticle.tsx (displayed above article header)
+- [x] Add hero image thumbnails to Blog.tsx listing cards
+- [x] Add admin regenerateImages endpoint for existing articles
+- [x] Inject infographic images inside article content (after 2nd H2)
+- [x] Inject product images before CTA section
+- [x] Write vitest tests for image injection logic (10 tests passing)

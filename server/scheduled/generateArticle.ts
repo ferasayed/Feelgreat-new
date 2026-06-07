@@ -857,9 +857,24 @@ export async function generateArticleHandler(req: Request, res: Response) {
       console.error("[GenerateArticle] Translation failed (non-blocking):", e);
     }
 
-    // STEP 3: Generate Hero Image
-    console.log("[GenerateArticle] Step 3: Generating hero image...");
-    const heroImageUrl = await generateHeroImage(article.heroImagePrompt);
+    // STEP 3: Generate Full Image Set (Hero + Infographic + Product)
+    console.log("[GenerateArticle] Step 3: Generating full image set (hero + infographic + product)...");
+    const { generateFullArticleImageSet, injectImagesIntoContent } = await import("../articleImageGenerator");
+    let heroImageUrl: string | null = null;
+    let imageSet = { hero: null as any, infographic: null as any, product: null as any };
+    try {
+      imageSet = await generateFullArticleImageSet(
+        keywordData.topic,
+        pillar.id,
+        keywordData.targetKeyword,
+        article.excerptEn
+      );
+      heroImageUrl = imageSet.hero?.url || null;
+      console.log(`[GenerateArticle] Images: hero=${!!heroImageUrl}, infographic=${!!imageSet.infographic?.url}, product=${!!imageSet.product?.url}`);
+    } catch (imgError) {
+      console.error("[GenerateArticle] Full image set generation failed, trying hero only:", imgError);
+      heroImageUrl = await generateHeroImage(article.heroImagePrompt);
+    }
 
     // STEP 4: Generate Social Content
     console.log("[GenerateArticle] Step 4: Generating social media content...");
@@ -903,8 +918,16 @@ export async function generateArticleHandler(req: Request, res: Response) {
 <p class="pillar-link">Learn more about <a href="${pillarPage.path}">${pillarPage.titleEn}</a> | <a href="/health-investor">The Health Investor Concept</a></p>
 </div>`;
 
-    const fullContentAr = article.contentAr + ctaAr;
-    const fullContentEn = article.contentEn + ctaEn;
+    // Inject infographic and product images into article content
+    let enrichedContentAr = article.contentAr;
+    let enrichedContentEn = article.contentEn;
+    if (imageSet.infographic?.url || imageSet.product?.url) {
+      enrichedContentAr = injectImagesIntoContent(article.contentAr, imageSet, true);
+      enrichedContentEn = injectImagesIntoContent(article.contentEn, imageSet, false);
+    }
+
+    const fullContentAr = enrichedContentAr + ctaAr;
+    const fullContentEn = enrichedContentEn + ctaEn;
 
     // Build structured data
     const faqSchemaJson = JSON.stringify({
@@ -1081,7 +1104,9 @@ export async function generateArticleHandler(req: Request, res: Response) {
 🔗 الرابط: /blog/${slug}
 📏 عدد الكلمات: EN ~${wordCountEn} | AR ~${wordCountAr}
 ⏱️ وقت القراءة: ${readTimeMinutes} دقائق
-🖼️ صورة: ${heroImageUrl ? "✅ تم التوليد" : "❌ فشل"}
+🖼️ صورة رئيسية: ${heroImageUrl ? "✅" : "❌"}
+📊 إنفوجرافيك: ${imageSet.infographic?.url ? "✅" : "❌"}
+🏷️ صورة المنتج: ${imageSet.product?.url ? "✅" : "❌"}
 📱 محتوى سوشيال: ${socialContent.facebook ? "✅" : "❌"}
 
 ✅ الحالة: ${meetsMinWordCount ? "منشور" : "مسودة (كلمات قليلة)"}
@@ -1115,6 +1140,8 @@ export async function generateArticleHandler(req: Request, res: Response) {
       wordCount,
       readTimeMinutes,
       heroImage: !!heroImageUrl,
+      infographic: !!imageSet.infographic?.url,
+      productImage: !!imageSet.product?.url,
       socialContent: !!socialContent.facebook,
       published: meetsMinWordCount,
       faqCount: article.faqSchema?.length || 0,

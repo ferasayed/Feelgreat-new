@@ -298,6 +298,18 @@ export default function BlogArticle() {
         </div>
       </div>
 
+      {/* Hero Image */}
+      {article.heroImageUrl && (
+        <div className="w-full max-h-[400px] overflow-hidden">
+          <img
+            src={article.heroImageUrl}
+            alt={title}
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+        </div>
+      )}
+
       {/* Article Header */}
       <header className="bg-gradient-to-b from-[#0a1628] to-[#132240] py-16">
         <div className="container max-w-3xl">

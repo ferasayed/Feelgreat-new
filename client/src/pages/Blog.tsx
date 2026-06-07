@@ -136,8 +136,19 @@ export default function Blog() {
               <Link
                 key={article.id}
                 href={`/blog/${article.slug}`}
-                className="group rounded-xl border bg-card p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-xl border bg-card overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
               >
+                {(article as any).heroImageUrl && (
+                  <div className="w-full h-40 overflow-hidden">
+                    <img
+                      src={(article as any).heroImageUrl}
+                      alt={getArticleField(article, 'title', lang)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#1a5276]/10 text-[#1a5276]">
                     {CATEGORIES.find((c) => c.id === article.category)?.labels[lang] || CATEGORIES.find((c) => c.id === article.category)?.labels.en || article.category}
@@ -164,6 +175,7 @@ export default function Blog() {
                   <span className="text-sm font-medium text-[#c8a951] group-hover:underline">
                     {t.readMore} →
                   </span>
+                </div>
                 </div>
               </Link>
             ))}

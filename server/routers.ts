@@ -583,6 +583,45 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return getArticlesByCluster(input.clusterId, input.limit ?? 20);
       }),
+
+    // Admin: regenerate images for an existing article
+    regenerateImages: adminProcedure
+      .input(z.object({ articleId: z.number() }))
+      .mutation(async ({ input }) => {
+        const article = await getArticleById(input.articleId);
+        if (!article) throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+
+        const { generateFullArticleImageSet, injectImagesIntoContent } = await import("./articleImageGenerator");
+        const imageSet = await generateFullArticleImageSet(
+          article.titleEn,
+          article.category,
+          article.targetKeyword || article.titleEn,
+          article.excerptEn
+        );
+
+        const updateData: any = {};
+        if (imageSet.hero?.url) {
+          updateData.heroImageUrl = imageSet.hero.url;
+          updateData.ogImageUrl = imageSet.hero.url;
+        }
+
+        // Inject infographic and product images into content
+        if (imageSet.infographic?.url || imageSet.product?.url) {
+          updateData.contentAr = injectImagesIntoContent(article.contentAr, imageSet, true);
+          updateData.contentEn = injectImagesIntoContent(article.contentEn, imageSet, false);
+        }
+
+        if (Object.keys(updateData).length > 0) {
+          await updateArticle(input.articleId, updateData);
+        }
+
+        return {
+          success: true,
+          heroImage: !!imageSet.hero?.url,
+          infographic: !!imageSet.infographic?.url,
+          productImage: !!imageSet.product?.url,
+        };
+      }),
   }),
 
   // Research Hub (public)
