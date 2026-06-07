@@ -664,3 +664,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Fix date locale formatting in BlogArticle.tsx for all 6 languages
 - [x] Update BlogArticle.tsx sub-components (TableOfContents, ClusterNavigation, RelatedSuccessStories, RelatedArticles) for 6-language support
 - [x] Fix Home.tsx remaining isAr pattern for 6-language support
+
+## Knowledge Hub Audio - All 6 Languages
+- [x] Generate English audio narration for Knowledge Hub
+- [x] Generate French audio narration for Knowledge Hub
+- [x] Generate Spanish audio narration for Knowledge Hub
+- [x] Generate German audio narration for Knowledge Hub
+- [x] Generate Turkish audio narration for Knowledge Hub
+- [x] Update Knowledge Hub page to switch audio based on selected language

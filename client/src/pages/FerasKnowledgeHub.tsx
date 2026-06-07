@@ -234,8 +234,15 @@ export default function FerasKnowledgeHub() {
                 {isAr ? "رسالة فراس" : lang === 'fr' ? "Message de Feras" : lang === 'es' ? "Mensaje de Feras" : lang === 'de' ? "Feras' Nachricht" : lang === 'tr' ? "Feras'ın Mesajı" : "Feras's Message"}
               </span>
             </div>
-            <audio controls className="flex-1 h-10" preload="metadata">
-              <source src="/manus-storage/knowledge-hub-intro-ar_4929473b.wav" type="audio/wav" />
+            <audio controls className="flex-1 h-10" preload="metadata" key={lang}>
+              <source src={{
+                ar: '/manus-storage/knowledge-hub-intro-ar_4929473b.wav',
+                en: '/manus-storage/knowledge-hub-intro-en_a368a891.wav',
+                fr: '/manus-storage/knowledge-hub-intro-fr_b6b09144.wav',
+                es: '/manus-storage/knowledge-hub-intro-es_0d4506f9.wav',
+                de: '/manus-storage/knowledge-hub-intro-de_5aeae630.wav',
+                tr: '/manus-storage/knowledge-hub-intro-tr_2c6da963.wav',
+              }[lang] || '/manus-storage/knowledge-hub-intro-en_a368a891.wav'} type="audio/wav" />
             </audio>
           </div>
         </div>
