@@ -600,6 +600,74 @@ IMPORTANT: Respond ONLY with valid JSON.`,
 }
 
 // ============================================================
+// STEP 2.5: TRANSLATE ARTICLE TO ALL 6 LANGUAGES
+// ============================================================
+interface TranslatedContent {
+  titleFr: string; titleEs: string; titleDe: string; titleTr: string;
+  excerptFr: string; excerptEs: string; excerptDe: string; excerptTr: string;
+  contentFr: string; contentEs: string; contentDe: string; contentTr: string;
+}
+
+async function translateArticleContent(titleEn: string, excerptEn: string, contentEn: string): Promise<TranslatedContent> {
+  // Use LLM to translate the article into 4 additional languages
+  // We translate from English as it's the most reliable source for LLM translation
+  const response = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: `You are a professional medical/health content translator. Translate the provided health article content into 4 languages: French (fr), Spanish (es), German (de), and Turkish (tr).
+
+Rules:
+- Maintain the same HTML structure and formatting in the content
+- Keep medical terminology accurate in each language
+- Preserve all HTML tags, classes, and attributes exactly as they are
+- Translate naturally, not word-for-word
+- Keep brand names (Feel Great, Unimate, Balance) untranslated
+- Keep URLs and links unchanged
+- Respond ONLY with valid JSON`,
+      },
+      {
+        role: "user",
+        content: `Translate the following into French, Spanish, German, and Turkish:
+
+Title: ${titleEn}
+
+Excerpt: ${excerptEn}
+
+Content (HTML): ${contentEn.slice(0, 12000)}
+
+Return JSON:
+{
+  "titleFr": "...", "titleEs": "...", "titleDe": "...", "titleTr": "...",
+  "excerptFr": "...", "excerptEs": "...", "excerptDe": "...", "excerptTr": "...",
+  "contentFr": "...", "contentEs": "...", "contentDe": "...", "contentTr": "..."
+}`,
+      },
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "article_translations",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            titleFr: { type: "string" }, titleEs: { type: "string" }, titleDe: { type: "string" }, titleTr: { type: "string" },
+            excerptFr: { type: "string" }, excerptEs: { type: "string" }, excerptDe: { type: "string" }, excerptTr: { type: "string" },
+            contentFr: { type: "string" }, contentEs: { type: "string" }, contentDe: { type: "string" }, contentTr: { type: "string" },
+          },
+          required: ["titleFr", "titleEs", "titleDe", "titleTr", "excerptFr", "excerptEs", "excerptDe", "excerptTr", "contentFr", "contentEs", "contentDe", "contentTr"],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+
+  const raw = response.choices?.[0]?.message?.content;
+  return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
+}
+
+// ============================================================
 // STEP 4: GENERATE HERO IMAGE
 // ============================================================
 async function generateHeroImage(prompt: string): Promise<string | null> {
@@ -706,6 +774,15 @@ export async function generateArticleHandler(req: Request, res: Response) {
     const wordCountEn = (article.contentEn || "").replace(/<[^>]*>/g, "").split(/\s+/).length;
     const wordCount = Math.max(wordCountAr, wordCountEn);
     const readTimeMinutes = Math.max(5, Math.ceil(wordCount / 200));
+
+    // STEP 2.5: Translate article to all 6 languages (fr, es, de, tr)
+    console.log("[GenerateArticle] Step 2.5: Translating to fr, es, de, tr...");
+    let translations = { titleFr: "", titleEs: "", titleDe: "", titleTr: "", excerptFr: "", excerptEs: "", excerptDe: "", excerptTr: "", contentFr: "", contentEs: "", contentDe: "", contentTr: "" };
+    try {
+      translations = await translateArticleContent(article.titleEn, article.excerptEn, article.contentEn);
+    } catch (e) {
+      console.error("[GenerateArticle] Translation failed (non-blocking):", e);
+    }
 
     // STEP 3: Generate Hero Image
     console.log("[GenerateArticle] Step 3: Generating hero image...");
@@ -875,6 +952,19 @@ export async function generateArticleHandler(req: Request, res: Response) {
       excerptEn: article.excerptEn,
       contentAr: fullContentAr,
       contentEn: fullContentEn,
+      // Translated content (fr, es, de, tr)
+      titleFr: translations.titleFr || null,
+      titleEs: translations.titleEs || null,
+      titleDe: translations.titleDe || null,
+      titleTr: translations.titleTr || null,
+      excerptFr: translations.excerptFr || null,
+      excerptEs: translations.excerptEs || null,
+      excerptDe: translations.excerptDe || null,
+      excerptTr: translations.excerptTr || null,
+      contentFr: translations.contentFr || null,
+      contentEs: translations.contentEs || null,
+      contentDe: translations.contentDe || null,
+      contentTr: translations.contentTr || null,
       category: pillar.id,
       tags: article.tags || [],
       keywords: keywordsWithSchema,

@@ -71,6 +71,19 @@ export const blogArticles = mysqlTable("blog_articles", {
   excerptEn: text("excerpt_en").notNull(),
   contentAr: text("content_ar").notNull(),
   contentEn: text("content_en").notNull(),
+  // Additional languages (fr, es, de, tr)
+  titleFr: text("title_fr"),
+  titleEs: text("title_es"),
+  titleDe: text("title_de"),
+  titleTr: text("title_tr"),
+  excerptFr: text("excerpt_fr"),
+  excerptEs: text("excerpt_es"),
+  excerptDe: text("excerpt_de"),
+  excerptTr: text("excerpt_tr"),
+  contentFr: text("content_fr"),
+  contentEs: text("content_es"),
+  contentDe: text("content_de"),
+  contentTr: text("content_tr"),
   category: varchar("category", { length: 100 }).notNull(),
   tags: json("tags").$type<string[]>().notNull(),
   keywords: text("keywords"),
@@ -195,21 +208,45 @@ export const researchStudies = mysqlTable("research_studies", {
   // AI-generated summaries at different reading levels
   titleAr: text("title_ar").notNull(),
   titleEn: text("title_en").notNull(),
+  titleFr: text("title_fr"),
+  titleEs: text("title_es"),
+  titleDe: text("title_de"),
+  titleTr: text("title_tr"),
   // 30-second summary
   summary30sAr: text("summary_30s_ar").notNull(),
   summary30sEn: text("summary_30s_en").notNull(),
+  summary30sFr: text("summary_30s_fr"),
+  summary30sEs: text("summary_30s_es"),
+  summary30sDe: text("summary_30s_de"),
+  summary30sTr: text("summary_30s_tr"),
   // 1-minute summary
   summary1minAr: text("summary_1min_ar").notNull(),
   summary1minEn: text("summary_1min_en").notNull(),
+  summary1minFr: text("summary_1min_fr"),
+  summary1minEs: text("summary_1min_es"),
+  summary1minDe: text("summary_1min_de"),
+  summary1minTr: text("summary_1min_tr"),
   // 3-minute summary
   summary3minAr: text("summary_3min_ar").notNull(),
   summary3minEn: text("summary_3min_en").notNull(),
+  summary3minFr: text("summary_3min_fr"),
+  summary3minEs: text("summary_3min_es"),
+  summary3minDe: text("summary_3min_de"),
+  summary3minTr: text("summary_3min_tr"),
   // Full analysis
   fullAnalysisAr: text("full_analysis_ar").notNull(),
   fullAnalysisEn: text("full_analysis_en").notNull(),
+  fullAnalysisFr: text("full_analysis_fr"),
+  fullAnalysisEs: text("full_analysis_es"),
+  fullAnalysisDe: text("full_analysis_de"),
+  fullAnalysisTr: text("full_analysis_tr"),
   // "What does this mean for your health?" section
   healthImplicationsAr: text("health_implications_ar").notNull(),
   healthImplicationsEn: text("health_implications_en").notNull(),
+  healthImplicationsFr: text("health_implications_fr"),
+  healthImplicationsEs: text("health_implications_es"),
+  healthImplicationsDe: text("health_implications_de"),
+  healthImplicationsTr: text("health_implications_tr"),
   // Key findings structured
   keyFindings: json("key_findings").$type<Array<{ findingEn: string; findingAr: string }>>().notNull(),
   strengthsWeaknesses: json("strengths_weaknesses").$type<{ strengths: string[]; weaknesses: string[] }>(),
@@ -239,3 +276,20 @@ export const researchStudies = mysqlTable("research_studies", {
 
 export type ResearchStudy = typeof researchStudies.$inferSelect;
 export type InsertResearchStudy = typeof researchStudies.$inferInsert;
+
+
+/**
+ * Newsletter subscribers table
+ */
+export const newsletterSubscribers = mysqlTable("newsletter_subscribers", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }),
+  language: varchar("language", { length: 10 }).default("ar").notNull(),
+  interests: text("interests"), // JSON array of interests: health, research, nutrition, leadership
+  isActive: boolean("is_active").default(true).notNull(),
+  subscribedAt: timestamp("subscribed_at").defaultNow().notNull(),
+  unsubscribedAt: timestamp("unsubscribed_at"),
+});
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
+export type InsertNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;

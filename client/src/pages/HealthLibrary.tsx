@@ -554,12 +554,137 @@ const PILLAR_HUBS: PillarHubData[] = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
+// MULTILINGUAL UI LABELS
+// ═══════════════════════════════════════════════════════════════
+
+const HL_UI: Record<string, {
+  builtOn: string; title: string; subtitle: string; authorLine: string;
+  whyTrust: string; peerReviewed: string; medInstitutions: string; expertAuthor: string; updated: string;
+  peerReviewedVal: string; medInstitutionsVal: string; expertAuthorVal: string; updatedVal: string;
+  backToLibrary: string; introduction: string; whatIsIt: string; symptoms: string; causes: string;
+  riskFactors: string; research: string; faq: string; articles: string; feelGreat: string;
+  relatedHubs: string; hubNotFound: string; relatedStudies: string; relatedArticles: string;
+  comingSoon: string; startJourney: string; quickLinks: string; connectedHubs: string;
+  viewProfile: string; authorName: string; authorTitle: string; authorBio: string;
+}> = {
+  ar: {
+    builtOn: 'مبني على أكثر من 47,000 دراسة علمية', title: 'مكتبة الصحة',
+    subtitle: 'مراكز معرفة شاملة مبنية على أحدث الأبحاث العلمية. كل مركز هو دليل متكامل قادر على أن يكون مرجعك الأول',
+    authorLine: 'بقلم فراس العايد — أخصائي التغذية العلاجية والسلوكية',
+    whyTrust: 'لماذا تثق بمكتبة الصحة هذه؟', peerReviewed: 'مصادر محكّمة', medInstitutions: 'مؤسسات طبية',
+    expertAuthor: 'مؤلف خبير', updated: 'محدّث', peerReviewedVal: '47,000+ دراسة',
+    medInstitutionsVal: 'هارفارد، ستانفورد', expertAuthorVal: 'فراس العايد', updatedVal: 'يومياً',
+    backToLibrary: 'العودة لمكتبة الصحة', introduction: 'مقدمة', whatIsIt: 'ما هو؟',
+    symptoms: 'الأعراض والعلامات', causes: 'الأسباب', riskFactors: 'عوامل الخطر',
+    research: 'الأبحاث العلمية', faq: 'أسئلة شائعة', articles: 'مقالات ذات صلة',
+    feelGreat: 'كيف يساعد Feel Great', relatedHubs: 'مراكز معرفة مرتبطة',
+    hubNotFound: 'المركز غير موجود', relatedStudies: 'دراسات ذات صلة من مركز الأبحاث',
+    relatedArticles: 'مقالات ذات صلة', comingSoon: 'سيتم إضافة مقالات ذات صلة قريباً...',
+    startJourney: 'ابدأ رحلتك مع Feel Great', quickLinks: '🔗 روابط سريعة بين المراكز',
+    connectedHubs: 'مراكز معرفة مرتبطة', viewProfile: 'عرض الملف الكامل →',
+    authorName: 'فراس العايد', authorTitle: 'أخصائي التغذية العلاجية والسلوكية',
+    authorBio: 'هذا المحتوى مبني على أحدث الأبحاث العلمية المحكّمة ومراجع من مؤسسات طبية رائدة. يتم تحديثه بانتظام ليعكس أحدث الاكتشافات.',
+  },
+  en: {
+    builtOn: 'Built on 47,000+ Peer-Reviewed Studies', title: 'Health Library',
+    subtitle: 'Comprehensive knowledge hubs built on the latest scientific research. Each hub is a complete evidence-based guide designed to be your primary reference',
+    authorLine: 'By Feras Alayed — Therapeutic & Behavioral Nutrition Specialist',
+    whyTrust: 'Why Trust This Health Library?', peerReviewed: 'Peer-Reviewed Sources', medInstitutions: 'Medical Institutions',
+    expertAuthor: 'Expert Author', updated: 'Updated', peerReviewedVal: '47,000+ studies',
+    medInstitutionsVal: 'Harvard, Stanford, NIH', expertAuthorVal: 'Feras Alayed, RDN', updatedVal: 'Daily',
+    backToLibrary: 'Back to Health Library', introduction: 'Introduction', whatIsIt: 'What Is It?',
+    symptoms: 'Signs & Symptoms', causes: 'Causes', riskFactors: 'Risk Factors',
+    research: 'Scientific Research', faq: 'Frequently Asked Questions', articles: 'Related Articles',
+    feelGreat: 'How Feel Great Helps', relatedHubs: 'Connected Knowledge Hubs',
+    hubNotFound: 'Hub Not Found', relatedStudies: 'Related Studies from Research Center',
+    relatedArticles: 'Related Articles', comingSoon: 'Related articles coming soon...',
+    startJourney: 'Start Your Feel Great Journey', quickLinks: '🔗 Quick Hub Links',
+    connectedHubs: 'Connected Knowledge Hubs', viewProfile: 'View Full Profile →',
+    authorName: 'Feras Alayed', authorTitle: 'Therapeutic & Behavioral Nutrition Specialist',
+    authorBio: 'This content is built on the latest peer-reviewed scientific research and references from leading medical institutions. It is regularly updated to reflect the newest findings.',
+  },
+  fr: {
+    builtOn: 'Basé sur plus de 47 000 études scientifiques', title: 'Bibliothèque Santé',
+    subtitle: 'Centres de connaissances complets basés sur les dernières recherches scientifiques',
+    authorLine: 'Par Feras Alayed — Spécialiste en nutrition thérapeutique',
+    whyTrust: 'Pourquoi faire confiance à cette bibliothèque ?', peerReviewed: 'Sources évaluées par des pairs', medInstitutions: 'Institutions médicales',
+    expertAuthor: 'Auteur expert', updated: 'Mis à jour', peerReviewedVal: '47 000+ études',
+    medInstitutionsVal: 'Harvard, Stanford, NIH', expertAuthorVal: 'Feras Alayed', updatedVal: 'Quotidiennement',
+    backToLibrary: 'Retour à la bibliothèque', introduction: 'Introduction', whatIsIt: 'Qu\'est-ce que c\'est ?',
+    symptoms: 'Signes et symptômes', causes: 'Causes', riskFactors: 'Facteurs de risque',
+    research: 'Recherche scientifique', faq: 'Questions fréquentes', articles: 'Articles connexes',
+    feelGreat: 'Comment Feel Great aide', relatedHubs: 'Centres de connaissances liés',
+    hubNotFound: 'Centre non trouvé', relatedStudies: 'Études connexes du centre de recherche',
+    relatedArticles: 'Articles connexes', comingSoon: 'Articles connexes bientôt disponibles...',
+    startJourney: 'Commencez votre parcours Feel Great', quickLinks: '🔗 Liens rapides',
+    connectedHubs: 'Centres de connaissances liés', viewProfile: 'Voir le profil complet →',
+    authorName: 'Feras Alayed', authorTitle: 'Spécialiste en nutrition thérapeutique et comportementale',
+    authorBio: 'Ce contenu est basé sur les dernières recherches scientifiques évaluées par des pairs et des références d\'institutions médicales de premier plan.',
+  },
+  es: {
+    builtOn: 'Basado en más de 47.000 estudios científicos', title: 'Biblioteca de Salud',
+    subtitle: 'Centros de conocimiento completos basados en las últimas investigaciones científicas',
+    authorLine: 'Por Feras Alayed — Especialista en nutrición terapéutica',
+    whyTrust: '¿Por qué confiar en esta biblioteca?', peerReviewed: 'Fuentes revisadas por pares', medInstitutions: 'Instituciones médicas',
+    expertAuthor: 'Autor experto', updated: 'Actualizado', peerReviewedVal: '47.000+ estudios',
+    medInstitutionsVal: 'Harvard, Stanford, NIH', expertAuthorVal: 'Feras Alayed', updatedVal: 'Diariamente',
+    backToLibrary: 'Volver a la biblioteca', introduction: 'Introducción', whatIsIt: '¿Qué es?',
+    symptoms: 'Signos y síntomas', causes: 'Causas', riskFactors: 'Factores de riesgo',
+    research: 'Investigación científica', faq: 'Preguntas frecuentes', articles: 'Artículos relacionados',
+    feelGreat: 'Cómo ayuda Feel Great', relatedHubs: 'Centros de conocimiento relacionados',
+    hubNotFound: 'Centro no encontrado', relatedStudies: 'Estudios relacionados del centro de investigación',
+    relatedArticles: 'Artículos relacionados', comingSoon: 'Artículos relacionados próximamente...',
+    startJourney: 'Comience su viaje Feel Great', quickLinks: '🔗 Enlaces rápidos',
+    connectedHubs: 'Centros de conocimiento relacionados', viewProfile: 'Ver perfil completo →',
+    authorName: 'Feras Alayed', authorTitle: 'Especialista en nutrición terapéutica y conductual',
+    authorBio: 'Este contenido se basa en las últimas investigaciones científicas revisadas por pares y referencias de instituciones médicas líderes.',
+  },
+  de: {
+    builtOn: 'Basierend auf über 47.000 wissenschaftlichen Studien', title: 'Gesundheitsbibliothek',
+    subtitle: 'Umfassende Wissenszentren basierend auf neuester wissenschaftlicher Forschung',
+    authorLine: 'Von Feras Alayed — Spezialist für therapeutische Ernährung',
+    whyTrust: 'Warum dieser Bibliothek vertrauen?', peerReviewed: 'Peer-reviewed Quellen', medInstitutions: 'Medizinische Institutionen',
+    expertAuthor: 'Experte Autor', updated: 'Aktualisiert', peerReviewedVal: '47.000+ Studien',
+    medInstitutionsVal: 'Harvard, Stanford, NIH', expertAuthorVal: 'Feras Alayed', updatedVal: 'Täglich',
+    backToLibrary: 'Zurück zur Bibliothek', introduction: 'Einleitung', whatIsIt: 'Was ist das?',
+    symptoms: 'Anzeichen und Symptome', causes: 'Ursachen', riskFactors: 'Risikofaktoren',
+    research: 'Wissenschaftliche Forschung', faq: 'Häufig gestellte Fragen', articles: 'Verwandte Artikel',
+    feelGreat: 'Wie Feel Great hilft', relatedHubs: 'Verbundene Wissenszentren',
+    hubNotFound: 'Zentrum nicht gefunden', relatedStudies: 'Verwandte Studien aus dem Forschungszentrum',
+    relatedArticles: 'Verwandte Artikel', comingSoon: 'Verwandte Artikel demnächst verfügbar...',
+    startJourney: 'Starten Sie Ihre Feel Great Reise', quickLinks: '🔗 Schnelllinks',
+    connectedHubs: 'Verbundene Wissenszentren', viewProfile: 'Vollständiges Profil anzeigen →',
+    authorName: 'Feras Alayed', authorTitle: 'Spezialist für therapeutische und verhaltensorientierte Ernährung',
+    authorBio: 'Dieser Inhalt basiert auf den neuesten peer-reviewed wissenschaftlichen Forschungen und Referenzen führender medizinischer Institutionen.',
+  },
+  tr: {
+    builtOn: '47.000\'den fazla bilimsel çalışmaya dayalı', title: 'Sağlık Kütüphanesi',
+    subtitle: 'En son bilimsel araştırmalara dayanan kapsamlı bilgi merkezleri',
+    authorLine: 'Feras Alayed — Terapötik beslenme uzmanı',
+    whyTrust: 'Bu kütüphaneye neden güvenmelisiniz?', peerReviewed: 'Hakemli kaynaklar', medInstitutions: 'Tıbbi kurumlar',
+    expertAuthor: 'Uzman yazar', updated: 'Güncellendi', peerReviewedVal: '47.000+ çalışma',
+    medInstitutionsVal: 'Harvard, Stanford, NIH', expertAuthorVal: 'Feras Alayed', updatedVal: 'Günlük',
+    backToLibrary: 'Kütüphaneye dön', introduction: 'Giriş', whatIsIt: 'Nedir?',
+    symptoms: 'Belirtiler', causes: 'Nedenler', riskFactors: 'Risk faktörleri',
+    research: 'Bilimsel araştırma', faq: 'Sık sorulan sorular', articles: 'İlgili makaleler',
+    feelGreat: 'Feel Great nasıl yardımcı olur', relatedHubs: 'Bağlantılı bilgi merkezleri',
+    hubNotFound: 'Merkez bulunamadı', relatedStudies: 'Araştırma merkezinden ilgili çalışmalar',
+    relatedArticles: 'İlgili makaleler', comingSoon: 'İlgili makaleler yakında...',
+    startJourney: 'Feel Great yolculuğunuza başlayın', quickLinks: '🔗 Hızlı bağlantılar',
+    connectedHubs: 'Bağlantılı bilgi merkezleri', viewProfile: 'Tam profili görüntüle →',
+    authorName: 'Feras Alayed', authorTitle: 'Terapötik ve davranışsal beslenme uzmanı',
+    authorBio: 'Bu içerik, önde gelen tıbbi kurumlardan en son hakemli bilimsel araştırmalara ve referanslara dayanmaktadır.',
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════
 // HEALTH LIBRARY MAIN PAGE
 // ═══════════════════════════════════════════════════════════════
 
 export default function HealthLibrary() {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
+  const hl = HL_UI[lang] || HL_UI.en;
 
   useEffect(() => {
     document.title = isAr
@@ -578,18 +703,16 @@ export default function HealthLibrary() {
         <div className="container relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/80 text-sm mb-6 border border-white/10">
             <span>📚</span>
-            <span>{isAr ? "مبني على أكثر من 47,000 دراسة علمية" : "Built on 47,000+ Peer-Reviewed Studies"}</span>
+            <span>{hl.builtOn}</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            {isAr ? "مكتبة الصحة" : "Health Library"}
+            {hl.title}
           </h1>
           <p className="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto mb-2">
-            {isAr
-              ? "مراكز معرفة شاملة مبنية على أحدث الأبحاث العلمية. كل مركز هو دليل متكامل قادر على أن يكون مرجعك الأول"
-              : "Comprehensive knowledge hubs built on the latest scientific research. Each hub is a complete evidence-based guide designed to be your primary reference"}
+            {hl.subtitle}
           </p>
           <p className="text-sm text-gray-400">
-            {isAr ? "بقلم فراس العايد — أخصائي التغذية العلاجية والسلوكية" : "By Feras Alayed — Therapeutic & Behavioral Nutrition Specialist"}
+            {hl.authorLine}
           </p>
         </div>
       </header>
@@ -625,19 +748,19 @@ export default function HealthLibrary() {
         {/* Authority Section */}
         <section className="mt-20 text-center">
           <h2 className="text-2xl font-bold text-foreground mb-4">
-            {isAr ? "لماذا تثق بمكتبة الصحة هذه؟" : "Why Trust This Health Library?"}
+            {hl.whyTrust}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mt-8">
             {[
-              { icon: "🔬", labelEn: "Peer-Reviewed Sources", labelAr: "مصادر محكّمة", valueEn: "47,000+ studies", valueAr: "47,000+ دراسة" },
-              { icon: "🏥", labelEn: "Medical Institutions", labelAr: "مؤسسات طبية", valueEn: "Harvard, Stanford, NIH", valueAr: "هارفارد، ستانفورد" },
-              { icon: "👨‍⚕️", labelEn: "Expert Author", labelAr: "مؤلف خبير", valueEn: "Feras Alayed, RDN", valueAr: "فراس العايد" },
-              { icon: "📅", labelEn: "Updated", labelAr: "محدّث", valueEn: "Daily", valueAr: "يومياً" },
+              { icon: "🔬", label: hl.peerReviewed, value: hl.peerReviewedVal },
+              { icon: "🏥", label: hl.medInstitutions, value: hl.medInstitutionsVal },
+              { icon: "👨‍⚕️", label: hl.expertAuthor, value: hl.expertAuthorVal },
+              { icon: "📅", label: hl.updated, value: hl.updatedVal },
             ].map((item, i) => (
               <div key={i} className="text-center">
                 <div className="text-3xl mb-2">{item.icon}</div>
-                <div className="text-xs text-muted-foreground">{isAr ? item.labelAr : item.labelEn}</div>
-                <div className="text-sm font-semibold text-foreground">{isAr ? item.valueAr : item.valueEn}</div>
+                <div className="text-xs text-muted-foreground">{item.label}</div>
+                <div className="text-sm font-semibold text-foreground">{item.value}</div>
               </div>
             ))}
           </div>
@@ -655,6 +778,7 @@ export function HealthLibraryHub() {
   const { slug } = useParams<{ slug: string }>();
   const { lang } = useLanguage();
   const isAr = lang === "ar";
+  const hl = HL_UI[lang] || HL_UI.en;
 
   const hub = useMemo(() => PILLAR_HUBS.find(h => h.slug === slug), [slug]);
 
@@ -682,9 +806,9 @@ export function HealthLibraryHub() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Hub Not Found</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{hl.hubNotFound}</h1>
           <Link href="/health-library" className="text-primary hover:underline">
-            ← Back to Health Library
+            ← {hl.backToLibrary}
           </Link>
         </div>
       </div>
@@ -704,7 +828,7 @@ export function HealthLibraryHub() {
         </div>
         <div className="container relative z-10">
           <Link href="/health-library" className="inline-flex items-center gap-1 text-gray-400 hover:text-white text-sm mb-6 transition-colors">
-            ← {isAr ? "العودة لمكتبة الصحة" : "Back to Health Library"}
+            ← {hl.backToLibrary}
           </Link>
           <div className="flex items-center gap-3 mb-4">
             <span className="text-5xl">{hub.icon}</span>
@@ -734,19 +858,19 @@ export function HealthLibraryHub() {
         <div className="container">
           <div className="flex gap-3 overflow-x-auto scrollbar-hide text-sm">
             {[
-              { id: "introduction", labelEn: "Introduction", labelAr: "مقدمة" },
-              { id: "what-is-it", labelEn: "What Is It?", labelAr: "ما هو؟" },
-              { id: "symptoms", labelEn: "Symptoms", labelAr: "الأعراض" },
-              { id: "causes", labelEn: "Causes", labelAr: "الأسباب" },
-              { id: "risk-factors", labelEn: "Risk Factors", labelAr: "عوامل الخطر" },
-              { id: "research", labelEn: "Research", labelAr: "الأبحاث" },
-              { id: "faq", labelEn: "FAQ", labelAr: "أسئلة شائعة" },
-              { id: "articles", labelEn: "Articles", labelAr: "مقالات" },
-              { id: "feel-great", labelEn: "Feel Great", labelAr: "Feel Great" },
-              { id: "related-hubs", labelEn: "Related Hubs", labelAr: "مراكز مرتبطة" },
+              { id: "introduction", label: hl.introduction },
+              { id: "what-is-it", label: hl.whatIsIt },
+              { id: "symptoms", label: hl.symptoms },
+              { id: "causes", label: hl.causes },
+              { id: "risk-factors", label: hl.riskFactors },
+              { id: "research", label: hl.research },
+              { id: "faq", label: hl.faq },
+              { id: "articles", label: hl.articles },
+              { id: "feel-great", label: hl.feelGreat },
+              { id: "related-hubs", label: hl.relatedHubs },
             ].map((item) => (
               <a key={item.id} href={`#${item.id}`} className="whitespace-nowrap px-3 py-1.5 rounded-full bg-muted hover:bg-primary/10 hover:text-primary text-muted-foreground transition-colors">
-                {isAr ? item.labelAr : item.labelEn}
+                {item.label}
               </a>
             ))}
           </div>
@@ -758,7 +882,7 @@ export function HealthLibraryHub() {
         <section id="introduction" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
             <span className="w-1 h-8 bg-primary rounded-full" />
-            {isAr ? "مقدمة" : "Introduction"}
+            {hl.introduction}
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
             {isAr ? hub.introAr : hub.introEn}
@@ -769,7 +893,7 @@ export function HealthLibraryHub() {
         <section id="what-is-it" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
             <span className="w-1 h-8 bg-primary rounded-full" />
-            {isAr ? `ما هو ${hub.titleAr}؟` : `What Is ${hub.titleEn}?`}
+            {isAr ? `ما هو ${hub.titleAr}؟` : `${hl.whatIsIt} ${hub.titleEn}`}
           </h2>
           <div className="bg-muted/50 rounded-xl p-6 border border-border">
             <p className="text-muted-foreground leading-relaxed">
@@ -782,7 +906,7 @@ export function HealthLibraryHub() {
         <section id="symptoms" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-yellow-500 rounded-full" />
-            {isAr ? "الأعراض والعلامات" : "Signs & Symptoms"}
+            {hl.symptoms}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {(isAr ? hub.symptomsAr : hub.symptomsEn).map((symptom, i) => (
@@ -798,7 +922,7 @@ export function HealthLibraryHub() {
         <section id="causes" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-red-500 rounded-full" />
-            {isAr ? "الأسباب" : "Causes"}
+            {hl.causes}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {(isAr ? hub.causesAr : hub.causesEn).map((cause, i) => (
@@ -814,7 +938,7 @@ export function HealthLibraryHub() {
         <section id="risk-factors" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-orange-500 rounded-full" />
-            {isAr ? "عوامل الخطر" : "Risk Factors"}
+            {hl.riskFactors}
           </h2>
           <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -832,7 +956,7 @@ export function HealthLibraryHub() {
         <section id="research" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-blue-500 rounded-full" />
-            {isAr ? "الأبحاث العلمية" : "Scientific Research"}
+            {hl.research}
           </h2>
           <Card className="border-blue-500/20 bg-blue-500/5">
             <CardContent className="p-6">
@@ -854,7 +978,7 @@ export function HealthLibraryHub() {
           {studies.length > 0 && (
             <div className="mt-8">
               <h3 className="text-lg font-semibold text-foreground mb-4">
-                {isAr ? "دراسات ذات صلة من مركز الأبحاث" : "Related Studies from Research Center"}
+                {hl.relatedStudies}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {studies.map((study: any) => (
@@ -879,7 +1003,7 @@ export function HealthLibraryHub() {
         <section id="faq" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-purple-500 rounded-full" />
-            {isAr ? "أسئلة شائعة" : "Frequently Asked Questions"}
+            {hl.faq}
           </h2>
           <Accordion type="single" collapsible className="space-y-2">
             {(isAr ? hub.faqAr : hub.faqEn).map((item, i) => (
@@ -899,7 +1023,7 @@ export function HealthLibraryHub() {
         <section id="articles" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-emerald-500 rounded-full" />
-            {isAr ? "مقالات ذات صلة" : "Related Articles"}
+            {hl.relatedArticles}
           </h2>
           {articles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -926,7 +1050,7 @@ export function HealthLibraryHub() {
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">
-              {isAr ? "سيتم إضافة مقالات ذات صلة قريباً..." : "Related articles coming soon..."}
+              {hl.comingSoon}
             </p>
           )}
         </section>
@@ -935,7 +1059,7 @@ export function HealthLibraryHub() {
         <section id="feel-great" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-emerald-500 rounded-full" />
-            {isAr ? "كيف يساعد Feel Great" : "How Feel Great Helps"}
+            {hl.feelGreat}
           </h2>
           <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-xl p-8 border border-emerald-500/20">
             <p className="text-muted-foreground leading-relaxed mb-6">
@@ -951,7 +1075,7 @@ export function HealthLibraryHub() {
             </div>
             <div className="mt-6">
               <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors">
-                {isAr ? "ابدأ رحلتك مع Feel Great" : "Start Your Feel Great Journey"}
+                {hl.startJourney}
                 <span>→</span>
               </Link>
             </div>
@@ -962,7 +1086,7 @@ export function HealthLibraryHub() {
         <section id="related-hubs" className="mb-16 scroll-mt-20">
           <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
             <span className="w-1 h-8 bg-primary rounded-full" />
-            {isAr ? "مراكز معرفة مرتبطة" : "Connected Knowledge Hubs"}
+            {hl.connectedHubs}
           </h2>
           <p className="text-sm text-muted-foreground mb-6">
             {isAr
@@ -995,7 +1119,7 @@ export function HealthLibraryHub() {
           {/* Cross-hub contextual links */}
           <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border/50">
             <h3 className="text-sm font-semibold text-foreground mb-3">
-              {isAr ? "🔗 روابط سريعة بين المراكز" : "🔗 Quick Hub Links"}
+              {hl.quickLinks}
             </h3>
             <div className="flex flex-wrap gap-2">
               {PILLAR_HUBS.filter(h => h.slug !== hub.slug).map((h) => (
@@ -1039,18 +1163,16 @@ export function HealthLibraryHub() {
             />
             <div>
               <h3 className="font-bold text-foreground">
-                {isAr ? "فراس العايد" : "Feras Alayed"}
+                {hl.authorName}
               </h3>
               <p className="text-xs text-muted-foreground mb-2">
-                {isAr ? "أخصائي التغذية العلاجية والسلوكية" : "Therapeutic & Behavioral Nutrition Specialist"}
+                {hl.authorTitle}
               </p>
               <p className="text-sm text-muted-foreground">
-                {isAr
-                  ? "هذا المحتوى مبني على أحدث الأبحاث العلمية المحكّمة ومراجع من مؤسسات طبية رائدة. يتم تحديثه بانتظام ليعكس أحدث الاكتشافات."
-                  : "This content is built on the latest peer-reviewed scientific research and references from leading medical institutions. It is regularly updated to reflect the newest findings."}
+                {hl.authorBio}
               </p>
               <Link href="/feras-alayed" className="text-primary text-xs hover:underline mt-2 inline-block">
-                {isAr ? "عرض الملف الكامل →" : "View Full Profile →"}
+                {hl.viewProfile}
               </Link>
             </div>
           </div>

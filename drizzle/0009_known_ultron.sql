@@ -1,0 +1,24 @@
+ALTER TABLE `research_studies` ADD `title_fr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `title_es` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `title_de` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `title_tr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_30s_fr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_30s_es` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_30s_de` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_30s_tr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_1min_fr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_1min_es` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_1min_de` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_1min_tr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_3min_fr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_3min_es` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_3min_de` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `summary_3min_tr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `full_analysis_fr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `full_analysis_es` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `full_analysis_de` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `full_analysis_tr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `health_implications_fr` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `health_implications_es` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `health_implications_de` text;--> statement-breakpoint
+ALTER TABLE `research_studies` ADD `health_implications_tr` text;

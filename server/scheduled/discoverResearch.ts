@@ -400,6 +400,15 @@ export async function discoverResearchHandler(req: Request, res: Response) {
       console.warn(`[ResearchDiscovery] Image generation failed, continuing without image`);
     }
     
+    // Translate research summary to fr, es, de, tr
+    let researchTranslations: any = {};
+    try {
+      researchTranslations = await translateResearchSummary(summary.titleEn, summary.summary30sEn, summary.summary1minEn, summary.summary3minEn, summary.fullAnalysisEn, summary.healthImplicationsEn);
+      console.log(`[ResearchDiscovery] Translations generated (fr, es, de, tr)`);
+    } catch (transErr) {
+      console.warn(`[ResearchDiscovery] Translation failed (non-blocking):`, transErr);
+    }
+
     // Create slug
     const slug = slugify(summary.titleEn);
     
@@ -443,6 +452,31 @@ export async function discoverResearchHandler(req: Request, res: Response) {
       metaDescriptionAr: summary.metaDescriptionAr,
       heroImageUrl: heroImageUrl || null,
       impactScore: summary.impactScore || 5,
+      // Translated content (fr, es, de, tr)
+      titleFr: researchTranslations.titleFr || null,
+      titleEs: researchTranslations.titleEs || null,
+      titleDe: researchTranslations.titleDe || null,
+      titleTr: researchTranslations.titleTr || null,
+      summary30sFr: researchTranslations.summary30sFr || null,
+      summary30sEs: researchTranslations.summary30sEs || null,
+      summary30sDe: researchTranslations.summary30sDe || null,
+      summary30sTr: researchTranslations.summary30sTr || null,
+      summary1minFr: researchTranslations.summary1minFr || null,
+      summary1minEs: researchTranslations.summary1minEs || null,
+      summary1minDe: researchTranslations.summary1minDe || null,
+      summary1minTr: researchTranslations.summary1minTr || null,
+      summary3minFr: researchTranslations.summary3minFr || null,
+      summary3minEs: researchTranslations.summary3minEs || null,
+      summary3minDe: researchTranslations.summary3minDe || null,
+      summary3minTr: researchTranslations.summary3minTr || null,
+      fullAnalysisFr: researchTranslations.fullAnalysisFr || null,
+      fullAnalysisEs: researchTranslations.fullAnalysisEs || null,
+      fullAnalysisDe: researchTranslations.fullAnalysisDe || null,
+      fullAnalysisTr: researchTranslations.fullAnalysisTr || null,
+      healthImplicationsFr: researchTranslations.healthImplicationsFr || null,
+      healthImplicationsEs: researchTranslations.healthImplicationsEs || null,
+      healthImplicationsDe: researchTranslations.healthImplicationsDe || null,
+      healthImplicationsTr: researchTranslations.healthImplicationsTr || null,
       isPublished: true,
     });
     
@@ -467,5 +501,72 @@ export async function discoverResearchHandler(req: Request, res: Response) {
   } catch (error: any) {
     console.error("[ResearchDiscovery] Handler error:", error?.message || error);
     res.status(500).json({ ok: false, error: error?.message || "Unknown error" });
+  }
+}
+
+
+// ============================================================
+// TRANSLATE RESEARCH SUMMARY TO 4 ADDITIONAL LANGUAGES
+// ============================================================
+async function translateResearchSummary(
+  titleEn: string, summary30sEn: string, summary1minEn: string,
+  summary3minEn: string, fullAnalysisEn: string, healthImplicationsEn: string
+): Promise<Record<string, string>> {
+  const { invokeLLM } = await import("../_core/llm");
+
+  const response = await invokeLLM({
+    messages: [
+      {
+        role: "system",
+        content: `You are a professional scientific/medical translator. Translate the provided research summary content into 4 languages: French (fr), Spanish (es), German (de), and Turkish (tr).
+
+Rules:
+- Maintain scientific accuracy and terminology
+- Translate naturally, not word-for-word
+- Keep brand names (Feel Great, Unimate, Balance) untranslated
+- Keep scientific terms in their standard form for each language
+- Respond ONLY with valid JSON`,
+      },
+      {
+        role: "user",
+        content: `Translate the following research content:
+
+Title: ${titleEn}
+30-second summary: ${summary30sEn}
+1-minute summary: ${summary1minEn}
+3-minute summary: ${summary3minEn.slice(0, 3000)}
+Full analysis: ${fullAnalysisEn.slice(0, 5000)}
+Health implications: ${healthImplicationsEn}
+
+Return JSON with keys: titleFr, titleEs, titleDe, titleTr, summary30sFr, summary30sEs, summary30sDe, summary30sTr, summary1minFr, summary1minEs, summary1minDe, summary1minTr, summary3minFr, summary3minEs, summary3minDe, summary3minTr, fullAnalysisFr, fullAnalysisEs, fullAnalysisDe, fullAnalysisTr, healthImplicationsFr, healthImplicationsEs, healthImplicationsDe, healthImplicationsTr`,
+      },
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "research_translations",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            titleFr: { type: "string" }, titleEs: { type: "string" }, titleDe: { type: "string" }, titleTr: { type: "string" },
+            summary30sFr: { type: "string" }, summary30sEs: { type: "string" }, summary30sDe: { type: "string" }, summary30sTr: { type: "string" },
+            summary1minFr: { type: "string" }, summary1minEs: { type: "string" }, summary1minDe: { type: "string" }, summary1minTr: { type: "string" },
+            summary3minFr: { type: "string" }, summary3minEs: { type: "string" }, summary3minDe: { type: "string" }, summary3minTr: { type: "string" },
+            fullAnalysisFr: { type: "string" }, fullAnalysisEs: { type: "string" }, fullAnalysisDe: { type: "string" }, fullAnalysisTr: { type: "string" },
+            healthImplicationsFr: { type: "string" }, healthImplicationsEs: { type: "string" }, healthImplicationsDe: { type: "string" }, healthImplicationsTr: { type: "string" },
+          },
+          required: ["titleFr", "titleEs", "titleDe", "titleTr", "summary30sFr", "summary30sEs", "summary30sDe", "summary30sTr", "summary1minFr", "summary1minEs", "summary1minDe", "summary1minTr", "summary3minFr", "summary3minEs", "summary3minDe", "summary3minTr", "fullAnalysisFr", "fullAnalysisEs", "fullAnalysisDe", "fullAnalysisTr", "healthImplicationsFr", "healthImplicationsEs", "healthImplicationsDe", "healthImplicationsTr"],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+
+  const raw = response.choices?.[0]?.message?.content;
+  try {
+    return JSON.parse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  } catch {
+    return {};
   }
 }

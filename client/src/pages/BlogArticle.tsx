@@ -4,10 +4,27 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useRef, useState, useMemo } from "react";
 
+// Helper to get multilingual article field
+function getField(article: any, field: string, lang: string): string {
+  const langMap: Record<string, string> = { ar: 'Ar', en: 'En', fr: 'Fr', es: 'Es', de: 'De', tr: 'Tr' };
+  const suffix = langMap[lang] || 'En';
+  return article[`${field}${suffix}`] || article[`${field}En`] || article[`${field}Ar`] || '';
+}
+
+const ARTICLE_UI: Record<string, { home: string; blog: string; minRead: string; words: string; author: string; authorTitle: string; published: string; updated: string; notFound: string; backToBlog: string }> = {
+  ar: { home: '\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629', blog: '\u0627\u0644\u0645\u062f\u0648\u0646\u0629', minRead: '\u062f\u0642\u0627\u0626\u0642 \u0642\u0631\u0627\u0621\u0629', words: '\u0643\u0644\u0645\u0629', author: '\u0641\u0631\u0627\u0633 \u0627\u0644\u0639\u0627\u064a\u062f', authorTitle: '\u0623\u062e\u0635\u0627\u0626\u064a \u0627\u0644\u062a\u063a\u0630\u064a\u0629 \u0627\u0644\u0639\u0644\u0627\u062c\u064a\u0629 \u0648\u0627\u0644\u0633\u0644\u0648\u0643\u064a\u0629', published: '\u0646\u064f\u0634\u0631: ', updated: '\u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b: ', notFound: '\u0627\u0644\u0645\u0642\u0627\u0644 \u063a\u064a\u0631 \u0645\u0648\u062c\u0648\u062f', backToBlog: '\u2190 \u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u0644\u0645\u062f\u0648\u0646\u0629' },
+  en: { home: 'Home', blog: 'Blog', minRead: 'min read', words: 'words', author: 'Feras Alayed', authorTitle: 'Therapeutic & Behavioral Nutrition Specialist', published: 'Published: ', updated: 'Updated: ', notFound: 'Article not found', backToBlog: '\u2190 Back to Blog' },
+  fr: { home: 'Accueil', blog: 'Blog', minRead: 'min de lecture', words: 'mots', author: 'Feras Alayed', authorTitle: 'Sp\u00e9cialiste en Nutrition Th\u00e9rapeutique', published: 'Publi\u00e9 : ', updated: 'Mis \u00e0 jour : ', notFound: 'Article non trouv\u00e9', backToBlog: '\u2190 Retour au blog' },
+  es: { home: 'Inicio', blog: 'Blog', minRead: 'min de lectura', words: 'palabras', author: 'Feras Alayed', authorTitle: 'Especialista en Nutrici\u00f3n Terap\u00e9utica', published: 'Publicado: ', updated: 'Actualizado: ', notFound: 'Art\u00edculo no encontrado', backToBlog: '\u2190 Volver al blog' },
+  de: { home: 'Startseite', blog: 'Blog', minRead: 'Min. Lesezeit', words: 'W\u00f6rter', author: 'Feras Alayed', authorTitle: 'Ern\u00e4hrungsspezialist', published: 'Ver\u00f6ffentlicht: ', updated: 'Aktualisiert: ', notFound: 'Artikel nicht gefunden', backToBlog: '\u2190 Zur\u00fcck zum Blog' },
+  tr: { home: 'Ana Sayfa', blog: 'Blog', minRead: 'dk okuma', words: 'kelime', author: 'Feras Alayed', authorTitle: 'Beslenme Uzman\u0131', published: 'Yay\u0131nlanma: ', updated: 'G\u00fcncelleme: ', notFound: 'Makale bulunamad\u0131', backToBlog: '\u2190 Bloga d\u00f6n' },
+};
+
 export default function BlogArticle() {
   const { slug } = useParams<{ slug: string }>();
   const { lang } = useLanguage();
   const isAr = lang === "ar";
+  const t = ARTICLE_UI[lang] || ARTICLE_UI.en;
 
   const { data: article, isLoading, error } = trpc.blog.getBySlug.useQuery(
     { slug: slug || "" },
@@ -33,12 +50,12 @@ export default function BlogArticle() {
   // Inject structured data (Article Schema, FAQ Schema, Breadcrumb Schema, Author Schema)
   useEffect(() => {
     if (article) {
-      const title = isAr ? article.titleAr : article.titleEn;
+      const title = getField(article, 'title', lang);
       document.title = `${title} | Feel Great`;
 
       // Update meta description
       const metaDesc = document.querySelector('meta[name="description"]');
-      const desc = isAr ? article.excerptAr : article.excerptEn;
+      const desc = getField(article, 'excerpt', lang);
       if (metaDesc) metaDesc.setAttribute("content", desc);
 
       // Remove existing schemas
@@ -83,9 +100,9 @@ export default function BlogArticle() {
           "@type": "WebPage",
           "@id": `https://feelgreat.us.com/blog/${article.slug}`
         },
-        wordCount: (isAr ? article.contentAr : article.contentEn).split(/\s+/).length,
+        wordCount: getField(article, 'content', lang).split(/\s+/).length,
         timeRequired: `PT${article.readTimeMinutes}M`,
-        inLanguage: isAr ? "ar" : "en",
+        inLanguage: lang,
         isAccessibleForFree: true,
         speakable: {
           "@type": "SpeakableSpecification",
@@ -108,13 +125,13 @@ export default function BlogArticle() {
           {
             "@type": "ListItem",
             position: 1,
-            name: isAr ? "الرئيسية" : "Home",
+            name: t.home,
             item: "https://feelgreat.us.com"
           },
           {
             "@type": "ListItem",
             position: 2,
-            name: isAr ? "المدونة" : "Blog",
+            name: t.blog,
             item: "https://feelgreat.us.com/blog"
           },
           {
@@ -207,7 +224,7 @@ export default function BlogArticle() {
         document.querySelector('link[rel="canonical"]')?.remove();
       };
     }
-  }, [article, isAr]);
+  }, [article, lang]);
 
   if (isLoading) {
     return (
@@ -226,28 +243,31 @@ export default function BlogArticle() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-muted-foreground mb-4">
-            {isAr ? "المقال غير موجود" : "Article not found"}
+            {t.notFound}
           </p>
           <Link href="/blog" className="text-[#1a5276] hover:underline font-medium">
-            {isAr ? "← العودة للمدونة" : "← Back to Blog"}
+            {t.backToBlog}
           </Link>
         </div>
       </div>
     );
   }
 
-  const content = isAr ? article.contentAr : article.contentEn;
-  const title = isAr ? article.titleAr : article.titleEn;
-  const excerpt = isAr ? article.excerptAr : article.excerptEn;
+  const content = getField(article, 'content', lang);
+  const title = getField(article, 'title', lang);
+  const excerpt = getField(article, 'excerpt', lang);
 
-  const publishDate = new Date(article.createdAt).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+  const localeMap: Record<string, string> = { ar: 'ar-SA', en: 'en-US', fr: 'fr-FR', es: 'es-ES', de: 'de-DE', tr: 'tr-TR' };
+  const dateLocale = localeMap[lang] || 'en-US';
+
+  const publishDate = new Date(article.createdAt).toLocaleDateString(dateLocale, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
   const updateDate = article.updatedAt
-    ? new Date(article.updatedAt).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
+    ? new Date(article.updatedAt).toLocaleDateString(dateLocale, {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -261,11 +281,11 @@ export default function BlogArticle() {
         <div className="container max-w-3xl">
           <nav className="flex items-center gap-2 text-xs text-gray-400" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white transition-colors">
-              {isAr ? "الرئيسية" : "Home"}
+              {t.home}
             </Link>
             <span className="text-gray-600">/</span>
             <Link href="/blog" className="hover:text-white transition-colors">
-              {isAr ? "المدونة" : "Blog"}
+              {t.blog}
             </Link>
             <span className="text-gray-600">/</span>
             <Link href={`/blog?category=${article.category}`} className="hover:text-white transition-colors">
@@ -285,11 +305,11 @@ export default function BlogArticle() {
               {article.category}
             </span>
             <span className="text-xs text-gray-400">
-              {article.readTimeMinutes} {isAr ? "دقائق قراءة" : "min read"}
+              {article.readTimeMinutes} {t.minRead}
             </span>
             {article.wordCount && article.wordCount > 0 && (
               <span className="text-xs text-gray-400">
-                {article.wordCount.toLocaleString()} {isAr ? "كلمة" : "words"}
+                {article.wordCount.toLocaleString()} {t.words}
               </span>
             )}
           </div>
@@ -308,10 +328,10 @@ export default function BlogArticle() {
               />
               <div>
                 <p className="text-white font-medium text-sm">
-                  {isAr ? "فراس العايد" : "Feras Alayed"}
+                  {t.author}
                 </p>
                 <p className="text-gray-400 text-xs">
-                  {isAr ? "أخصائي التغذية العلاجية والسلوكية" : "Therapeutic & Behavioral Nutrition Specialist"}
+                  {t.authorTitle}
                 </p>
               </div>
             </div>
@@ -320,12 +340,12 @@ export default function BlogArticle() {
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400 sm:ms-auto">
               <span className="flex items-center gap-1">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                {isAr ? "نُشر: " : "Published: "}{publishDate}
+                {t.published}{publishDate}
               </span>
               {updateDate && updateDate !== publishDate && (
                 <span className="flex items-center gap-1">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                  {isAr ? "آخر تحديث: " : "Updated: "}{updateDate}
+                  {t.updated}{updateDate}
                 </span>
               )}
             </div>
@@ -335,8 +355,11 @@ export default function BlogArticle() {
           <div className="mt-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-green-900/30 border border-green-700/40 w-fit">
             <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <span className="text-xs text-green-300">
-              {isAr
-                ? "تمت المراجعة العلمية • المحتوى تعليمي ولا يُغني عن استشارة الطبيب"
+              {lang === 'ar' ? "تمت المراجعة العلمية • المحتوى تعليمي ولا يُغني عن استشارة الطبيب"
+                : lang === 'fr' ? "Révisé scientifiquement • Contenu éducatif, ne remplace pas un avis médical"
+                : lang === 'es' ? "Revisado científicamente • Contenido educativo, no sustituye el consejo médico"
+                : lang === 'de' ? "Wissenschaftlich geprüft • Bildungsinhalte, kein Ersatz für ärztlichen Rat"
+                : lang === 'tr' ? "Bilimsel olarak incelendi • Eğitim amaçlı, tıbbi tavsiye yerine geçmez"
                 : "Scientifically Reviewed • Educational content, not a substitute for medical advice"}
             </span>
           </div>
@@ -344,7 +367,7 @@ export default function BlogArticle() {
       </header>
 
       {/* Table of Contents */}
-      {content && <TableOfContents content={content} isAr={isAr} />}
+      {content && <TableOfContents content={content} isAr={isAr} lang={lang} />}
 
       {/* Article Content */}
       <article className="container max-w-3xl py-12">
@@ -393,7 +416,7 @@ export default function BlogArticle() {
 
       {/* Content Cluster Navigation */}
       {article.pillarId && (
-        <ClusterNavigation pillarId={article.pillarId} currentSlug={article.slug} isAr={isAr} />
+        <ClusterNavigation pillarId={article.pillarId} currentSlug={article.slug} isAr={isAr} lang={lang} />
       )}
 
       {/* Share & CTA */}
@@ -402,7 +425,7 @@ export default function BlogArticle() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="text-sm text-muted-foreground">
-                {isAr ? "شارك المقال:" : "Share:"}
+                {lang === 'ar' ? "شارك المقال:" : lang === 'fr' ? "Partager :" : lang === 'es' ? "Compartir:" : lang === 'de' ? "Teilen:" : lang === 'tr' ? "Paylaş:" : "Share:"}
               </span>
               <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(`https://feelgreat.us.com/blog/${article.slug}`)}`}
@@ -427,17 +450,17 @@ export default function BlogArticle() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
             >
-              {isAr ? "احجز استشارة مجانية" : "Book Free Consultation"}
+              {lang === 'ar' ? "احجز استشارة مجانية" : lang === 'fr' ? "Réservez une consultation gratuite" : lang === 'es' ? "Reserve una consulta gratuita" : lang === 'de' ? "Kostenlose Beratung buchen" : lang === 'tr' ? "Ücretsiz danışma ayırtın" : "Book Free Consultation"}
             </a>
           </div>
         </div>
       </div>
 
       {/* Related Success Stories */}
-      <RelatedSuccessStories category={article.category} isAr={isAr} />
+      <RelatedSuccessStories category={article.category} isAr={isAr} lang={lang} />
 
       {/* Related Articles */}
-      <RelatedArticles category={article.category} currentSlug={article.slug} isAr={isAr} />
+      <RelatedArticles category={article.category} currentSlug={article.slug} isAr={isAr} lang={lang} />
 
       {/* Medical Disclaimer Footer */}
       <div className="bg-muted/30 border-t py-6">
@@ -446,11 +469,14 @@ export default function BlogArticle() {
             <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
             <div className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
               <p className="font-semibold mb-1">
-                {isAr ? "إخلاء مسؤولية طبية" : "Medical Disclaimer"}
+                {lang === 'ar' ? "إخلاء مسؤولية طبية" : lang === 'fr' ? "Avertissement médical" : lang === 'es' ? "Descargo de responsabilidad médica" : lang === 'de' ? "Medizinischer Haftungsausschluss" : lang === 'tr' ? "Tıbbi sorumluluk reddi" : "Medical Disclaimer"}
               </p>
               <p>
-                {isAr
-                  ? "هذا المحتوى تعليمي ومعلوماتي فقط ولا يُعد بديلاً عن الاستشارة الطبية المتخصصة أو التشخيص أو العلاج. استشر طبيبك دائماً قبل إجراء أي تغييرات في نظامك الغذائي أو نمط حياتك."
+                {lang === 'ar' ? "هذا المحتوى تعليمي ومعلوماتي فقط ولا يُعد بديلاً عن الاستشارة الطبية المتخصصة أو التشخيص أو العلاج. استشر طبيبك دائماً قبل إجراء أي تغييرات في نظامك الغذائي أو نمط حياتك."
+                  : lang === 'fr' ? "Ce contenu est uniquement à des fins éducatives et informatives et ne remplace pas un avis médical professionnel. Consultez toujours votre médecin avant de modifier votre alimentation ou votre mode de vie."
+                  : lang === 'es' ? "Este contenido es solo con fines educativos e informativos y no sustituye el consejo médico profesional. Consulte siempre a su médico antes de realizar cambios en su dieta o estilo de vida."
+                  : lang === 'de' ? "Dieser Inhalt dient nur zu Bildungs- und Informationszwecken und ersetzt keine professionelle medizinische Beratung. Konsultieren Sie immer Ihren Arzt, bevor Sie Änderungen an Ihrer Ernährung oder Ihrem Lebensstil vornehmen."
+                  : lang === 'tr' ? "Bu içerik yalnızca eğitim ve bilgilendirme amaçlıdır ve profesyonel tıbbi tavsiyenin yerini almaz. Diyetinizde veya yaşam tarzınızda değişiklik yapmadan önce her zaman doktorunuza danışın."
                   : "This content is for educational and informational purposes only and is not intended as a substitute for professional medical advice, diagnosis, or treatment. Always consult your physician before making any changes to your diet or lifestyle."}
               </p>
             </div>
@@ -464,7 +490,8 @@ export default function BlogArticle() {
 // ============================================================
 // Interactive Table of Contents Component
 // ============================================================
-function TableOfContents({ content, isAr }: { content: string; isAr: boolean }) {
+function TableOfContents({ content, isAr, lang }: { content: string; isAr: boolean; lang?: string }) {
+  const tocLabel = lang === 'fr' ? 'Table des matières' : lang === 'es' ? 'Tabla de contenidos' : lang === 'de' ? 'Inhaltsverzeichnis' : lang === 'tr' ? 'İçindekiler' : isAr ? 'محتويات المقال' : 'Table of Contents';
   const [isOpen, setIsOpen] = useState(true);
   const [activeId, setActiveId] = useState<string>("");
 
@@ -537,7 +564,7 @@ function TableOfContents({ content, isAr }: { content: string; isAr: boolean }) 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
             </svg>
             <span className="font-semibold text-sm text-foreground">
-              {isAr ? "محتويات المقال" : "Table of Contents"}
+              {tocLabel}
             </span>
             <span className="text-xs text-muted-foreground">({headings.length})</span>
           </div>
@@ -580,7 +607,7 @@ function TableOfContents({ content, isAr }: { content: string; isAr: boolean }) 
 // ============================================================
 // Content Cluster Navigation Component
 // ============================================================
-function ClusterNavigation({ pillarId, currentSlug, isAr }: { pillarId: string; currentSlug: string; isAr: boolean }) {
+function ClusterNavigation({ pillarId, currentSlug, isAr, lang }: { pillarId: string; currentSlug: string; isAr: boolean; lang?: string }) {
   const { data } = trpc.blog.getByPillar.useQuery({ pillarId, limit: 20 });
   const clusterArticles = (data ?? []).filter((a) => a.slug !== currentSlug).slice(0, 8);
 
@@ -610,7 +637,7 @@ function ClusterNavigation({ pillarId, currentSlug, isAr }: { pillarId: string; 
         <div className="flex items-center gap-2 mb-4">
           <svg className="w-5 h-5 text-[#c8a951]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
           <h3 className="font-bold text-sm">
-            {isAr ? `📚 المزيد من سلسلة: ${pillarName.ar}` : `📚 More from: ${pillarName.en}`}
+            {isAr ? `📚 المزيد من سلسلة: ${pillarName.ar}` : lang === 'fr' ? `📚 Plus de : ${pillarName.en}` : lang === 'es' ? `📚 Más de: ${pillarName.en}` : lang === 'de' ? `📚 Mehr aus: ${pillarName.en}` : lang === 'tr' ? `📚 Daha fazla: ${pillarName.en}` : `📚 More from: ${pillarName.en}`}
           </h3>
         </div>
         <div className="grid gap-2">
@@ -622,7 +649,7 @@ function ClusterNavigation({ pillarId, currentSlug, isAr }: { pillarId: string; 
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#c8a951] flex-shrink-0" />
               <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors line-clamp-1">
-                {isAr ? a.titleAr : a.titleEn}
+                {getField(a, 'title', lang || 'en')}
               </span>
             </Link>
           ))}
@@ -631,7 +658,7 @@ function ClusterNavigation({ pillarId, currentSlug, isAr }: { pillarId: string; 
           href={`/topics/${pillarId}`}
           className="inline-flex items-center gap-1 mt-4 text-xs text-[#c8a951] hover:underline font-medium"
         >
-          {isAr ? `اقرأ دليل ${pillarName.ar} الشامل ←` : `Read the full ${pillarName.en} guide →`}
+          {isAr ? `اقرأ دليل ${pillarName.ar} الشامل ←` : lang === 'fr' ? `Lire le guide complet ${pillarName.en} →` : lang === 'es' ? `Leer la guía completa de ${pillarName.en} →` : lang === 'de' ? `Den vollständigen ${pillarName.en} Leitfaden lesen →` : lang === 'tr' ? `${pillarName.en} tam kılavuzunu oku →` : `Read the full ${pillarName.en} guide →`}
         </Link>
       </div>
     </div>
@@ -641,7 +668,7 @@ function ClusterNavigation({ pillarId, currentSlug, isAr }: { pillarId: string; 
 // ============================================================
 // Related Success Stories Component
 // ============================================================
-function RelatedSuccessStories({ category, isAr }: { category: string; isAr: boolean }) {
+function RelatedSuccessStories({ category, isAr, lang }: { category: string; isAr: boolean; lang?: string }) {
   // Map article categories to success story categories
   const CATEGORY_MAP: Record<string, string> = {
     "insulin-resistance": "insulin-resistance",
@@ -670,12 +697,10 @@ function RelatedSuccessStories({ category, isAr }: { category: string; isAr: boo
       <div className="container max-w-3xl">
         <div className="text-center mb-6">
           <h3 className="text-lg font-bold text-white mb-2">
-            {isAr ? "💪 قصص نجاح حقيقية" : "💪 Real Success Stories"}
+            {isAr ? '💪 قصص نجاح حقيقية' : lang === 'fr' ? '💪 Histoires de réussite' : lang === 'es' ? '💪 Historias de éxito reales' : lang === 'de' ? '💪 Echte Erfolgsgeschichten' : lang === 'tr' ? '💪 Gerçek başarı hikayeleri' : '💪 Real Success Stories'}
           </h3>
           <p className="text-sm text-gray-400">
-            {isAr
-              ? "أشخاص حقيقيون حققوا نتائج ملموسة في رحلتهم الصحية"
-              : "Real people who achieved tangible results in their health journey"}
+            {isAr ? 'أشخاص حقيقيون حققوا نتائج ملموسة في رحلتهم الصحية' : lang === 'fr' ? 'De vraies personnes avec de vrais résultats' : lang === 'es' ? 'Personas reales con resultados tangibles' : lang === 'de' ? 'Echte Menschen mit greifbaren Ergebnissen' : lang === 'tr' ? 'Gerçek insanlar, gerçek sonuçlar' : 'Real people who achieved tangible results in their health journey'}
           </p>
         </div>
 
@@ -702,7 +727,7 @@ function RelatedSuccessStories({ category, isAr }: { category: string; isAr: boo
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link href={`/success-stories?category=${storyCategory}`}>
             <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#c8a951] text-[#0a1628] rounded-lg font-medium hover:bg-[#d4b85c] transition-colors text-sm cursor-pointer">
-              {isAr ? "اقرأ قصص النجاح" : "Read Success Stories"}
+              {isAr ? 'اقرأ قصص النجاح' : lang === 'fr' ? 'Lire les témoignages' : lang === 'es' ? 'Leer historias de éxito' : lang === 'de' ? 'Erfolgsgeschichten lesen' : lang === 'tr' ? 'Başarı hikayelerini oku' : 'Read Success Stories'}
             </span>
           </Link>
           <a
@@ -711,7 +736,7 @@ function RelatedSuccessStories({ category, isAr }: { category: string; isAr: boo
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
           >
-            {isAr ? "ابدأ رحلتك الآن" : "Start Your Journey"}
+            {isAr ? 'ابدأ رحلتك الآن' : lang === 'fr' ? 'Commencez votre parcours' : lang === 'es' ? 'Comience su viaje' : lang === 'de' ? 'Starten Sie Ihre Reise' : lang === 'tr' ? 'Yolculuğunuza başlayın' : 'Start Your Journey'}
           </a>
         </div>
       </div>
@@ -722,7 +747,7 @@ function RelatedSuccessStories({ category, isAr }: { category: string; isAr: boo
 // ============================================================
 // Related Articles Component
 // ============================================================
-function RelatedArticles({ category, currentSlug, isAr }: { category: string; currentSlug: string; isAr: boolean }) {
+function RelatedArticles({ category, currentSlug, isAr, lang }: { category: string; currentSlug: string; isAr: boolean; lang?: string }) {
   const { data } = trpc.blog.getByCategory.useQuery({ category, limit: 4 });
   const related = (data ?? []).filter((a) => a.slug !== currentSlug).slice(0, 3);
 
@@ -732,7 +757,7 @@ function RelatedArticles({ category, currentSlug, isAr }: { category: string; cu
     <section className="bg-muted/30 py-12">
       <div className="container max-w-5xl">
         <h2 className="text-xl font-bold mb-6">
-          {isAr ? "مقالات ذات صلة" : "Related Articles"}
+          {isAr ? 'مقالات ذات صلة' : lang === 'fr' ? 'Articles connexes' : lang === 'es' ? 'Artículos relacionados' : lang === 'de' ? 'Verwandte Artikel' : lang === 'tr' ? 'İlgili makaleler' : 'Related Articles'}
         </h2>
         <div className="grid md:grid-cols-3 gap-4">
           {related.map((article) => (
@@ -742,10 +767,10 @@ function RelatedArticles({ category, currentSlug, isAr }: { category: string; cu
               className="group rounded-lg border bg-card p-4 hover:shadow-md transition-all"
             >
               <h3 className="font-semibold text-sm group-hover:text-[#1a5276] transition-colors line-clamp-2 mb-2">
-                {isAr ? article.titleAr : article.titleEn}
+                {getField(article, 'title', lang || 'en')}
               </h3>
               <p className="text-xs text-muted-foreground line-clamp-2">
-                {isAr ? article.excerptAr : article.excerptEn}
+                {getField(article, 'excerpt', lang || 'en')}
               </p>
             </Link>
           ))}

@@ -1,16 +1,21 @@
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, TrendingUp, Heart, Brain, Shield, Zap, DollarSign, Clock, Activity, BarChart3, Target, CheckCircle, Star } from "lucide-react";
-
+import { useLanguage } from "@/contexts/LanguageContext";
 export default function HealthInvestor() {
+  const { lang } = useLanguage();
+  const isAr = lang === "ar";
   useEffect(() => {
-    document.title = "Health Investor | Invest In Your Health Today, Build Your Impact Tomorrow | Feel Great";
+    document.title = isAr
+      ? "المستثمر الصحي | استثمر في صحتك اليوم، وابنِ تأثيرك غداً | Feel Great"
+      : "Health Investor | Invest In Your Health Today, Build Your Impact Tomorrow | Feel Great";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Become a Health Investor. The most profitable investment you'll ever make is in your own health. Discover how investing in metabolic health creates compound returns in energy, productivity, longevity, and quality of life.");
-  }, []);
-
+    if (meta) meta.setAttribute("content", isAr
+      ? "كن مستثمراً صحياً. أكثر استثمار مربح ستقوم به هو في صحتك. اكتشف كيف يُحقق الاستثمار في الصحة الأيضية عوائد مركبة في الطاقة والإنتاجية والعمر والجودة."
+      : "Become a Health Investor. The most profitable investment you'll ever make is in your own health. Discover how investing in metabolic health creates compound returns in energy, productivity, longevity, and quality of life.");
+  }, [isAr]);
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-transparent to-green-400/5" />
@@ -21,23 +26,23 @@ export default function HealthInvestor() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-block px-4 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 text-sm font-medium mb-6">
-                A New Paradigm in Health
+                {isAr ? "نموذج جديد في الصحة" : "A New Paradigm in Health"}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                Become a <span className="text-amber-400">Health Investor</span>
+                {isAr ? <>كن <span className="text-amber-400">مستثمراً صحياً</span></> : <>Become a <span className="text-amber-400">Health Investor</span></>}
               </h1>
               <p className="text-xl text-slate-300 mb-4 leading-relaxed">
-                The most profitable investment you'll ever make isn't in stocks, real estate, or crypto. It's in your own health.
+                {isAr ? "أكثر استثمار مربح ستقوم به ليس في الأسهم أو العقارات أو العملات الرقمية. إنه في صحتك." : "The most profitable investment you'll ever make isn't in stocks, real estate, or crypto. It's in your own health."}
               </p>
               <p className="text-lg text-slate-400 mb-8">
-                Health Investing is the philosophy that every dollar, minute, and decision you put into your metabolic health generates compound returns in energy, productivity, longevity, relationships, and quality of life.
+                {isAr ? "الاستثمار الصحي هو فلسفة أن كل ريال ودقيقة وقرار تضعه في صحتك الأيضية يُولّد عوائد مركبة في الطاقة والإنتاجية والعمر والعلاقات وجودة الحياة." : "Health Investing is the philosophy that every dollar, minute, and decision you put into your metabolic health generates compound returns in energy, productivity, longevity, relationships, and quality of life."}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/assessments" className="px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center gap-2">
-                  Calculate Your Health ROI <ArrowRight className="w-4 h-4" />
+                  {isAr ? "احسب عائد صحتك" : "Calculate Your Health ROI"} <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link href="/about" className="px-6 py-3 border border-slate-600 text-slate-300 font-medium rounded-xl hover:bg-slate-700/50 transition-colors">
-                  Meet Feras Alayed
+                  {isAr ? "تعرّف على فراس العايد" : "Meet Feras Alayed"}
                 </Link>
               </div>
             </div>
@@ -54,14 +59,14 @@ export default function HealthInvestor() {
 
       {/* The Problem */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-4">The Cost of NOT Investing in Health</h2>
+        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "تكلفة عدم الاستثمار في الصحة" : "The Cost of NOT Investing in Health"}</h2>
         <p className="text-slate-400 text-center max-w-2xl mx-auto mb-10">
-          Most people treat health as an expense. Smart people treat it as an investment with measurable returns.
+          {isAr ? "معظم الناس يعاملون الصحة كمصروف. الأذكياء يعاملونها كاستثمار بعوائد قابلة للقياس." : "Most people treat health as an expense. Smart people treat it as an investment with measurable returns."}
         </p>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-red-400/5 border border-red-400/20 rounded-xl p-6">
             <h3 className="text-red-400 font-bold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 rotate-180" /> The Cost of Neglect
+              <TrendingUp className="w-5 h-5 rotate-180" /> {isAr ? "تكلفة الإهمال" : "The Cost of Neglect"}
             </h3>
             <ul className="space-y-3 text-slate-300 text-sm">
               <li className="flex items-start gap-2"><span className="text-red-400">•</span> Average American spends $12,500/year on healthcare (reactive)</li>
@@ -73,7 +78,7 @@ export default function HealthInvestor() {
           </div>
           <div className="bg-green-400/5 border border-green-400/20 rounded-xl p-6">
             <h3 className="text-green-400 font-bold mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" /> The Return on Health Investment
+              <TrendingUp className="w-5 h-5" /> {isAr ? "عائد الاستثمار الصحي" : "The Return on Health Investment"}
             </h3>
             <ul className="space-y-3 text-slate-300 text-sm">
               <li className="flex items-start gap-2"><span className="text-green-400">•</span> Every $1 in prevention saves $5.60 in treatment costs</li>
@@ -88,9 +93,9 @@ export default function HealthInvestor() {
 
       {/* The Health Investor Framework */}
       <section className="container max-w-5xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-4">The Health Investor Framework</h2>
+        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "إطار المستثمر الصحي" : "The Health Investor Framework"}</h2>
         <p className="text-slate-400 text-center max-w-2xl mx-auto mb-12">
-          Like financial investing, health investing follows principles of compound growth, diversification, and long-term thinking.
+          {isAr ? "مثل الاستثمار المالي، يتبع الاستثمار الصحي مبادئ النمو المركب والتنويع والتفكير طويل المدى." : "Like financial investing, health investing follows principles of compound growth, diversification, and long-term thinking."}
         </p>
         <div className="grid md:grid-cols-3 gap-6">
           {[
@@ -114,7 +119,7 @@ export default function HealthInvestor() {
 
       {/* The 5 Pillars of Health Investment */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-10">The 5 Pillars of Health Investment</h2>
+        <h2 className="text-3xl font-bold text-center mb-10">{isAr ? "الركائز الخمس للاستثمار الصحي" : "The 5 Pillars of Health Investment"}</h2>
         <div className="space-y-6">
           {[
             { num: "01", title: "Metabolic Capital", desc: "Your metabolic health is your primary asset. Insulin sensitivity, blood sugar stability, and cellular energy production determine everything else. The Feel Great system optimizes this foundation.", icon: Activity },
@@ -141,9 +146,9 @@ export default function HealthInvestor() {
       <section className="container max-w-4xl mx-auto px-4 py-16">
         <div className="bg-gradient-to-r from-amber-400/5 to-green-400/5 border border-amber-400/20 rounded-2xl p-10">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Your Health ROI</h2>
+            <h2 className="text-3xl font-bold mb-4">{isAr ? "عائد استثمارك الصحي" : "Your Health ROI"}</h2>
             <p className="text-slate-400 max-w-2xl mx-auto">
-              Consider this: If you invest $150/month in your metabolic health today, here's what the compound returns look like:
+              {isAr ? "فكّر في هذا: إذا استثمرت $150 شهرياً في صحتك الأيضية اليوم، إليك كيف تبدو العوائد المركبة:" : "Consider this: If you invest $150/month in your metabolic health today, here's what the compound returns look like:"}
             </p>
           </div>
           <div className="grid md:grid-cols-4 gap-4 mb-8">
@@ -176,10 +181,10 @@ export default function HealthInvestor() {
 
       {/* Who Is a Health Investor */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-10">Who Is a Health Investor?</h2>
+        <h2 className="text-3xl font-bold text-center mb-10">{isAr ? "من هو المستثمر الصحي؟" : "Who Is a Health Investor?"}</h2>
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="font-bold text-lg mb-4 text-amber-400">A Health Investor is someone who:</h3>
+            <h3 className="font-bold text-lg mb-4 text-amber-400">{isAr ? "المستثمر الصحي هو شخص:" : "A Health Investor is someone who:"}</h3>
             <ul className="space-y-3">
               {[
                 "Sees health as their most valuable asset, not an afterthought",
@@ -198,7 +203,7 @@ export default function HealthInvestor() {
             </ul>
           </div>
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
-            <h3 className="font-bold text-lg mb-4">The Health Investor Mindset</h3>
+            <h3 className="font-bold text-lg mb-4">{isAr ? "عقلية المستثمر الصحي" : "The Health Investor Mindset"}</h3>
             <div className="space-y-4">
               {[
                 { old: "\"I can't afford to eat healthy\"", new: "\"I can't afford NOT to invest in my health\"" },
@@ -235,16 +240,16 @@ export default function HealthInvestor() {
       {/* CTA */}
       <section className="container max-w-3xl mx-auto px-4 py-16">
         <div className="bg-gradient-to-r from-amber-400/10 to-green-400/10 border border-amber-400/30 rounded-2xl p-10 text-center">
-          <h2 className="text-3xl font-bold mb-4">Start Your Health Investment Today</h2>
+          <h2 className="text-3xl font-bold mb-4">{isAr ? "ابدأ استثمارك الصحي اليوم" : "Start Your Health Investment Today"}</h2>
           <p className="text-slate-300 mb-8 max-w-lg mx-auto">
-            Whether you want to optimize your own health or help others do the same — the first step is the same: invest in yourself.
+            {isAr ? "سواء أردت تحسين صحتك أو مساعدة الآخرين على ذلك — الخطوة الأولى واحدة: استثمر في نفسك." : "Whether you want to optimize your own health or help others do the same — the first step is the same: invest in yourself."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/assessments" className="px-8 py-4 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center justify-center gap-2">
-              Take Free Health Assessment <ArrowRight className="w-5 h-5" />
+              {isAr ? "خذ التقييم الصحي المجاني" : "Take Free Health Assessment"} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link href="/partner-with-feras" className="px-8 py-4 border border-amber-400/50 text-amber-400 font-bold rounded-xl hover:bg-amber-400/10 transition-colors inline-flex items-center justify-center gap-2">
-              Become a Health Investor Partner
+              {isAr ? "كن شريكاً مستثمراً صحياً" : "Become a Health Investor Partner"}
             </Link>
           </div>
         </div>
@@ -253,12 +258,12 @@ export default function HealthInvestor() {
       {/* Footer */}
       <div className="container max-w-5xl mx-auto px-4 pb-16 text-center">
         <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-400">
-          <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
-          <Link href="/about" className="hover:text-amber-400 transition-colors">About Feras</Link>
-          <Link href="/topics" className="hover:text-amber-400 transition-colors">Health Topics</Link>
-          <Link href="/partner-with-feras" className="hover:text-amber-400 transition-colors">Partner</Link>
-          <Link href="/assessments" className="hover:text-amber-400 transition-colors">Assessments</Link>
-          <Link href="/blog" className="hover:text-amber-400 transition-colors">Blog</Link>
+          <Link href="/" className="hover:text-amber-400 transition-colors">{isAr ? "الرئيسية" : "Home"}</Link>
+          <Link href="/about" className="hover:text-amber-400 transition-colors">{isAr ? "عن فراس" : "About Feras"}</Link>
+          <Link href="/topics" className="hover:text-amber-400 transition-colors">{isAr ? "المواضيع الصحية" : "Health Topics"}</Link>
+          <Link href="/partner-with-feras" className="hover:text-amber-400 transition-colors">{isAr ? "الشراكة" : "Partner"}</Link>
+          <Link href="/assessments" className="hover:text-amber-400 transition-colors">{isAr ? "التقييمات" : "Assessments"}</Link>
+          <Link href="/blog" className="hover:text-amber-400 transition-colors">{isAr ? "المدونة" : "Blog"}</Link>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -720,4 +720,48 @@ export async function getResearchTopics(): Promise<Array<{ topic: string; count:
     .groupBy(researchStudies.primaryTopic)
     .orderBy(desc(count()));
   return results.map(r => ({ topic: r.topic, count: r.count }));
+}
+
+
+// ============ Newsletter ============
+export async function subscribeToNewsletter(data: { email: string; name?: string; language: string; interests?: string[] }): Promise<{ success: boolean; alreadySubscribed?: boolean }> {
+  const db = await getDb();
+  if (!db) return { success: false };
+  
+  // Check if already subscribed
+  const existing = await db.select().from(newsletterSubscribers).where(eq(newsletterSubscribers.email, data.email)).limit(1);
+  if (existing.length > 0) {
+    // Reactivate if previously unsubscribed
+    if (!existing[0].isActive) {
+      await db.update(newsletterSubscribers)
+        .set({ isActive: true, unsubscribedAt: null, language: data.language })
+        .where(eq(newsletterSubscribers.email, data.email));
+      return { success: true };
+    }
+    return { success: true, alreadySubscribed: true };
+  }
+  
+  await db.insert(newsletterSubscribers).values({
+    email: data.email,
+    name: data.name || null,
+    language: data.language,
+    interests: data.interests ? JSON.stringify(data.interests) : null,
+  });
+  return { success: true };
+}
+
+export async function unsubscribeFromNewsletter(email: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  await db.update(newsletterSubscribers)
+    .set({ isActive: false, unsubscribedAt: new Date() })
+    .where(eq(newsletterSubscribers.email, email));
+  return true;
+}
+
+export async function getNewsletterSubscriberCount(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db.select({ count: count() }).from(newsletterSubscribers).where(eq(newsletterSubscribers.isActive, true));
+  return result[0]?.count || 0;
 }

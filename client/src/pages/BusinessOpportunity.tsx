@@ -1,33 +1,39 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle, Play, DollarSign, Globe, Users, Clock, TrendingUp, Star, Award } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type FunnelStep = "opportunity" | "video" | "application" | "booking";
 
 export default function BusinessOpportunity() {
+  const { lang } = useLanguage();
+  const isAr = lang === "ar";
   const [step, setStep] = useState<FunnelStep>("opportunity");
 
   useEffect(() => {
-    document.title = "Business Partnership Opportunity | Feel Great";
+    document.title = isAr
+      ? "فرصة الشراكة التجارية | Feel Great"
+      : "Business Partnership Opportunity | Feel Great";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Discover how to build a global health business with Feel Great. Join 10,000+ partners earning income while helping others achieve sustainable wellness.");
-  }, []);
+    if (meta) meta.setAttribute("content", isAr
+      ? "اكتشف كيف تبني عملاً صحياً عالمياً مع Feel Great. انضم لأكثر من 10,000 شريك يكسبون دخلاً بينما يساعدون الآخرين."
+      : "Discover how to build a global health business with Feel Great. Join 10,000+ partners earning income while helping others achieve sustainable wellness.");
+  }, [isAr]);
 
   const renderOpportunity = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       <div className="container max-w-4xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-16">
           <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
           <div className="inline-block px-4 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 text-sm font-medium mb-6">
-            Limited Partnership Positions Available
+            {isAr ? "مواقع شراكة محدودة متاحة" : "Limited Partnership Positions Available"}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            Build a Global Health Business<br />
-            <span className="text-amber-400">From Anywhere in the World</span>
+            {isAr ? <>ابنِ عملاً صحياً عالمياً<br /><span className="text-amber-400">من أي مكان في العالم</span></> : <>Build a Global Health Business<br /><span className="text-amber-400">From Anywhere in the World</span></>}
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Join thousands of partners who are building meaningful income while helping others achieve sustainable health. No inventory, no overhead, no limits.
+            {isAr ? "انضم لآلاف الشركاء الذين يبنون دخلاً ذا معنى بينما يساعدون الآخرين على تحقيق صحة مستدامة. لا مخزون، لا تكاليف ثابتة، لا حدود." : "Join thousands of partners who are building meaningful income while helping others achieve sustainable health. No inventory, no overhead, no limits."}
           </p>
         </div>
 
@@ -97,21 +103,21 @@ export default function BusinessOpportunity() {
             onClick={() => setStep("video")}
             className="px-10 py-5 bg-amber-400 text-slate-900 font-bold text-lg rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center gap-3"
           >
-            Watch the Opportunity Video <Play className="w-5 h-5" />
+            {isAr ? "شاهد فيديو الفرصة" : "Watch the Opportunity Video"} <Play className="w-5 h-5" />
           </button>
-          <p className="text-slate-500 text-sm mt-4">Free 5-minute presentation • No obligation</p>
+          <p className="text-slate-500 text-sm mt-4">{isAr ? "عرض مجاني 5 دقائق • بدون التزام" : "Free 5-minute presentation • No obligation"}</p>
         </div>
       </div>
     </div>
   );
 
   const renderVideo = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       <div className="container max-w-3xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">The Feel Great Business Model</h1>
-          <p className="text-slate-400">Watch this 5-minute overview to understand the opportunity</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "نموذج عمل Feel Great" : "The Feel Great Business Model"}</h1>
+          <p className="text-slate-400">{isAr ? "شاهد هذا العرض لمدة 5 دقائق لفهم الفرصة" : "Watch this 5-minute overview to understand the opportunity"}</p>
         </div>
 
         {/* Video placeholder */}
@@ -151,11 +157,11 @@ export default function BusinessOpportunity() {
             onClick={() => setStep("application")}
             className="px-10 py-5 bg-amber-400 text-slate-900 font-bold text-lg rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center gap-3"
           >
-            Apply to Become a Partner <ArrowRight className="w-5 h-5" />
+            {isAr ? "قدّم لتصبح شريكاً" : "Apply to Become a Partner"} <ArrowRight className="w-5 h-5" />
           </button>
           <div>
             <button onClick={() => setStep("opportunity")} className="text-slate-400 hover:text-white text-sm transition-colors">
-              ← Back to overview
+              {isAr ? "← العودة للنظرة العامة" : "← Back to overview"}
             </button>
           </div>
         </div>
@@ -164,12 +170,12 @@ export default function BusinessOpportunity() {
   );
 
   const renderApplication = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       <div className="container max-w-2xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Partner Application</h1>
-          <p className="text-slate-400">Tell us about yourself so we can determine if this is a good fit</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "طلب الشراكة" : "Partner Application"}</h1>
+          <p className="text-slate-400">{isAr ? "أخبرنا عن نفسك لنحدد ما إذا كان هذا مناسباً لك" : "Tell us about yourself so we can determine if this is a good fit"}</p>
         </div>
 
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
@@ -201,14 +207,14 @@ export default function BusinessOpportunity() {
               onClick={() => setStep("booking")}
               className="w-full px-8 py-4 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors flex items-center justify-center gap-2"
             >
-              Book Your Discovery Call <ArrowRight className="w-5 h-5" />
+              {isAr ? "احجز مكالمة الاكتشاف" : "Book Your Discovery Call"} <ArrowRight className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         <div className="mt-6 text-center">
           <button onClick={() => setStep("video")} className="text-slate-400 hover:text-white text-sm transition-colors">
-            ← Back to video
+            {isAr ? "← العودة للفيديو" : "← Back to video"}
           </button>
         </div>
       </div>
@@ -216,16 +222,16 @@ export default function BusinessOpportunity() {
   );
 
   const renderBooking = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       <div className="container max-w-2xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
           <div className="w-16 h-16 bg-green-400/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-8 h-8 text-green-400" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Book Your Discovery Call</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "احجز مكالمة الاكتشاف" : "Book Your Discovery Call"}</h1>
           <p className="text-slate-400 max-w-lg mx-auto">
-            Schedule a 20-minute call with Feras Al-Ayed to discuss the partnership opportunity and answer your questions.
+            {isAr ? "حدد موعداً لمكالمة 20 دقيقة مع فراس العايد لمناقشة فرصة الشراكة والإجابة على أسئلتك." : "Schedule a 20-minute call with Feras Al-Ayed to discuss the partnership opportunity and answer your questions."}
           </p>
         </div>
 
@@ -253,7 +259,7 @@ export default function BusinessOpportunity() {
               rel="noopener noreferrer"
               className="w-full px-8 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-colors flex items-center justify-center gap-2"
             >
-              Book via WhatsApp <ArrowRight className="w-5 h-5" />
+              {isAr ? "احجز عبر واتساب" : "Book via WhatsApp"} <ArrowRight className="w-5 h-5" />
             </a>
             <a
               href="https://www.instagram.com/use2lose"

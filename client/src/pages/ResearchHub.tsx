@@ -38,9 +38,26 @@ const EVIDENCE_LABELS: Record<string, { ar: string; en: string }> = {
   "very-low": { ar: "ضعيف جداً", en: "Very Low" },
 };
 
-function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
-  const title = isAr ? study.titleAr : study.titleEn;
-  const summary = isAr ? study.summary30sAr : study.summary30sEn;
+// Helper to get multilingual research field
+function getResearchField(study: any, field: string, lang: string): string {
+  const langMap: Record<string, string> = { ar: 'Ar', en: 'En', fr: 'Fr', es: 'Es', de: 'De', tr: 'Tr' };
+  const suffix = langMap[lang] || 'En';
+  return study[`${field}${suffix}`] || study[`${field}En`] || study[`${field}Ar`] || '';
+}
+
+const RESEARCH_UI: Record<string, { title: string; subtitle: string; aiPowered: string; studies: string; updatedDaily: string; verifiedSources: string; disclaimer: string; disclaimerText: string; noStudies: string; addedSoon: string; noToday: string; checkLatest: string; noWeek: string; noMonth: string; noData: string; topicsCovered: string; sources: string; stayUpdated: string; stayUpdatedDesc: string; readBlog: string; latest: string; today: string; week: string; month: string; popular: string; impactful: string; preliminary: string; reads: string }> = {
+  ar: { title: '\u0645\u0631\u0643\u0632 \u0627\u0644\u0623\u0628\u062d\u0627\u062b \u0627\u0644\u0639\u0644\u0645\u064a\u0629', subtitle: '\u0623\u062d\u062f\u062b \u0627\u0644\u062f\u0631\u0627\u0633\u0627\u062a \u0627\u0644\u0639\u0644\u0645\u064a\u0629 \u0645\u0646 \u0623\u0641\u0636\u0644 \u0627\u0644\u062c\u0627\u0645\u0639\u0627\u062a \u0648\u0627\u0644\u0645\u062c\u0644\u0627\u062a \u0627\u0644\u0639\u0627\u0644\u0645\u064a\u0629 \u2014 \u0645\u0628\u0633\u0637\u0629 \u0648\u0645\u062a\u0631\u062c\u0645\u0629 \u0644\u062a\u0641\u0647\u0645\u0647\u0627 \u0641\u064a 30 \u062b\u0627\u0646\u064a\u0629 \u0623\u0648 3 \u062f\u0642\u0627\u0626\u0642', aiPowered: '\u0645\u062f\u0639\u0648\u0645 \u0628\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a', studies: '\u062f\u0631\u0627\u0633\u0629', updatedDaily: '\u062a\u062d\u062f\u064a\u062b \u064a\u0648\u0645\u064a', verifiedSources: '\u0645\u0635\u0627\u062f\u0631 \u0645\u0648\u062b\u0642\u0629', disclaimer: '\u062a\u0646\u0628\u064a\u0647:', disclaimerText: '\u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u062a\u0639\u0644\u064a\u0645\u064a \u0648\u0644\u064a\u0633 \u062a\u0634\u062e\u064a\u0635\u0627\u064b \u0637\u0628\u064a\u0627\u064b. \u0627\u0644\u062f\u0631\u0627\u0633\u0627\u062a \u0627\u0644\u0623\u0648\u0644\u064a\u0629 \u0639\u0644\u0649 \u0627\u0644\u062d\u064a\u0648\u0627\u0646\u0627\u062a \u0623\u0648 \u0627\u0644\u062e\u0644\u0627\u064a\u0627 \u0644\u0627 \u062a\u064f\u0639\u062f \u0625\u062b\u0628\u0627\u062a\u0627\u064b \u0639\u0644\u0649 \u0627\u0644\u0628\u0634\u0631. \u0627\u0633\u062a\u0634\u0631 \u0637\u0628\u064a\u0628\u0643 \u062f\u0627\u0626\u0645\u0627\u064b.', noStudies: '\u0644\u0627 \u062a\u0648\u062c\u062f \u062f\u0631\u0627\u0633\u0627\u062a \u0628\u0639\u062f', addedSoon: '\u0633\u064a\u062a\u0645 \u0625\u0636\u0627\u0641\u0629 \u062f\u0631\u0627\u0633\u0627\u062a \u062c\u062f\u064a\u062f\u0629 \u0642\u0631\u064a\u0628\u0627\u064b', noToday: '\u0644\u0627 \u062a\u0648\u062c\u062f \u062f\u0631\u0627\u0633\u0627\u062a \u062c\u062f\u064a\u062f\u0629 \u0627\u0644\u064a\u0648\u0645', checkLatest: '\u062a\u062d\u0642\u0642 \u0645\u0646 \u0627\u0644\u062f\u0631\u0627\u0633\u0627\u062a \u0627\u0644\u0623\u062d\u062f\u062b \u0623\u0648 \u0647\u0630\u0627 \u0627\u0644\u0623\u0633\u0628\u0648\u0639', noWeek: '\u0644\u0627 \u062a\u0648\u062c\u062f \u062f\u0631\u0627\u0633\u0627\u062a \u0647\u0630\u0627 \u0627\u0644\u0623\u0633\u0628\u0648\u0639', noMonth: '\u0644\u0627 \u062a\u0648\u062c\u062f \u062f\u0631\u0627\u0633\u0627\u062a \u0647\u0630\u0627 \u0627\u0644\u0634\u0647\u0631', noData: '\u0644\u0627 \u062a\u0648\u062c\u062f \u0628\u064a\u0627\u0646\u0627\u062a \u0628\u0639\u062f', topicsCovered: '\u0627\u0644\u0645\u0648\u0627\u0636\u064a\u0639 \u0627\u0644\u0645\u063a\u0637\u0627\u0629', sources: '\u0645\u0635\u0627\u062f\u0631\u0646\u0627 \u0627\u0644\u0639\u0644\u0645\u064a\u0629', stayUpdated: '\u0627\u0628\u0642\u064e \u0639\u0644\u0649 \u0627\u0637\u0644\u0627\u0639 \u0628\u0623\u062d\u062f\u062b \u0627\u0644\u0623\u0628\u062d\u0627\u062b', stayUpdatedDesc: '\u0646\u0636\u064a\u0641 \u062f\u0631\u0627\u0633\u0627\u062a \u062c\u062f\u064a\u062f\u0629 \u064a\u0648\u0645\u064a\u0627\u064b \u0645\u0646 \u0623\u0641\u0636\u0644 \u0627\u0644\u0645\u062c\u0644\u0627\u062a \u0627\u0644\u0639\u0644\u0645\u064a\u0629 \u0627\u0644\u0639\u0627\u0644\u0645\u064a\u0629', readBlog: '\u0627\u0642\u0631\u0623 \u0645\u0642\u0627\u0644\u0627\u062a\u0646\u0627 \u0623\u064a\u0636\u0627\u064b', latest: '\u0627\u0644\u0623\u062d\u062f\u062b', today: '\u0627\u0644\u064a\u0648\u0645', week: '\u0647\u0630\u0627 \u0627\u0644\u0623\u0633\u0628\u0648\u0639', month: '\u0647\u0630\u0627 \u0627\u0644\u0634\u0647\u0631', popular: '\u0627\u0644\u0623\u0643\u062b\u0631 \u0642\u0631\u0627\u0621\u0629', impactful: '\u0627\u0644\u0623\u0643\u062b\u0631 \u062a\u0623\u062b\u064a\u0631\u0627\u064b', preliminary: '\u062f\u0631\u0627\u0633\u0629 \u0623\u0648\u0644\u064a\u0629', reads: '\u0642\u0631\u0627\u0621\u0629' },
+  en: { title: 'Health Science Hub', subtitle: 'Latest scientific studies from top universities and journals \u2014 simplified so you can understand them in 30 seconds or 3 minutes', aiPowered: 'AI-Powered Research Summaries', studies: 'studies', updatedDaily: 'Updated daily', verifiedSources: 'Verified sources', disclaimer: 'Disclaimer:', disclaimerText: 'This content is educational, not medical advice. Preliminary animal/cell studies are not proof in humans. Always consult your doctor.', noStudies: 'No studies yet', addedSoon: 'New studies will be added soon', noToday: 'No new studies today', checkLatest: 'Check Latest or This Week tabs for recent studies', noWeek: 'No studies this week', noMonth: 'No studies this month', noData: 'No data yet', topicsCovered: 'Topics Covered', sources: 'Our Scientific Sources', stayUpdated: 'Stay Updated with Latest Research', stayUpdatedDesc: 'We add new studies daily from the world\'s top scientific journals', readBlog: 'Read Our Blog Too', latest: 'Latest', today: 'Today', week: 'This Week', month: 'This Month', popular: 'Most Read', impactful: 'Most Impactful', preliminary: 'Preliminary', reads: 'reads' },
+  fr: { title: 'Centre de Recherche Scientifique', subtitle: 'Derni\u00e8res \u00e9tudes scientifiques simplifi\u00e9es des meilleures universit\u00e9s', aiPowered: 'R\u00e9sum\u00e9s aliment\u00e9s par l\'IA', studies: '\u00e9tudes', updatedDaily: 'Mise \u00e0 jour quotidienne', verifiedSources: 'Sources v\u00e9rifi\u00e9es', disclaimer: 'Avertissement :', disclaimerText: 'Ce contenu est \u00e9ducatif, pas un avis m\u00e9dical. Les \u00e9tudes pr\u00e9liminaires ne sont pas des preuves chez l\'homme.', noStudies: 'Aucune \u00e9tude', addedSoon: 'De nouvelles \u00e9tudes seront ajout\u00e9es bient\u00f4t', noToday: 'Pas de nouvelles \u00e9tudes aujourd\'hui', checkLatest: 'Consultez les onglets R\u00e9cents ou Cette semaine', noWeek: 'Pas d\'\u00e9tudes cette semaine', noMonth: 'Pas d\'\u00e9tudes ce mois', noData: 'Pas encore de donn\u00e9es', topicsCovered: 'Sujets couverts', sources: 'Nos sources scientifiques', stayUpdated: 'Restez inform\u00e9', stayUpdatedDesc: 'Nous ajoutons de nouvelles \u00e9tudes quotidiennement', readBlog: 'Lisez aussi notre blog', latest: 'R\u00e9cents', today: 'Aujourd\'hui', week: 'Cette semaine', month: 'Ce mois', popular: 'Plus lus', impactful: 'Plus impactants', preliminary: 'Pr\u00e9liminaire', reads: 'lectures' },
+  es: { title: 'Centro de Investigaci\u00f3n Cient\u00edfica', subtitle: '\u00daltimos estudios cient\u00edficos simplificados de las mejores universidades', aiPowered: 'Res\u00famenes con IA', studies: 'estudios', updatedDaily: 'Actualizado diariamente', verifiedSources: 'Fuentes verificadas', disclaimer: 'Aviso:', disclaimerText: 'Este contenido es educativo, no consejo m\u00e9dico. Los estudios preliminares no son prueba en humanos.', noStudies: 'No hay estudios a\u00fan', addedSoon: 'Se a\u00f1adir\u00e1n nuevos estudios pronto', noToday: 'No hay estudios nuevos hoy', checkLatest: 'Consulte las pesta\u00f1as Recientes o Esta semana', noWeek: 'No hay estudios esta semana', noMonth: 'No hay estudios este mes', noData: 'Sin datos a\u00fan', topicsCovered: 'Temas cubiertos', sources: 'Nuestras fuentes cient\u00edficas', stayUpdated: 'Mant\u00e9ngase actualizado', stayUpdatedDesc: 'A\u00f1adimos nuevos estudios diariamente', readBlog: 'Lea tambi\u00e9n nuestro blog', latest: 'Recientes', today: 'Hoy', week: 'Esta semana', month: 'Este mes', popular: 'M\u00e1s le\u00eddos', impactful: 'M\u00e1s impactantes', preliminary: 'Preliminar', reads: 'lecturas' },
+  de: { title: 'Wissenschaftliches Forschungszentrum', subtitle: 'Neueste wissenschaftliche Studien vereinfacht aus den besten Universit\u00e4ten', aiPowered: 'KI-gest\u00fctzte Zusammenfassungen', studies: 'Studien', updatedDaily: 'T\u00e4glich aktualisiert', verifiedSources: 'Verifizierte Quellen', disclaimer: 'Hinweis:', disclaimerText: 'Dieser Inhalt ist p\u00e4dagogisch, keine medizinische Beratung. Vorl\u00e4ufige Studien sind kein Beweis beim Menschen.', noStudies: 'Noch keine Studien', addedSoon: 'Neue Studien werden bald hinzugef\u00fcgt', noToday: 'Keine neuen Studien heute', checkLatest: 'Pr\u00fcfen Sie die Tabs Neueste oder Diese Woche', noWeek: 'Keine Studien diese Woche', noMonth: 'Keine Studien diesen Monat', noData: 'Noch keine Daten', topicsCovered: 'Abgedeckte Themen', sources: 'Unsere wissenschaftlichen Quellen', stayUpdated: 'Bleiben Sie auf dem Laufenden', stayUpdatedDesc: 'Wir f\u00fcgen t\u00e4glich neue Studien hinzu', readBlog: 'Lesen Sie auch unseren Blog', latest: 'Neueste', today: 'Heute', week: 'Diese Woche', month: 'Diesen Monat', popular: 'Meistgelesen', impactful: 'Wirkungsvollste', preliminary: 'Vorl\u00e4ufig', reads: 'Aufrufe' },
+  tr: { title: 'Bilimsel Ara\u015ft\u0131rma Merkezi', subtitle: 'En iyi \u00fcniversitelerden basitle\u015ftirilmi\u015f bilimsel \u00e7al\u0131\u015fmalar', aiPowered: 'Yapay Zeka Destekli \u00d6zetler', studies: '\u00e7al\u0131\u015fma', updatedDaily: 'G\u00fcnl\u00fck g\u00fcncelleme', verifiedSources: 'Do\u011frulanm\u0131\u015f kaynaklar', disclaimer: 'Uyar\u0131:', disclaimerText: 'Bu i\u00e7erik e\u011fitim ama\u00e7l\u0131d\u0131r, t\u0131bbi tavsiye de\u011fildir. \u00d6n \u00e7al\u0131\u015fmalar insanlarda kan\u0131t de\u011fildir.', noStudies: 'Hen\u00fcz \u00e7al\u0131\u015fma yok', addedSoon: 'Yak\u0131nda yeni \u00e7al\u0131\u015fmalar eklenecek', noToday: 'Bug\u00fcn yeni \u00e7al\u0131\u015fma yok', checkLatest: 'Son veya Bu Hafta sekmelerini kontrol edin', noWeek: 'Bu hafta \u00e7al\u0131\u015fma yok', noMonth: 'Bu ay \u00e7al\u0131\u015fma yok', noData: 'Hen\u00fcz veri yok', topicsCovered: 'Kapsanan konular', sources: 'Bilimsel kaynaklar\u0131m\u0131z', stayUpdated: 'G\u00fcncel kal\u0131n', stayUpdatedDesc: 'Her g\u00fcn yeni \u00e7al\u0131\u015fmalar ekliyoruz', readBlog: 'Blogumuzu da okuyun', latest: 'Son', today: 'Bug\u00fcn', week: 'Bu Hafta', month: 'Bu Ay', popular: 'En \u00c7ok Okunan', impactful: 'En Etkili', preliminary: '\u00d6n \u00c7al\u0131\u015fma', reads: 'okuma' },
+};
+
+function StudyCard({ study, isAr, lang }: { study: any; isAr: boolean; lang: string }) {
+  const rt = RESEARCH_UI[lang] || RESEARCH_UI.en;
+  const title = getResearchField(study, 'title', lang);
+  const summary = getResearchField(study, 'summary30s', lang);
   const evidenceLabel = EVIDENCE_LABELS[study.evidenceLevel] || { ar: study.evidenceLevel, en: study.evidenceLevel };
   const evidenceColor = EVIDENCE_COLORS[study.evidenceLevel] || "bg-gray-100 text-gray-800";
 
@@ -64,7 +81,7 @@ function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
             </Badge>
             {study.isPreliminary && (
               <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300 border-amber-200">
-                {isAr ? "⚠️ دراسة أولية" : "⚠️ Preliminary"}
+                ⚠️ {rt.preliminary}
               </Badge>
             )}
             <Badge variant="outline" className="text-xs">
@@ -96,7 +113,7 @@ function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
                   ⭐ {study.impactScore}/10
                 </span>
               )}
-              <span>{new Date(study.publishDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", { year: "numeric", month: "short" })}</span>
+              <span>{new Date(study.publishDate).toLocaleDateString({ ar: 'ar-SA', en: 'en-US', fr: 'fr-FR', es: 'es-ES', de: 'de-DE', tr: 'tr-TR' }[lang] || 'en-US', { year: "numeric", month: "short" })}</span>
             </div>
           </div>
 
@@ -113,7 +130,7 @@ function StudyCard({ study, isAr }: { study: any; isAr: boolean }) {
           {study.viewCount > 0 && (
             <div className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground">
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-              {study.viewCount.toLocaleString()} {isAr ? "قراءة" : "reads"}
+              {study.viewCount.toLocaleString()} {rt.reads}
             </div>
           )}
         </div>
@@ -143,6 +160,7 @@ function StudyCardSkeleton() {
 export default function ResearchHub() {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
+  const rt = RESEARCH_UI[lang] || RESEARCH_UI.en;
   const [selectedTopic, setSelectedTopic] = useState("all");
   const [activeTab, setActiveTab] = useState("latest");
 
@@ -184,28 +202,26 @@ export default function ResearchHub() {
             <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
-            <span>{isAr ? "مدعوم بالذكاء الاصطناعي" : "AI-Powered Research Summaries"}</span>
+            <span>{rt.aiPowered}</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            {isAr ? "مركز الأبحاث العلمية" : "Health Science Hub"}
+            {rt.title}
           </h1>
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-4">
-            {isAr
-              ? "أحدث الدراسات العلمية من أفضل الجامعات والمجلات العالمية — مبسطة ومترجمة لتفهمها في 30 ثانية أو 3 دقائق"
-              : "Latest scientific studies from top universities and journals — simplified so you can understand them in 30 seconds or 3 minutes"}
+            {rt.subtitle}
           </p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-400">
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
-              {totalStudies} {isAr ? "دراسة" : "studies"}
+              {totalStudies} {rt.studies}
             </span>
             <span>•</span>
-            <span>{isAr ? "تحديث يومي" : "Updated daily"}</span>
+            <span>{rt.updatedDaily}</span>
             <span>•</span>
-            <span>{isAr ? "مصادر موثقة" : "Verified sources"}</span>
+            <span>{rt.verifiedSources}</span>
           </div>
         </div>
       </header>
@@ -213,10 +229,8 @@ export default function ResearchHub() {
       {/* Disclaimer Banner */}
       <div className="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800/30">
         <div className="container py-3 text-center text-sm text-amber-800 dark:text-amber-200">
-          <span className="font-medium">⚠️ {isAr ? "تنبيه:" : "Disclaimer:"}</span>{" "}
-          {isAr
-            ? "المحتوى تعليمي وليس تشخيصاً طبياً. الدراسات الأولية على الحيوانات أو الخلايا لا تُعد إثباتاً على البشر. استشر طبيبك دائماً."
-            : "This content is educational, not medical advice. Preliminary animal/cell studies are not proof in humans. Always consult your doctor."}
+          <span className="font-medium">⚠️ {rt.disclaimer}</span>{" "}
+          {rt.disclaimerText}
         </div>
       </div>
 
@@ -243,12 +257,12 @@ export default function ResearchHub() {
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
           <TabsList className="grid w-full max-w-3xl grid-cols-6">
-            <TabsTrigger value="latest">{isAr ? "الأحدث" : "Latest"}</TabsTrigger>
-            <TabsTrigger value="today">{isAr ? "اليوم" : "Today"}</TabsTrigger>
-            <TabsTrigger value="week">{isAr ? "هذا الأسبوع" : "This Week"}</TabsTrigger>
-            <TabsTrigger value="month">{isAr ? "هذا الشهر" : "This Month"}</TabsTrigger>
-            <TabsTrigger value="popular">{isAr ? "الأكثر قراءة" : "Most Read"}</TabsTrigger>
-            <TabsTrigger value="impactful">{isAr ? "الأكثر تأثيراً" : "Most Impactful"}</TabsTrigger>
+            <TabsTrigger value="latest">{rt.latest}</TabsTrigger>
+            <TabsTrigger value="today">{rt.today}</TabsTrigger>
+            <TabsTrigger value="week">{rt.week}</TabsTrigger>
+            <TabsTrigger value="month">{rt.month}</TabsTrigger>
+            <TabsTrigger value="popular">{rt.popular}</TabsTrigger>
+            <TabsTrigger value="impactful">{rt.impactful}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="latest" className="mt-6">
@@ -260,16 +274,16 @@ export default function ResearchHub() {
               <div className="text-center py-20">
                 <div className="text-6xl mb-4">🔬</div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {isAr ? "لا توجد دراسات بعد" : "No studies yet"}
+                  {rt.noStudies}
                 </h3>
                 <p className="text-muted-foreground">
-                  {isAr ? "سيتم إضافة دراسات جديدة قريباً" : "New studies will be added soon"}
+                  {rt.addedSoon}
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {studies.map((study: any) => (
-                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                  <StudyCard key={study.id} study={study} isAr={isAr} lang={lang} />
                 ))}
               </div>
             )}
@@ -279,17 +293,17 @@ export default function ResearchHub() {
             {todayData && todayData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {todayData.map((study: any) => (
-                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                  <StudyCard key={study.id} study={study} isAr={isAr} lang={lang} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">📅</div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {isAr ? "لا توجد دراسات جديدة اليوم" : "No new studies today"}
+                  {rt.noToday}
                 </h3>
                 <p className="text-muted-foreground text-sm">
-                  {isAr ? "تحقق من الدراسات الأحدث أو هذا الأسبوع" : "Check Latest or This Week tabs for recent studies"}
+                  {rt.checkLatest}
                 </p>
               </div>
             )}
@@ -299,12 +313,12 @@ export default function ResearchHub() {
             {weekData && weekData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {weekData.map((study: any) => (
-                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                  <StudyCard key={study.id} study={study} isAr={isAr} lang={lang} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className="text-muted-foreground">{isAr ? "لا توجد دراسات هذا الأسبوع" : "No studies this week"}</p>
+                <p className="text-muted-foreground">{rt.noWeek}</p>
               </div>
             )}
           </TabsContent>
@@ -313,12 +327,12 @@ export default function ResearchHub() {
             {monthData && monthData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {monthData.map((study: any) => (
-                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                  <StudyCard key={study.id} study={study} isAr={isAr} lang={lang} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className="text-muted-foreground">{isAr ? "لا توجد دراسات هذا الشهر" : "No studies this month"}</p>
+                <p className="text-muted-foreground">{rt.noMonth}</p>
               </div>
             )}
           </TabsContent>
@@ -327,12 +341,12 @@ export default function ResearchHub() {
             {mostReadData && mostReadData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {mostReadData.map((study: any) => (
-                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                  <StudyCard key={study.id} study={study} isAr={isAr} lang={lang} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className="text-muted-foreground">{isAr ? "لا توجد بيانات بعد" : "No data yet"}</p>
+                <p className="text-muted-foreground">{rt.noData}</p>
               </div>
             )}
           </TabsContent>
@@ -341,12 +355,12 @@ export default function ResearchHub() {
             {mostImpactfulData && mostImpactfulData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {mostImpactfulData.map((study: any) => (
-                  <StudyCard key={study.id} study={study} isAr={isAr} />
+                  <StudyCard key={study.id} study={study} isAr={isAr} lang={lang} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-20">
-                <p className="text-muted-foreground">{isAr ? "لا توجد بيانات بعد" : "No data yet"}</p>
+                <p className="text-muted-foreground">{rt.noData}</p>
               </div>
             )}
           </TabsContent>
@@ -356,7 +370,7 @@ export default function ResearchHub() {
         {topicsData && topicsData.length > 0 && (
           <section className="mt-12 p-6 bg-muted/30 rounded-2xl border border-border/50">
             <h2 className="text-xl font-bold text-foreground mb-4">
-              {isAr ? "المواضيع المغطاة" : "Topics Covered"}
+              {rt.topicsCovered}
             </h2>
             <div className="flex flex-wrap gap-3">
               {topicsData.map((t: any) => (
@@ -376,7 +390,7 @@ export default function ResearchHub() {
         {/* Trust Section */}
         <section className="mt-12 text-center">
           <h2 className="text-xl font-bold text-foreground mb-6">
-            {isAr ? "مصادرنا العلمية" : "Our Scientific Sources"}
+            {rt.sources}
           </h2>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground opacity-70">
             {["PubMed", "NIH", "Nature", "The Lancet", "JAMA", "BMJ", "Harvard", "Stanford", "Mayo Clinic", "WHO"].map((source) => (
@@ -390,16 +404,14 @@ export default function ResearchHub() {
       <section className="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 py-12 border-t">
         <div className="container text-center">
           <h2 className="text-2xl font-bold text-foreground mb-3">
-            {isAr ? "ابقَ على اطلاع بأحدث الأبحاث" : "Stay Updated with Latest Research"}
+            {rt.stayUpdated}
           </h2>
           <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            {isAr
-              ? "نضيف دراسات جديدة يومياً من أفضل المجلات العلمية العالمية"
-              : "We add new studies daily from the world's top scientific journals"}
+            {rt.stayUpdatedDesc}
           </p>
           <Link href="/blog">
             <span className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:opacity-90 transition-opacity">
-              {isAr ? "اقرأ مقالاتنا أيضاً" : "Read Our Blog Too"}
+              {rt.readBlog}
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isAr ? "M19 12H5m0 0l7-7m-7 7l7 7" : "M5 12h14m0 0l-7-7m7 7l-7 7"} />
               </svg>

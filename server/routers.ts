@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -736,6 +736,28 @@ export const appRouter = router({
       return getReviewStats();
     }),
   }),
+  // Newsletter
+  newsletter: router({
+    subscribe: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+        language: z.string().default("ar"),
+        interests: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await subscribeToNewsletter(input);
+        if (!result.success) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to subscribe" });
+        return result;
+      }),
+    unsubscribe: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        return unsubscribeFromNewsletter(input.email);
+      }),
+    count: publicProcedure.query(async () => {
+      return getNewsletterSubscriberCount();
+    }),
+  }),
 });
-
 export type AppRouter = typeof appRouter;

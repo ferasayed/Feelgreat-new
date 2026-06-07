@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Globe, Heart, Users, Award, BookOpen, Mic, Target, Zap, Shield, Star, CheckCircle, TrendingUp, Briefcase } from "lucide-react";
 import { useCountUp } from "@/hooks/useCountUp";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function AboutCounter({ end, suffix, label, icon: Icon, color }: { end: number; suffix: string; label: string; icon: any; color: string }) {
   const { count, ref } = useCountUp(end, 2200);
@@ -15,14 +16,93 @@ function AboutCounter({ end, suffix, label, icon: Icon, color }: { end: number; 
 }
 
 export default function About() {
+  const { lang } = useLanguage();
+  const isAr = lang === "ar";
+
   useEffect(() => {
-    document.title = "About Feras Alayed | Global Trainer & Health Strategist | Feel Great";
+    document.title = isAr
+      ? "عن فراس العايد | مدرب عالمي واستراتيجي صحي | Feel Great"
+      : "About Feras Alayed | Global Trainer & Health Strategist | Feel Great";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Meet Feras Alayed - Global Trainer, Leadership Mentor, Health & Performance Strategist, Behavioral Nutrition Specialist, and Sustainable Health Advocate helping people transform their health, mindset, and life across 30+ countries.");
-  }, []);
+    if (meta) meta.setAttribute("content", isAr
+      ? "تعرّف على فراس العايد - مدرب عالمي، مرشد قيادي، استراتيجي صحي، أخصائي تغذية سلوكية، ومُثقف في الصحة المستدامة يساعد الناس على تحويل صحتهم وعقليتهم وحياتهم في أكثر من 30 دولة."
+      : "Meet Feras Alayed - Global Trainer, Leadership Mentor, Health & Performance Strategist, Behavioral Nutrition Specialist, and Sustainable Health Advocate helping people transform their health, mindset, and life across 30+ countries.");
+  }, [isAr]);
+
+  const titles = isAr
+    ? ["مدرب عالمي", "مرشد قيادي", "استراتيجي صحي", "أخصائي تغذية سلوكية", "مُثقف في الصحة المستدامة"]
+    : ["Global Trainer", "Leadership Mentor", "Health & Performance Strategist", "Behavioral Nutrition Specialist", "Sustainable Health Advocate"];
+
+  const pillars = isAr
+    ? [
+        { icon: Heart, title: "الصحة المستدامة", desc: "استراتيجيات تغذية ونمط حياة مبنية على الأدلة تُحدث تغييراً دائماً وليس مؤقتاً", color: "text-green-400 bg-green-400/10" },
+        { icon: BookOpen, title: "التغذية السلوكية", desc: "فهم سيكولوجية الأكل وبناء عادات تجعل الحياة الصحية تلقائية", color: "text-blue-400 bg-blue-400/10" },
+        { icon: Users, title: "تطوير القيادة", desc: "بناء قادة واثقين يُلهمون الآخرين ويُحدثون تأثيراً إيجابياً في مجتمعاتهم", color: "text-purple-400 bg-purple-400/10" },
+        { icon: Zap, title: "تحويل العقلية", desc: "تغيير المعتقدات المُقيّدة وتطوير المرونة الذهنية اللازمة للنجاح الدائم", color: "text-amber-400 bg-amber-400/10" },
+        { icon: TrendingUp, title: "النمو الشخصي", desc: "التطوير المستمر في جميع أبعاد الحياة — الصحة، العلاقات، المهنة، والهدف", color: "text-cyan-400 bg-cyan-400/10" },
+        { icon: Target, title: "التمكين المالي", desc: "خلق فرص للنمو المالي من خلال المهارات والقيادة وريادة الأعمال الصحية", color: "text-red-400 bg-red-400/10" },
+      ]
+    : [
+        { icon: Heart, title: "Sustainable Health", desc: "Evidence-based nutrition and lifestyle strategies that create lasting change, not temporary fixes", color: "text-green-400 bg-green-400/10" },
+        { icon: BookOpen, title: "Behavioral Nutrition", desc: "Understanding the psychology of eating and building habits that make healthy living automatic", color: "text-blue-400 bg-blue-400/10" },
+        { icon: Users, title: "Leadership Development", desc: "Building confident leaders who inspire others and create positive impact in their communities", color: "text-purple-400 bg-purple-400/10" },
+        { icon: Zap, title: "Mindset Transformation", desc: "Shifting limiting beliefs and developing the mental resilience needed for lasting success", color: "text-amber-400 bg-amber-400/10" },
+        { icon: TrendingUp, title: "Personal Growth", desc: "Continuous development across all dimensions of life — health, relationships, career, and purpose", color: "text-cyan-400 bg-cyan-400/10" },
+        { icon: Target, title: "Financial Empowerment", desc: "Creating opportunities for financial growth through skills, leadership, and health entrepreneurship", color: "text-red-400 bg-red-400/10" },
+      ];
+
+  const speakingItems = isAr
+    ? [
+        { title: "ورش عمل الصحة والعافية", desc: "جلسات مبنية على الأدلة حول الصحة الأيضية ومقاومة الإنسولين والتغذية المستدامة" },
+        { title: "برامج تطوير القيادة", desc: "بناء فرق عالية الأداء وتطوير قادة الجيل القادم" },
+        { title: "تدريب العقلية والأداء", desc: "إطلاق الأداء الأعلى من خلال علم السلوك وتكوين العادات" },
+        { title: "ندوات الأعمال وريادة الأعمال", desc: "إنشاء أعمال هادفة في مجال الصحة والعافية" },
+      ]
+    : [
+        { title: "Health & Wellness Workshops", desc: "Evidence-based sessions on metabolic health, insulin resistance, and sustainable nutrition" },
+        { title: "Leadership Development Programs", desc: "Building high-performance teams and developing next-generation leaders" },
+        { title: "Mindset & Performance Training", desc: "Unlocking peak performance through behavioral science and habit formation" },
+        { title: "Business & Entrepreneurship Seminars", desc: "Creating purpose-driven businesses in the health and wellness space" },
+      ];
+
+  const roles = isAr
+    ? [
+        { icon: Globe, title: "مدرب دولي", desc: "برامج تدريبية في أكثر من 30 دولة" },
+        { icon: Users, title: "مرشد قيادي", desc: "تطوير قادة يبنون فرقاً مؤثرة" },
+        { icon: Heart, title: "استراتيجي صحي", desc: "تحسين الصحة الأيضية المبني على الأدلة" },
+        { icon: Mic, title: "متحدث", desc: "عروض رئيسية عن الصحة والقيادة والنمو" },
+        { icon: Shield, title: "بانٍ للمجتمعات", desc: "بناء مجتمعات عالمية من المنجزين المهتمين بالصحة" },
+        { icon: Star, title: "مُثقف في التنمية الشخصية", desc: "نمو شامل في جميع أبعاد الحياة" },
+      ]
+    : [
+        { icon: Globe, title: "International Trainer", desc: "Training programs delivered across 30+ countries" },
+        { icon: Users, title: "Leadership Mentor", desc: "Developing leaders who build impactful teams" },
+        { icon: Heart, title: "Health Strategist", desc: "Evidence-based metabolic health optimization" },
+        { icon: Mic, title: "Speaker", desc: "Keynote presentations on health, leadership & growth" },
+        { icon: Shield, title: "Community Builder", desc: "Building global communities of health-focused achievers" },
+        { icon: Star, title: "Personal Development Advocate", desc: "Holistic growth across all life dimensions" },
+      ];
+
+  const credentials = isAr
+    ? [
+        { icon: Award, title: "Presidential Sapphire - يونيسيتي الدولية", desc: "أعلى رتبة قيادية تم تحقيقها من خلال بناء فريق عالمي في أكثر من 30 دولة" },
+        { icon: BookOpen, title: "أخصائي تغذية سلوكية", desc: "شهادة متقدمة في منهجية التغيير السلوكي وتكوين العادات وتعديل نمط الحياة المستدام" },
+        { icon: Briefcase, title: "خبير تغذية علاجية", desc: "متخصص في الصحة الأيضية وإدارة مقاومة الإنسولين والوقاية من الأمراض المزمنة من خلال التغذية" },
+        { icon: Globe, title: "مُثقف صحي دولي", desc: "أقام ندوات تثقيف صحي وبرامج تدريبية في الشرق الأوسط وأوروبا وأمريكا الشمالية" },
+        { icon: TrendingUp, title: "مدرب تحسين الأداء", desc: "الجمع بين علم التغذية وعلم النفس السلوكي لتحقيق نتائج الأداء الأعلى" },
+        { icon: Shield, title: "ممارسة متوافقة مع FTC", desc: "جميع الادعاءات الصحية والممارسات التجارية متوافقة تماماً مع إرشادات FTC ومعايير الصناعة" },
+      ]
+    : [
+        { icon: Award, title: "Presidential Sapphire - Unicity International", desc: "Highest leadership rank achieved through building a global team across 30+ countries" },
+        { icon: BookOpen, title: "Behavioral Nutrition Specialist", desc: "Advanced certification in behavioral change methodology, habit formation, and sustainable lifestyle modification" },
+        { icon: Briefcase, title: "Therapeutic Nutrition Expert", desc: "Specialized in metabolic health, insulin resistance management, and chronic disease prevention through nutrition" },
+        { icon: Globe, title: "International Health Educator", desc: "Conducted health education seminars and training programs across the Middle East, Europe, and North America" },
+        { icon: TrendingUp, title: "Performance Optimization Coach", desc: "Combining nutrition science with behavioral psychology for peak performance outcomes" },
+        { icon: Shield, title: "FTC Compliant Practice", desc: "All health claims and business practices fully compliant with FTC guidelines and industry standards" },
+      ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 to-slate-900/70 z-10" />
@@ -35,23 +115,27 @@ export default function About() {
               <div className="inline-block px-4 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 text-sm font-medium mb-6">
                 Presidential Sapphire | Unicity International
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">Meet Feras Alayed</h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                {isAr ? "تعرّف على فراس العايد" : "Meet Feras Alayed"}
+              </h1>
               <div className="flex flex-wrap gap-2 mb-6">
-                {["Global Trainer", "Leadership Mentor", "Health & Performance Strategist", "Behavioral Nutrition Specialist", "Sustainable Health Advocate"].map((title) => (
+                {titles.map((title) => (
                   <span key={title} className="px-3 py-1 bg-slate-700/50 border border-slate-600 rounded-full text-sm text-slate-300">
                     {title}
                   </span>
                 ))}
               </div>
               <p className="text-lg text-slate-300 leading-relaxed mb-6">
-                Feras Alayed is an international trainer, leadership mentor, and health strategist dedicated to helping people create transformation in both health and life. His mission extends beyond nutrition — he helps people improve their health, strengthen their mindset, build confidence, develop leadership skills, create sustainable habits, and unlock higher levels of personal and professional growth.
+                {isAr
+                  ? "فراس العايد مدرب دولي ومرشد قيادي واستراتيجي صحي مكرّس لمساعدة الناس على إحداث تحول في صحتهم وحياتهم. مهمته تتجاوز التغذية — فهو يساعد الناس على تحسين صحتهم، تقوية عقليتهم، بناء ثقتهم، تطوير مهاراتهم القيادية، خلق عادات مستدامة، وإطلاق مستويات أعلى من النمو الشخصي والمهني."
+                  : "Feras Alayed is an international trainer, leadership mentor, and health strategist dedicated to helping people create transformation in both health and life. His mission extends beyond nutrition — he helps people improve their health, strengthen their mindset, build confidence, develop leadership skills, create sustainable habits, and unlock higher levels of personal and professional growth."}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/health-assessment" className="px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center gap-2">
-                  Start Your Journey <ArrowRight className="w-4 h-4" />
+                  {isAr ? "ابدأ رحلتك" : "Start Your Journey"} <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link href="/partner-with-feras" className="px-6 py-3 border border-amber-400/50 text-amber-400 font-medium rounded-xl hover:bg-amber-400/10 transition-colors">
-                  Partner With Feras
+                  {isAr ? "شراكة مع فراس" : "Partner With Feras"}
                 </Link>
               </div>
             </div>
@@ -63,7 +147,7 @@ export default function About() {
                   className="rounded-2xl shadow-2xl max-h-[500px] object-cover"
                 />
                 <div className="absolute -bottom-4 -right-4 bg-amber-400 text-slate-900 px-4 py-2 rounded-xl font-bold text-sm shadow-lg">
-                  15+ Years Experience
+                  {isAr ? "+15 سنة خبرة" : "15+ Years Experience"}
                 </div>
               </div>
             </div>
@@ -74,12 +158,17 @@ export default function About() {
       {/* Mission */}
       <section className="container max-w-5xl mx-auto px-4 py-16" id="mission">
         <div className="bg-gradient-to-r from-amber-400/5 to-amber-500/5 border border-amber-400/20 rounded-2xl p-10 text-center">
-          <h2 className="text-3xl font-bold mb-4">Mission</h2>
+          <h2 className="text-3xl font-bold mb-4">{isAr ? "الرسالة" : "Mission"}</h2>
           <p className="text-2xl text-slate-200 font-light italic max-w-3xl mx-auto leading-relaxed">
-            "To empower people to build stronger bodies, stronger minds, stronger leadership, and better futures."
+            {isAr
+              ? "\"تمكين الناس من بناء أجسام أقوى، عقول أقوى، قيادة أقوى، ومستقبل أفضل.\""
+              : "\"To empower people to build stronger bodies, stronger minds, stronger leadership, and better futures.\""}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-6">
-            {["Health Transformation", "Leadership Development", "Personal Growth", "Mindset Development", "Financial Empowerment", "International Experience"].map((pillar) => (
+            {(isAr
+              ? ["التحول الصحي", "تطوير القيادة", "النمو الشخصي", "تطوير العقلية", "التمكين المالي", "الخبرة الدولية"]
+              : ["Health Transformation", "Leadership Development", "Personal Growth", "Mindset Development", "Financial Empowerment", "International Experience"]
+            ).map((pillar) => (
               <span key={pillar} className="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-300">
                 {pillar}
               </span>
@@ -90,19 +179,14 @@ export default function About() {
 
       {/* Core Pillars */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold text-center mb-4">Core Pillars</h2>
+        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "الركائز الأساسية" : "Core Pillars"}</h2>
         <p className="text-slate-400 text-center max-w-2xl mx-auto mb-10">
-          Feras's unique approach combines multiple disciplines to create holistic transformation
+          {isAr
+            ? "نهج فراس الفريد يجمع بين تخصصات متعددة لإحداث تحول شامل"
+            : "Feras's unique approach combines multiple disciplines to create holistic transformation"}
         </p>
         <div className="grid md:grid-cols-3 gap-6">
-          {[
-            { icon: Heart, title: "Sustainable Health", desc: "Evidence-based nutrition and lifestyle strategies that create lasting change, not temporary fixes", color: "text-green-400 bg-green-400/10" },
-            { icon: BookOpen, title: "Behavioral Nutrition", desc: "Understanding the psychology of eating and building habits that make healthy living automatic", color: "text-blue-400 bg-blue-400/10" },
-            { icon: Users, title: "Leadership Development", desc: "Building confident leaders who inspire others and create positive impact in their communities", color: "text-purple-400 bg-purple-400/10" },
-            { icon: Zap, title: "Mindset Transformation", desc: "Shifting limiting beliefs and developing the mental resilience needed for lasting success", color: "text-amber-400 bg-amber-400/10" },
-            { icon: TrendingUp, title: "Personal Growth", desc: "Continuous development across all dimensions of life — health, relationships, career, and purpose", color: "text-cyan-400 bg-cyan-400/10" },
-            { icon: Target, title: "Financial Empowerment", desc: "Creating opportunities for financial growth through skills, leadership, and health entrepreneurship", color: "text-red-400 bg-red-400/10" },
-          ].map((pillar, i) => (
+          {pillars.map((pillar, i) => (
             <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-amber-400/30 transition-colors">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${pillar.color}`}>
                 <pillar.icon className="w-6 h-6" />
@@ -116,15 +200,17 @@ export default function About() {
 
       {/* Global Impact */}
       <section className="container max-w-5xl mx-auto px-4 py-12" id="global-impact">
-        <h2 className="text-3xl font-bold text-center mb-4">Creating Impact Beyond Health</h2>
+        <h2 className="text-3xl font-bold text-center mb-4">{isAr ? "إحداث تأثير يتجاوز الصحة" : "Creating Impact Beyond Health"}</h2>
         <p className="text-slate-400 text-center max-w-3xl mx-auto mb-10">
-          Over the years, Feras has helped individuals across different countries improve their wellbeing, develop healthier lifestyles, grow their confidence, strengthen leadership abilities, and create new opportunities for personal and financial growth. His work focuses on empowering people to become the strongest version of themselves.
+          {isAr
+            ? "على مر السنين، ساعد فراس أفراداً في دول مختلفة على تحسين صحتهم، تطوير أنماط حياة أكثر صحة، تنمية ثقتهم، تعزيز قدراتهم القيادية، وخلق فرص جديدة للنمو الشخصي والمالي. يركز عمله على تمكين الناس ليصبحوا أقوى نسخة من أنفسهم."
+            : "Over the years, Feras has helped individuals across different countries improve their wellbeing, develop healthier lifestyles, grow their confidence, strengthen leadership abilities, and create new opportunities for personal and financial growth. His work focuses on empowering people to become the strongest version of themselves."}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          <AboutCounter end={30} suffix="+" label="Countries Reached" icon={Globe} color="text-amber-400" />
-          <AboutCounter end={10000} suffix="+" label="Lives Impacted" icon={Users} color="text-green-400" />
-          <AboutCounter end={200} suffix="+" label="Training Sessions" icon={Mic} color="text-blue-400" />
-          <AboutCounter end={15} suffix="+" label="Years Experience" icon={Award} color="text-purple-400" />
+          <AboutCounter end={30} suffix="+" label={isAr ? "دولة" : "Countries Reached"} icon={Globe} color="text-amber-400" />
+          <AboutCounter end={10000} suffix="+" label={isAr ? "حياة تأثرت" : "Lives Impacted"} icon={Users} color="text-green-400" />
+          <AboutCounter end={200} suffix="+" label={isAr ? "جلسة تدريبية" : "Training Sessions"} icon={Mic} color="text-blue-400" />
+          <AboutCounter end={15} suffix="+" label={isAr ? "سنة خبرة" : "Years Experience"} icon={Award} color="text-purple-400" />
         </div>
       </section>
 
@@ -132,17 +218,14 @@ export default function About() {
       <section className="container max-w-5xl mx-auto px-4 py-12" id="speaking">
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-3xl font-bold mb-4">Speaking & Training</h2>
+            <h2 className="text-3xl font-bold mb-4">{isAr ? "التحدث والتدريب" : "Speaking & Training"}</h2>
             <p className="text-slate-300 mb-6 leading-relaxed">
-              Feras is a sought-after speaker and trainer who has conducted workshops, seminars, and training programs across the Middle East, Europe, and North America. His presentations combine scientific knowledge with practical strategies and motivational storytelling.
+              {isAr
+                ? "فراس متحدث ومدرب مطلوب أقام ورش عمل وندوات وبرامج تدريبية في الشرق الأوسط وأوروبا وأمريكا الشمالية. عروضه تجمع بين المعرفة العلمية والاستراتيجيات العملية والقصص التحفيزية."
+                : "Feras is a sought-after speaker and trainer who has conducted workshops, seminars, and training programs across the Middle East, Europe, and North America. His presentations combine scientific knowledge with practical strategies and motivational storytelling."}
             </p>
             <div className="space-y-4">
-              {[
-                { title: "Health & Wellness Workshops", desc: "Evidence-based sessions on metabolic health, insulin resistance, and sustainable nutrition" },
-                { title: "Leadership Development Programs", desc: "Building high-performance teams and developing next-generation leaders" },
-                { title: "Mindset & Performance Training", desc: "Unlocking peak performance through behavioral science and habit formation" },
-                { title: "Business & Entrepreneurship Seminars", desc: "Creating purpose-driven businesses in the health and wellness space" },
-              ].map((item, i) => (
+              {speakingItems.map((item, i) => (
                 <div key={i} className="flex gap-3">
                   <CheckCircle className="w-5 h-5 text-amber-400 mt-1 shrink-0" />
                   <div>
@@ -166,27 +249,22 @@ export default function About() {
       {/* Why People Follow Feras */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-10 text-center">
-          <h2 className="text-3xl font-bold mb-6">Why People Follow Feras</h2>
-          <p className="text-xl text-slate-300 mb-4">Because he teaches more than health.</p>
-          <p className="text-2xl font-bold text-amber-400 mb-6">He teaches transformation.</p>
+          <h2 className="text-3xl font-bold mb-6">{isAr ? "لماذا يتابع الناس فراس" : "Why People Follow Feras"}</h2>
+          <p className="text-xl text-slate-300 mb-4">{isAr ? "لأنه يُعلّم أكثر من الصحة." : "Because he teaches more than health."}</p>
+          <p className="text-2xl font-bold text-amber-400 mb-6">{isAr ? "يُعلّم التحول." : "He teaches transformation."}</p>
           <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            People come to improve their health. They stay because they discover a better version of themselves.
+            {isAr
+              ? "يأتي الناس لتحسين صحتهم. يبقون لأنهم يكتشفون نسخة أفضل من أنفسهم."
+              : "People come to improve their health. They stay because they discover a better version of themselves."}
           </p>
         </div>
       </section>
 
       {/* Authority Roles */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold text-center mb-10">Authority & Expertise</h2>
+        <h2 className="text-3xl font-bold text-center mb-10">{isAr ? "السلطة والخبرة" : "Authority & Expertise"}</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { icon: Globe, title: "International Trainer", desc: "Training programs delivered across 30+ countries" },
-            { icon: Users, title: "Leadership Mentor", desc: "Developing leaders who build impactful teams" },
-            { icon: Heart, title: "Health Strategist", desc: "Evidence-based metabolic health optimization" },
-            { icon: Mic, title: "Speaker", desc: "Keynote presentations on health, leadership & growth" },
-            { icon: Shield, title: "Community Builder", desc: "Building global communities of health-focused achievers" },
-            { icon: Star, title: "Personal Development Advocate", desc: "Holistic growth across all life dimensions" },
-          ].map((role, i) => (
+          {roles.map((role, i) => (
             <div key={i} className="flex items-center gap-4 p-4 bg-slate-800/30 border border-slate-700/50 rounded-xl">
               <div className="w-10 h-10 bg-amber-400/10 rounded-lg flex items-center justify-center shrink-0">
                 <role.icon className="w-5 h-5 text-amber-400" />
@@ -202,16 +280,9 @@ export default function About() {
 
       {/* Professional Credentials */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold text-center mb-10">Professional Credentials</h2>
+        <h2 className="text-3xl font-bold text-center mb-10">{isAr ? "المؤهلات المهنية" : "Professional Credentials"}</h2>
         <div className="grid md:grid-cols-2 gap-6">
-          {[
-            { icon: Award, title: "Presidential Sapphire - Unicity International", desc: "Highest leadership rank achieved through building a global team across 30+ countries" },
-            { icon: BookOpen, title: "Behavioral Nutrition Specialist", desc: "Advanced certification in behavioral change methodology, habit formation, and sustainable lifestyle modification" },
-            { icon: Briefcase, title: "Therapeutic Nutrition Expert", desc: "Specialized in metabolic health, insulin resistance management, and chronic disease prevention through nutrition" },
-            { icon: Globe, title: "International Health Educator", desc: "Conducted health education seminars and training programs across the Middle East, Europe, and North America" },
-            { icon: TrendingUp, title: "Performance Optimization Coach", desc: "Combining nutrition science with behavioral psychology for peak performance outcomes" },
-            { icon: Shield, title: "FTC Compliant Practice", desc: "All health claims and business practices fully compliant with FTC guidelines and industry standards" },
-          ].map((cred, i) => (
+          {credentials.map((cred, i) => (
             <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 flex gap-4">
               <div className="w-12 h-12 bg-amber-400/10 rounded-xl flex items-center justify-center shrink-0">
                 <cred.icon className="w-6 h-6 text-amber-400" />
@@ -228,31 +299,38 @@ export default function About() {
       {/* Final Positioning */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
         <div className="text-center">
-          <p className="text-slate-400 mb-2">Visitors should perceive Feras Alayed as a trusted authority in:</p>
+          <p className="text-slate-400 mb-2">
+            {isAr ? "يجب أن يرى الزوار فراس العايد كسلطة موثوقة في:" : "Visitors should perceive Feras Alayed as a trusted authority in:"}
+          </p>
           <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {["Health", "Leadership", "Personal Growth", "Behavior Change", "Performance", "Life Transformation"].map((area) => (
+            {(isAr
+              ? ["الصحة", "القيادة", "النمو الشخصي", "تغيير السلوك", "الأداء", "تحويل الحياة"]
+              : ["Health", "Leadership", "Personal Growth", "Behavior Change", "Performance", "Life Transformation"]
+            ).map((area) => (
               <span key={area} className="px-4 py-2 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 font-medium">
                 {area}
               </span>
             ))}
           </div>
-          <p className="text-slate-500 italic">Not simply as a nutrition coach.</p>
+          <p className="text-slate-500 italic">{isAr ? "ليس مجرد مدرب تغذية." : "Not simply as a nutrition coach."}</p>
         </div>
       </section>
 
       {/* CTAs */}
       <section className="container max-w-3xl mx-auto px-4 py-16">
         <div className="bg-gradient-to-r from-amber-400/10 to-amber-500/10 border border-amber-400/30 rounded-2xl p-10 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Transformation?</h2>
+          <h2 className="text-3xl font-bold mb-4">{isAr ? "مستعد لبدء تحولك؟" : "Ready to Start Your Transformation?"}</h2>
           <p className="text-slate-300 mb-8 max-w-lg mx-auto">
-            Whether you're looking to transform your health, develop your leadership, or build a meaningful business — Feras is here to guide you.
+            {isAr
+              ? "سواء كنت تبحث عن تحويل صحتك، تطوير قيادتك، أو بناء عمل ذي معنى — فراس هنا لإرشادك."
+              : "Whether you're looking to transform your health, develop your leadership, or build a meaningful business — Feras is here to guide you."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/health-assessment" className="px-8 py-4 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center justify-center gap-2">
-              Take Health Assessment <ArrowRight className="w-5 h-5" />
+              {isAr ? "خذ التقييم الصحي" : "Take Health Assessment"} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link href="/partner-with-feras" className="px-8 py-4 border border-amber-400/50 text-amber-400 font-bold rounded-xl hover:bg-amber-400/10 transition-colors inline-flex items-center justify-center gap-2">
-              Partner With Feras
+              {isAr ? "شراكة مع فراس" : "Partner With Feras"}
             </Link>
           </div>
         </div>
@@ -261,12 +339,12 @@ export default function About() {
       {/* Footer nav */}
       <div className="container max-w-5xl mx-auto px-4 pb-16 text-center">
         <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-400">
-          <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
-          <Link href="/topics" className="hover:text-amber-400 transition-colors">Health Topics</Link>
-          <Link href="/blog" className="hover:text-amber-400 transition-colors">Blog</Link>
-          <Link href="/partner-with-feras" className="hover:text-amber-400 transition-colors">Partner</Link>
-          <Link href="/health-investor" className="hover:text-amber-400 transition-colors">Health Investor</Link>
-          <Link href="/faq" className="hover:text-amber-400 transition-colors">FAQ</Link>
+          <Link href="/" className="hover:text-amber-400 transition-colors">{isAr ? "الرئيسية" : "Home"}</Link>
+          <Link href="/topics" className="hover:text-amber-400 transition-colors">{isAr ? "المواضيع الصحية" : "Health Topics"}</Link>
+          <Link href="/blog" className="hover:text-amber-400 transition-colors">{isAr ? "المدونة" : "Blog"}</Link>
+          <Link href="/partner-with-feras" className="hover:text-amber-400 transition-colors">{isAr ? "الشراكة" : "Partner"}</Link>
+          <Link href="/health-investor" className="hover:text-amber-400 transition-colors">{isAr ? "المستثمر الصحي" : "Health Investor"}</Link>
+          <Link href="/faq" className="hover:text-amber-400 transition-colors">{isAr ? "الأسئلة الشائعة" : "FAQ"}</Link>
         </div>
         <div className="flex justify-center gap-4 mt-4">
           <a href="https://www.instagram.com/use2lose" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors text-sm">Instagram</a>

@@ -599,3 +599,68 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Central entity connecting all articles, research, pillar pages, success stories, workshops, and resources
 - [x] Route registered at /feras-alayed (replaces existing page)
 - [x] SEO meta injection for Knowledge Hub page
+
+## Platform Enhancement - Knowledge Platform Identity (June 2026)
+
+### Homepage Redesign
+- [x] Redesign homepage to reflect knowledge platform identity instead of product page
+- [x] Add featured articles section to homepage
+- [x] Add latest research section to homepage
+- [x] Add health library quick access to homepage
+- [x] Add Feras Alayed authority section to homepage (TrustAuthoritySection links to /feras-alayed)
+- [x] Update hero messaging to focus on health education and knowledge
+
+### Today in Health Science Page
+- [x] Create dedicated "Today in Health Science" page (6 languages)
+- [x] Display today's research discoveries
+- [x] Display today's published articles
+- [x] Add daily health fact/tip section
+- [x] Add route and navigation link
+
+### Navigation UX Improvement
+- [x] Add "مركز المعرفة / Knowledge Hub" link to main navigation
+- [x] Improve navigation between Health Library, Research, and Articles
+- [x] Add Blog, Research, Health Library links to navbar
+- [x] Update footer with comprehensive navigation links
+
+### Newsletter System
+- [x] Create newsletter_subscribers table in database
+- [x] Add newsletter subscription tRPC procedure (subscribe, unsubscribe, count)
+- [x] Add newsletter signup form component (NewsletterSection, all 6 languages)
+- [x] Add newsletter CTA to homepage
+- [x] Add unsubscribe mechanism
+- [x] Vitest tests for newsletter system (7 tests passing)
+
+### Knowledge Hub Video
+- [ ] Create 60-90 second intro video for Feras Knowledge Hub (pending)
+- [ ] Embed video in Knowledge Hub page (pending)
+
+### Backlinks Execution
+- [ ] Create actionable directory submission guide with direct links (pending)
+- [ ] Prepare submission templates for health directories (pending)
+
+## Translation & Localization Audit
+- [x] Add ar/en language support to About.tsx
+- [x] Add ar/en language support to BusinessOpportunity.tsx
+- [x] Add ar/en language support to HealthInvestor.tsx
+- [x] Add ar/en language support to JourneyRoadmap.tsx
+- [x] Add ar/en language support to PartnerWithFeras.tsx
+- [x] Add ar/en language support to Reviews.tsx
+- [x] Add ar/en language support to HealthAssessment.tsx
+- [x] Verify audio recordings mapped correctly per language in Home.tsx (confirmed: all 6 languages have audio)
+
+## Full 6-Language Support (ar, en, fr, es, de, tr)
+- [x] Update article generation to produce content in all 6 languages (not just ar/en)
+- [x] Add title_fr, title_es, title_de, title_tr fields to blog_articles schema
+- [x] Add content_fr, content_es, content_de, content_tr fields to blog_articles schema
+- [x] Add excerpt_fr, excerpt_es, excerpt_de, excerpt_tr fields to blog_articles schema
+- [x] Update article generation prompt to produce all 6 language versions
+- [x] Update BlogArticle.tsx to display content in user's selected language
+- [x] Update Blog.tsx listing to show titles in user's selected language
+- [x] Ensure homepage redesign supports all 6 languages
+- [x] Ensure Today in Health Science page supports all 6 languages
+- [x] Update ResearchHub.tsx for full 6-language UI support
+- [x] Update HealthLibrary.tsx for full 6-language UI support
+- [x] Fix date locale formatting in BlogArticle.tsx for all 6 languages
+- [x] Update BlogArticle.tsx sub-components (TableOfContents, ClusterNavigation, RelatedSuccessStories, RelatedArticles) for 6-language support
+- [x] Fix Home.tsx remaining isAr pattern for 6-language support

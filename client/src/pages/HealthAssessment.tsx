@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, CheckCircle, Heart, Activity, Brain, Scale, Zap, Moon, ChevronRight } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Step = "assessment" | "results" | "consultation";
 
@@ -19,6 +20,8 @@ interface AssessmentAnswers {
 }
 
 export default function HealthAssessment() {
+  const { lang } = useLanguage();
+  const isAr = lang === "ar";
   const [step, setStep] = useState<Step>("assessment");
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<AssessmentAnswers>({
@@ -35,10 +38,12 @@ export default function HealthAssessment() {
   });
 
   useEffect(() => {
-    document.title = "Free Health Assessment | Feel Great";
+    document.title = isAr ? "تقييم صحي مجاني | Feel Great" : "Free Health Assessment | Feel Great";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "Take our free 2-minute health assessment to discover your metabolic health score and get personalized recommendations for sustainable wellness.");
-  }, []);
+    if (meta) meta.setAttribute("content", isAr
+      ? "خذ تقييمنا الصحي المجاني لمدة دقيقتين لاكتشاف درجة صحتك الأيضية والحصول على توصيات مخصصة."
+      : "Take our free 2-minute health assessment to discover your metabolic health score and get personalized recommendations for sustainable wellness.");
+  }, [isAr]);
 
   const questions = [
     {
@@ -180,7 +185,7 @@ export default function HealthAssessment() {
     const progress = ((currentQuestion + 1) / questions.length) * 100;
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
         {/* Progress bar */}
         <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-slate-700">
           <div className="h-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500" style={{ width: `${progress}%` }} />
@@ -190,7 +195,7 @@ export default function HealthAssessment() {
           {/* Header */}
           <div className="text-center mb-12">
             <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-            <p className="text-slate-400 text-sm">Question {currentQuestion + 1} of {questions.length}</p>
+            <p className="text-slate-400 text-sm">{isAr ? `السؤال ${currentQuestion + 1} من ${questions.length}` : `Question ${currentQuestion + 1} of ${questions.length}`}</p>
           </div>
 
           {/* Question */}
@@ -223,7 +228,7 @@ export default function HealthAssessment() {
               onClick={() => setCurrentQuestion((prev) => prev - 1)}
               className="mt-6 text-slate-400 hover:text-white transition-colors text-sm"
             >
-              ← Previous question
+              {isAr ? "→ السؤال السابق" : "← Previous question"}
             </button>
           )}
         </div>
@@ -235,21 +240,21 @@ export default function HealthAssessment() {
     const score = calculateScore();
     const recommendations = getRecommendations();
     const scoreColor = score >= 70 ? "text-green-400" : score >= 50 ? "text-amber-400" : "text-red-400";
-    const scoreLabel = score >= 70 ? "Good" : score >= 50 ? "Needs Improvement" : "Needs Attention";
+    const scoreLabel = score >= 70 ? (isAr ? "جيد" : "Good") : score >= 50 ? (isAr ? "يحتاج تحسين" : "Needs Improvement") : (isAr ? "يحتاج اهتمام" : "Needs Attention");
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
         <div className="container max-w-3xl mx-auto px-4 py-16">
           {/* Header */}
           <div className="text-center mb-12">
             <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Your Health Assessment Results</h1>
-            <p className="text-slate-400">Based on your responses, here's your personalized health profile</p>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "نتائج تقييمك الصحي" : "Your Health Assessment Results"}</h1>
+            <p className="text-slate-400">{isAr ? "بناءً على إجاباتك، إليك ملفك الصحي المخصص" : "Based on your responses, here's your personalized health profile"}</p>
           </div>
 
           {/* Score */}
           <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 text-center mb-10">
-            <p className="text-slate-400 text-sm uppercase tracking-wider mb-2">Your Metabolic Health Score</p>
+            <p className="text-slate-400 text-sm uppercase tracking-wider mb-2">{isAr ? "درجة صحتك الأيضية" : "Your Metabolic Health Score"}</p>
             <div className={`text-6xl font-bold ${scoreColor} mb-2`}>{score}</div>
             <p className={`text-lg ${scoreColor}`}>{scoreLabel}</p>
             <div className="w-full bg-slate-700 rounded-full h-3 mt-6">
@@ -259,7 +264,7 @@ export default function HealthAssessment() {
 
           {/* Recommendations */}
           <div className="mb-10">
-            <h2 className="text-2xl font-bold mb-6">Your Personalized Recommendations</h2>
+            <h2 className="text-2xl font-bold mb-6">{isAr ? "توصياتك المخصصة" : "Your Personalized Recommendations"}</h2>
             <div className="space-y-4">
               {recommendations.map((rec, i) => {
                 const Icon = rec.icon;
@@ -280,16 +285,16 @@ export default function HealthAssessment() {
 
           {/* CTA */}
           <div className="bg-gradient-to-r from-amber-400/10 to-amber-500/10 border border-amber-400/30 rounded-2xl p-8 text-center">
-            <h3 className="text-2xl font-bold mb-3">Ready to Transform Your Health?</h3>
+            <h3 className="text-2xl font-bold mb-3">{isAr ? "مستعد لتحويل صحتك؟" : "Ready to Transform Your Health?"}</h3>
             <p className="text-slate-300 mb-6 max-w-lg mx-auto">
-              Based on your assessment, the Feel Great system can help you achieve significant improvements in energy, weight management, and overall wellness within 30 days.
+              {isAr ? "بناءً على تقييمك، يمكن لنظام Feel Great مساعدتك في تحقيق تحسينات كبيرة في الطاقة وإدارة الوزن والصحة العامة خلال 30 يوماً." : "Based on your assessment, the Feel Great system can help you achieve significant improvements in energy, weight management, and overall wellness within 30 days."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => setStep("consultation")}
                 className="px-8 py-4 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors flex items-center justify-center gap-2"
               >
-                Book Free Consultation <ArrowRight className="w-5 h-5" />
+                {isAr ? "احجز استشارة مجانية" : "Book Free Consultation"} <ArrowRight className="w-5 h-5" />
               </button>
               <a
                 href="https://wa.me/96877020770?text=I%20just%20completed%20the%20health%20assessment%20and%20would%20like%20to%20learn%20more%20about%20the%20Feel%20Great%20system"
@@ -297,7 +302,7 @@ export default function HealthAssessment() {
                 rel="noopener noreferrer"
                 className="px-8 py-4 border border-green-500 text-green-400 font-bold rounded-xl hover:bg-green-500/10 transition-colors"
               >
-                Chat on WhatsApp
+                {isAr ? "تحدث عبر واتساب" : "Chat on WhatsApp"}
               </a>
             </div>
           </div>
@@ -306,15 +311,15 @@ export default function HealthAssessment() {
           <div className="mt-10 grid grid-cols-3 gap-4 text-center">
             <div className="p-4">
               <div className="text-2xl font-bold text-amber-400">10,000+</div>
-              <div className="text-sm text-slate-400">People Helped</div>
+              <div className="text-sm text-slate-400">{isAr ? "شخص تمت مساعدته" : "People Helped"}</div>
             </div>
             <div className="p-4">
               <div className="text-2xl font-bold text-amber-400">30+</div>
-              <div className="text-sm text-slate-400">Countries</div>
+              <div className="text-sm text-slate-400">{isAr ? "دولة" : "Countries"}</div>
             </div>
             <div className="p-4">
               <div className="text-2xl font-bold text-amber-400">15+ yrs</div>
-              <div className="text-sm text-slate-400">Experience</div>
+              <div className="text-sm text-slate-400">{isAr ? "سنوات خبرة" : "Experience"}</div>
             </div>
           </div>
         </div>
@@ -323,16 +328,16 @@ export default function HealthAssessment() {
   };
 
   const renderConsultation = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
       <div className="container max-w-2xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
           <div className="w-16 h-16 bg-green-400/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-8 h-8 text-green-400" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Book Your Free Consultation</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "احجز استشارتك المجانية" : "Book Your Free Consultation"}</h1>
           <p className="text-slate-400 max-w-lg mx-auto">
-            Connect with Feras Al-Ayed, Therapeutic & Behavioral Nutrition Specialist, for a personalized 15-minute consultation to discuss your health goals.
+            {isAr ? "تواصل مع فراس العايد، أخصائي التغذية العلاجية والسلوكية، لاستشارة شخصية لمدة 15 دقيقة لمناقشة أهدافك الصحية." : "Connect with Feras Al-Ayed, Therapeutic & Behavioral Nutrition Specialist, for a personalized 15-minute consultation to discuss your health goals."}
           </p>
         </div>
 
@@ -364,13 +369,13 @@ export default function HealthAssessment() {
               rel="noopener noreferrer"
               className="w-full px-8 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-colors flex items-center justify-center gap-2"
             >
-              Book via WhatsApp <ArrowRight className="w-5 h-5" />
+              {isAr ? "احجز عبر واتساب" : "Book via WhatsApp"} <ArrowRight className="w-5 h-5" />
             </a>
             <Link
               href="/"
               className="w-full px-8 py-4 border border-slate-600 text-slate-300 font-medium rounded-xl hover:bg-slate-700/50 transition-colors flex items-center justify-center"
             >
-              Return to Homepage
+              {isAr ? "العودة للرئيسية" : "Return to Homepage"}
             </Link>
           </div>
         </div>

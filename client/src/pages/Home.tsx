@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Globe, ChevronDown, Zap, Heart, TrendingUp, Users, DollarSign, Clock, GraduationCap, Star, MessageCircle, X, Send, ArrowUp, Shield, Brain, Moon, Activity, Leaf, Target, MapPin, Award, Phone, Play, Sparkles, BarChart3, Calendar } from "lucide-react";
+import { Globe, ChevronDown, Zap, Heart, TrendingUp, Users, DollarSign, Clock, GraduationCap, Star, MessageCircle, X, Send, ArrowUp, Shield, Brain, Moon, Activity, Leaf, Target, MapPin, Award, Phone, Play, Sparkles, BarChart3, Calendar, BookOpen, FlaskConical, Library, ArrowRight } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import ChatWidget from "@/components/ChatWidget";
+import { NewsletterSection } from "@/components/NewsletterSection";
 
 function LanguageSwitcher() {
   const { lang, setLang, languages } = useLanguage();
@@ -54,12 +56,12 @@ function Navbar() {
   }, []);
 
   const navLabels: Record<string, Record<string, string>> = {
-    ar: { products: "المنتجات", health: "الصحة المستدامة", opportunity: "الشراكة", stories: "قصص النجاح", register: "سجّل الآن", faq: "الأسئلة الشائعة" },
-    en: { products: "Products", health: "Sustainable Health", opportunity: "Partnership", stories: "Success Stories", register: "Register", faq: "FAQ" },
-    fr: { products: "Produits", health: "Santé Durable", opportunity: "Partenariat", stories: "Témoignages", register: "S'inscrire", faq: "FAQ" },
-    es: { products: "Productos", health: "Salud Sostenible", opportunity: "Asociación", stories: "Testimonios", register: "Regístrate", faq: "FAQ" },
-    de: { products: "Produkte", health: "Nachhaltige Gesundheit", opportunity: "Partnerschaft", stories: "Erfolgsgeschichten", register: "Registrieren", faq: "FAQ" },
-    tr: { products: "Ürünler", health: "Sürdürülebilir Sağlık", opportunity: "Ortaklık", stories: "Başarı Hikayeleri", register: "Kaydol", faq: "SSS" },
+    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", opportunity: "الشراكة", register: "سجّل الآن" },
+    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", opportunity: "Partnership", register: "Register" },
+    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", opportunity: "Partenariat", register: "S'inscrire" },
+    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", opportunity: "Asociación", register: "Regístrate" },
+    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", opportunity: "Partnerschaft", register: "Registrieren" },
+    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", opportunity: "Ortaklık", register: "Kaydol" },
   };
   const nav = navLabels[lang] || navLabels.en;
 
@@ -71,13 +73,12 @@ function Navbar() {
         </a>
 
         <div className="hidden lg:flex items-center gap-5">
-          <a href="#products" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.products}</a>
-          <a href="#sustainable-health" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.health}</a>
+          <a href="/blog" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.blog}</a>
+          <a href="/research" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.research}</a>
+          <a href="/health-library" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.library}</a>
+          <a href="/feras-alayed" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.knowledgeHub}</a>
           <a href="#partnership" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.opportunity}</a>
-          <a href="#testimonials" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.stories}</a>
           <a href="#register" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.register}</a>
-          <a href="/faq" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.faq}</a>
-          <a href="/research" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{lang === "ar" ? "الأبحاث" : "Research"}</a>
         </div>
 
         <div className="flex items-center gap-3">
@@ -98,13 +99,12 @@ function Navbar() {
 
       {mobileOpen && (
         <div className="lg:hidden border-t border-border bg-white p-4 space-y-3">
-          <a href="#products" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.products}</a>
-          <a href="#sustainable-health" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.health}</a>
+          <a href="/blog" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.blog}</a>
+          <a href="/research" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.research}</a>
+          <a href="/health-library" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.library}</a>
+          <a href="/feras-alayed" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.knowledgeHub}</a>
           <a href="#partnership" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.opportunity}</a>
-          <a href="#testimonials" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.stories}</a>
           <a href="#register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.register}</a>
-          <a href="/faq" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.faq}</a>
-          <a href="/research" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{lang === "ar" ? "الأبحاث" : "Research"}</a>
         </div>
       )}
     </nav>
@@ -1004,15 +1004,14 @@ function Footer() {
           <div>
             <h4 className="font-bold text-white mb-3">{lang === "ar" ? "روابط سريعة" : "Quick Links"}</h4>
             <div className="space-y-2 text-sm">
-              <a href="/faq" className="block hover:text-white transition-colors">{lang === "ar" ? "الأسئلة الشائعة" : "FAQ"}</a>
-              <a href="/partner" className="block hover:text-white transition-colors">{lang === "ar" ? "كن شريكاً" : "Become a Partner"}</a>
-              <a href="/founder" className="block hover:text-white transition-colors">{lang === "ar" ? "عن المؤسس" : "About the Founder"}</a>
+              <a href="/feras-alayed" className="block hover:text-white transition-colors">{lang === "ar" ? "مركز المعرفة" : "Knowledge Hub"}</a>
               <a href="/blog" className="block hover:text-white transition-colors">{lang === "ar" ? "المدونة الصحية" : "Health Blog"}</a>
               <a href="/research" className="block hover:text-white transition-colors">{lang === "ar" ? "مركز الأبحاث" : "Research Hub"}</a>
-              <a href="/blog?category=insulin-resistance" className="block hover:text-white transition-colors">{lang === "ar" ? "مقاومة الإنسولين" : "Insulin Resistance"}</a>
-              <a href="/blog?category=sustainable-health" className="block hover:text-white transition-colors">{lang === "ar" ? "الصحة المستدامة" : "Sustainable Health"}</a>
-              <a href="/blog?category=weight-loss" className="block hover:text-white transition-colors">{lang === "ar" ? "إنقاص الوزن" : "Weight Loss"}</a>
-              <a href="/blog?category=gut-health" className="block hover:text-white transition-colors">{lang === "ar" ? "صحة الأمعاء" : "Gut Health"}</a>
+              <a href="/today-in-health-science" className="block hover:text-white transition-colors">{lang === "ar" ? "اليوم في العلوم الصحية" : "Today in Health Science"}</a>
+              <a href="/health-library" className="block hover:text-white transition-colors">{lang === "ar" ? "المكتبة الصحية" : "Health Library"}</a>
+              <a href="/partner" className="block hover:text-white transition-colors">{lang === "ar" ? "كن شريكاً" : "Become a Partner"}</a>
+              <a href="/faq" className="block hover:text-white transition-colors">{lang === "ar" ? "الأسئلة الشائعة" : "FAQ"}</a>
+              <a href="/about" className="block hover:text-white transition-colors">{lang === "ar" ? "عن المنصة" : "About"}</a>
             </div>
           </div>
 
@@ -1542,22 +1541,297 @@ function SuccessStoriesSection() {
   );
 }
 
+function LatestArticlesSection() {
+  const { lang } = useLanguage();
+  const { data, isLoading } = trpc.blog.list.useQuery({ limit: 6, offset: 0 });
+
+  const labels: Record<string, { title: string; subtitle: string; cta: string; readTime: string }> = {
+    ar: { title: "أحدث المقالات الصحية", subtitle: "محتوى يومي مبني على العلم والخبرة", cta: "تصفح جميع المقالات", readTime: "دقيقة قراءة" },
+    en: { title: "Latest Health Articles", subtitle: "Daily science-backed content for your health journey", cta: "Browse All Articles", readTime: "min read" },
+    fr: { title: "Derniers Articles Santé", subtitle: "Contenu quotidien basé sur la science", cta: "Voir Tous les Articles", readTime: "min de lecture" },
+    es: { title: "Últimos Artículos de Salud", subtitle: "Contenido diario basado en ciencia", cta: "Ver Todos los Artículos", readTime: "min de lectura" },
+    de: { title: "Neueste Gesundheitsartikel", subtitle: "Tägliche wissenschaftlich fundierte Inhalte", cta: "Alle Artikel Ansehen", readTime: "Min. Lesezeit" },
+    tr: { title: "En Son Sağlık Makaleleri", subtitle: "Bilime dayalı günlük içerik", cta: "Tüm Makaleleri Gör", readTime: "dk okuma" },
+  };
+  const l = labels[lang] || labels.en;
+  const isAr = lang === "ar";
+
+  const getTitle = (article: any) => {
+    const map: Record<string, string> = { ar: article.titleAr, en: article.titleEn, fr: article.titleFr, es: article.titleEs, de: article.titleDe, tr: article.titleTr };
+    return map[lang] || article.titleEn || article.titleAr;
+  };
+  const getExcerpt = (article: any) => {
+    const map: Record<string, string> = { ar: article.excerptAr, en: article.excerptEn, fr: article.excerptFr, es: article.excerptEs, de: article.excerptDe, tr: article.excerptTr };
+    return map[lang] || article.excerptEn || article.excerptAr;
+  };
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="container">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-1.5 mb-3">
+              <BookOpen className="w-4 h-4 text-blue-600" />
+              <span className="text-blue-700 text-sm font-medium">3 {lang === 'ar' ? 'مقالات يومياً' : lang === 'fr' ? 'articles par jour' : lang === 'es' ? 'artículos diarios' : lang === 'de' ? 'Artikel täglich' : lang === 'tr' ? 'günlük makale' : 'articles daily'}</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{l.title}</h2>
+            <p className="text-muted-foreground mt-2">{l.subtitle}</p>
+          </div>
+          <a href="/blog" className="hidden md:inline-flex items-center gap-2 text-primary font-medium hover:underline">
+            {l.cta} <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3].map(i => (
+              <div key={i} className="rounded-2xl border border-border p-5">
+                <Skeleton className="h-40 w-full rounded-xl mb-4" />
+                <Skeleton className="h-5 w-3/4 mb-2" />
+                <Skeleton className="h-4 w-full mb-1" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data?.articles?.slice(0, 6).map((article: any) => (
+              <a key={article.id} href={`/blog/${article.slug}`} className="group rounded-2xl border border-border bg-white hover:shadow-lg hover:border-primary/20 transition-all duration-300 overflow-hidden">
+                {article.heroImageUrl && (
+                  <div className="aspect-[16/9] overflow-hidden">
+                    <img src={article.heroImageUrl} alt={getTitle(article)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  </div>
+                )}
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">{article.category}</span>
+                    <span className="text-xs text-muted-foreground">{article.readTimeMinutes} {l.readTime}</span>
+                  </div>
+                  <h3 className="font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2">{getTitle(article)}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{getExcerpt(article)}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 text-center md:hidden">
+          <a href="/blog" className="inline-flex items-center gap-2 text-primary font-medium">
+            {l.cta} <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LatestResearchSection() {
+  const { lang } = useLanguage();
+  const { data, isLoading } = trpc.research.list.useQuery({ limit: 4 });
+
+  const labels: Record<string, { title: string; subtitle: string; cta: string }> = {
+    ar: { title: "أحدث الأبحاث العلمية", subtitle: "ملخصات علمية من أهم المجلات الطبية العالمية", cta: "استكشف مركز الأبحاث" },
+    en: { title: "Latest Scientific Research", subtitle: "Curated summaries from top medical journals worldwide", cta: "Explore Research Hub" },
+    fr: { title: "Dernières Recherches Scientifiques", subtitle: "Résumés des meilleures revues médicales mondiales", cta: "Explorer le Centre de Recherche" },
+    es: { title: "Últimas Investigaciones Científicas", subtitle: "Resúmenes de las principales revistas médicas del mundo", cta: "Explorar Centro de Investigación" },
+    de: { title: "Neueste Wissenschaftliche Forschung", subtitle: "Zusammenfassungen aus führenden medizinischen Fachzeitschriften", cta: "Forschungszentrum Erkunden" },
+    tr: { title: "En Son Bilimsel Araştırmalar", subtitle: "Dünyanın önde gelen tıp dergilerinden özetler", cta: "Araştırma Merkezini Keşfedin" },
+  };
+  const l = labels[lang] || labels.en;
+
+  const getTitle = (study: any) => {
+    const map: Record<string, string> = { ar: study.titleAr, en: study.titleEn, fr: study.titleFr, es: study.titleEs, de: study.titleDe, tr: study.titleTr };
+    return map[lang] || study.titleEn || study.titleAr;
+  };
+  const getSummary = (study: any) => {
+    const map: Record<string, string> = { ar: study.summary30sAr, en: study.summary30sEn, fr: study.summary30sFr, es: study.summary30sEs, de: study.summary30sDe, tr: study.summary30sTr };
+    return map[lang] || study.summary30sEn || study.summary30sAr;
+  };
+
+  return (
+    <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+      <div className="container">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-full px-4 py-1.5 mb-3">
+              <FlaskConical className="w-4 h-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">PubMed + Multi-Source</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{l.title}</h2>
+            <p className="text-muted-foreground mt-2">{l.subtitle}</p>
+          </div>
+          <a href="/research" className="hidden md:inline-flex items-center gap-2 text-purple-600 font-medium hover:underline">
+            {l.cta} <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 gap-6">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="rounded-2xl border border-border p-6">
+                <Skeleton className="h-4 w-1/3 mb-3" />
+                <Skeleton className="h-5 w-full mb-2" />
+                <Skeleton className="h-4 w-full mb-1" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6">
+            {data?.studies?.slice(0, 4).map((study: any) => (
+              <a key={study.id} href={`/research/${study.slug}`} className="group rounded-2xl border border-border bg-white hover:shadow-lg hover:border-purple-200 transition-all duration-300 p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">{study.topic}</span>
+                  <span className="text-xs text-muted-foreground">{study.journal}</span>
+                </div>
+                <h3 className="font-bold text-foreground group-hover:text-purple-700 transition-colors line-clamp-2 mb-2">{getTitle(study)}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-3">{getSummary(study)}</p>
+                <div className="flex items-center gap-3 mt-4 pt-3 border-t border-border">
+                  <span className="text-xs text-muted-foreground">{study.evidenceLevel}</span>
+                  {study.impactScore > 0 && (
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">★ {study.impactScore}</span>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 text-center md:hidden">
+          <a href="/research" className="inline-flex items-center gap-2 text-purple-600 font-medium">
+            {l.cta} <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HealthLibraryPreview() {
+  const { lang } = useLanguage();
+
+  const labels: Record<string, { title: string; subtitle: string; cta: string }> = {
+    ar: { title: "المكتبة الصحية", subtitle: "7 مراكز معرفية شاملة لكل جانب من صحتك", cta: "استكشف المكتبة" },
+    en: { title: "Health Library", subtitle: "7 comprehensive knowledge hubs covering every aspect of your health", cta: "Explore Library" },
+    fr: { title: "Bibliothèque Santé", subtitle: "7 centres de connaissances couvrant chaque aspect de votre santé", cta: "Explorer la Bibliothèque" },
+    es: { title: "Biblioteca de Salud", subtitle: "7 centros de conocimiento que cubren cada aspecto de tu salud", cta: "Explorar Biblioteca" },
+    de: { title: "Gesundheitsbibliothek", subtitle: "7 umfassende Wissenszentren für jeden Aspekt Ihrer Gesundheit", cta: "Bibliothek Erkunden" },
+    tr: { title: "Sağlık Kütüphanesi", subtitle: "Sağlığınızın her yönünü kapsayan 7 kapsamlı bilgi merkezi", cta: "Kütüphaneyi Keşfedin" },
+  };
+  const l = labels[lang] || labels.en;
+
+  const hubs: Record<string, Array<{ slug: string; title: string; icon: any; color: string }>> = {
+    ar: [
+      { slug: "insulin-resistance", title: "مقاومة الإنسولين", icon: Activity, color: "from-blue-500 to-indigo-600" },
+      { slug: "gut-health", title: "صحة الأمعاء", icon: Leaf, color: "from-green-500 to-emerald-600" },
+      { slug: "sustainable-health", title: "الصحة المستدامة", icon: Heart, color: "from-rose-500 to-pink-600" },
+      { slug: "weight-loss", title: "إنقاص الوزن", icon: TrendingUp, color: "from-amber-500 to-orange-600" },
+      { slug: "sleep-health", title: "صحة النوم", icon: Moon, color: "from-indigo-500 to-purple-600" },
+      { slug: "womens-health", title: "صحة المرأة", icon: Shield, color: "from-pink-500 to-rose-600" },
+      { slug: "metabolic-health", title: "الصحة الأيضية", icon: Zap, color: "from-yellow-500 to-amber-600" },
+    ],
+    en: [
+      { slug: "insulin-resistance", title: "Insulin Resistance", icon: Activity, color: "from-blue-500 to-indigo-600" },
+      { slug: "gut-health", title: "Gut Health", icon: Leaf, color: "from-green-500 to-emerald-600" },
+      { slug: "sustainable-health", title: "Sustainable Health", icon: Heart, color: "from-rose-500 to-pink-600" },
+      { slug: "weight-loss", title: "Weight Loss", icon: TrendingUp, color: "from-amber-500 to-orange-600" },
+      { slug: "sleep-health", title: "Sleep Health", icon: Moon, color: "from-indigo-500 to-purple-600" },
+      { slug: "womens-health", title: "Women's Health", icon: Shield, color: "from-pink-500 to-rose-600" },
+      { slug: "metabolic-health", title: "Metabolic Health", icon: Zap, color: "from-yellow-500 to-amber-600" },
+    ],
+    fr: [
+      { slug: "insulin-resistance", title: "Résistance à l'Insuline", icon: Activity, color: "from-blue-500 to-indigo-600" },
+      { slug: "gut-health", title: "Santé Intestinale", icon: Leaf, color: "from-green-500 to-emerald-600" },
+      { slug: "sustainable-health", title: "Santé Durable", icon: Heart, color: "from-rose-500 to-pink-600" },
+      { slug: "weight-loss", title: "Perte de Poids", icon: TrendingUp, color: "from-amber-500 to-orange-600" },
+      { slug: "sleep-health", title: "Santé du Sommeil", icon: Moon, color: "from-indigo-500 to-purple-600" },
+      { slug: "womens-health", title: "Santé Féminine", icon: Shield, color: "from-pink-500 to-rose-600" },
+      { slug: "metabolic-health", title: "Santé Métabolique", icon: Zap, color: "from-yellow-500 to-amber-600" },
+    ],
+    es: [
+      { slug: "insulin-resistance", title: "Resistencia a la Insulina", icon: Activity, color: "from-blue-500 to-indigo-600" },
+      { slug: "gut-health", title: "Salud Intestinal", icon: Leaf, color: "from-green-500 to-emerald-600" },
+      { slug: "sustainable-health", title: "Salud Sostenible", icon: Heart, color: "from-rose-500 to-pink-600" },
+      { slug: "weight-loss", title: "Pérdida de Peso", icon: TrendingUp, color: "from-amber-500 to-orange-600" },
+      { slug: "sleep-health", title: "Salud del Sueño", icon: Moon, color: "from-indigo-500 to-purple-600" },
+      { slug: "womens-health", title: "Salud Femenina", icon: Shield, color: "from-pink-500 to-rose-600" },
+      { slug: "metabolic-health", title: "Salud Metabólica", icon: Zap, color: "from-yellow-500 to-amber-600" },
+    ],
+    de: [
+      { slug: "insulin-resistance", title: "Insulinresistenz", icon: Activity, color: "from-blue-500 to-indigo-600" },
+      { slug: "gut-health", title: "Darmgesundheit", icon: Leaf, color: "from-green-500 to-emerald-600" },
+      { slug: "sustainable-health", title: "Nachhaltige Gesundheit", icon: Heart, color: "from-rose-500 to-pink-600" },
+      { slug: "weight-loss", title: "Gewichtsverlust", icon: TrendingUp, color: "from-amber-500 to-orange-600" },
+      { slug: "sleep-health", title: "Schlafgesundheit", icon: Moon, color: "from-indigo-500 to-purple-600" },
+      { slug: "womens-health", title: "Frauengesundheit", icon: Shield, color: "from-pink-500 to-rose-600" },
+      { slug: "metabolic-health", title: "Stoffwechselgesundheit", icon: Zap, color: "from-yellow-500 to-amber-600" },
+    ],
+    tr: [
+      { slug: "insulin-resistance", title: "İnsülin Direnci", icon: Activity, color: "from-blue-500 to-indigo-600" },
+      { slug: "gut-health", title: "Bağırsak Sağlığı", icon: Leaf, color: "from-green-500 to-emerald-600" },
+      { slug: "sustainable-health", title: "Sürdürülebilir Sağlık", icon: Heart, color: "from-rose-500 to-pink-600" },
+      { slug: "weight-loss", title: "Kilo Kaybı", icon: TrendingUp, color: "from-amber-500 to-orange-600" },
+      { slug: "sleep-health", title: "Uyku Sağlığı", icon: Moon, color: "from-indigo-500 to-purple-600" },
+      { slug: "womens-health", title: "Kadın Sağlığı", icon: Shield, color: "from-pink-500 to-rose-600" },
+      { slug: "metabolic-health", title: "Metabolik Sağlık", icon: Zap, color: "from-yellow-500 to-amber-600" },
+    ],
+  };
+  const hubList = hubs[lang] || hubs.en;
+
+  return (
+    <section className="py-20 gradient-section">
+      <div className="container">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 mb-3">
+            <Library className="w-4 h-4 text-emerald-600" />
+            <span className="text-emerald-700 text-sm font-medium">7 {lang === 'ar' ? 'مراكز معرفية' : 'Knowledge Hubs'}</span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground">{l.title}</h2>
+          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">{l.subtitle}</p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+          {hubList.map((hub) => (
+            <a key={hub.slug} href={`/health-library/${hub.slug}`} className="group relative overflow-hidden rounded-2xl bg-white border border-border p-5 hover:shadow-lg hover:border-primary/20 transition-all duration-300 hover:-translate-y-1 text-center">
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${hub.color} flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                <hub.icon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-sm text-foreground">{hub.title}</h3>
+            </a>
+          ))}
+          {/* Explore All Hub */}
+          <a href="/health-library" className="group relative overflow-hidden rounded-2xl bg-primary/5 border border-primary/20 p-5 hover:shadow-lg hover:bg-primary/10 transition-all duration-300 hover:-translate-y-1 text-center flex flex-col items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+              <ArrowRight className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="font-semibold text-sm text-primary">{l.cta}</h3>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <SchemaMarkup />
       <Navbar />
       <HeroSection />
-      {/* New flow: Problem → Education → Trust → Transformation → Success Stories → Solution → Consultation */}
+      {/* Knowledge Platform Flow: Authority → Content → Research → Library → Problem → Solution → Partnership */}
+      <TrustAuthoritySection />
+      <LatestArticlesSection />
+      <LatestResearchSection />
+      <HealthLibraryPreview />
       <ProblemSection />
       <SustainableHealthSection />
-      <TrustAuthoritySection />
       <TransformationSection />
       <SuccessStoriesSection />
       <TestimonialsSection />
       <HealthInvestorSection />
       <ProductsSection />
       <PartnershipSection />
+      <NewsletterSection />
       <RegistrationForm />
       <Footer />
       <ChatWidget />
