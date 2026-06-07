@@ -6,20 +6,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const TOPICS = [
-  { id: "all", labelAr: "الكل", labelEn: "All" },
-  { id: "insulin resistance", labelAr: "مقاومة الإنسولين", labelEn: "Insulin Resistance" },
-  { id: "metabolic health", labelAr: "الصحة الأيضية", labelEn: "Metabolic Health" },
-  { id: "gut health", labelAr: "صحة الأمعاء", labelEn: "Gut Health" },
-  { id: "weight loss", labelAr: "إنقاص الوزن", labelEn: "Weight Loss" },
-  { id: "sleep", labelAr: "النوم", labelEn: "Sleep" },
-  { id: "inflammation", labelAr: "الالتهاب", labelEn: "Inflammation" },
-  { id: "nutrition", labelAr: "التغذية", labelEn: "Nutrition" },
-  { id: "mental health", labelAr: "الصحة النفسية", labelEn: "Mental Health" },
-  { id: "longevity", labelAr: "طول العمر", labelEn: "Longevity" },
-  { id: "diabetes", labelAr: "السكري", labelEn: "Diabetes" },
-  { id: "microbiome", labelAr: "الميكروبيوم", labelEn: "Microbiome" },
-  { id: "women's health", labelAr: "صحة المرأة", labelEn: "Women's Health" },
+const TOPICS: { id: string; labels: Record<string, string> }[] = [
+  { id: "all", labels: { ar: "الكل", en: "All", fr: "Tous", es: "Todos", de: "Alle", tr: "Tümü" } },
+  { id: "insulin resistance", labels: { ar: "مقاومة الإنسولين", en: "Insulin Resistance", fr: "Résistance à l'insuline", es: "Resistencia a la insulina", de: "Insulinresistenz", tr: "İnsülin Direnci" } },
+  { id: "metabolic health", labels: { ar: "الصحة الأيضية", en: "Metabolic Health", fr: "Santé métabolique", es: "Salud metabólica", de: "Stoffwechselgesundheit", tr: "Metabolik Sağlık" } },
+  { id: "gut health", labels: { ar: "صحة الأمعاء", en: "Gut Health", fr: "Santé intestinale", es: "Salud intestinal", de: "Darmgesundheit", tr: "Bağırsak Sağlığı" } },
+  { id: "weight loss", labels: { ar: "إنقاص الوزن", en: "Weight Loss", fr: "Perte de poids", es: "Pérdida de peso", de: "Gewichtsverlust", tr: "Kilo Verme" } },
+  { id: "sleep", labels: { ar: "النوم", en: "Sleep", fr: "Sommeil", es: "Sueño", de: "Schlaf", tr: "Uyku" } },
+  { id: "inflammation", labels: { ar: "الالتهاب", en: "Inflammation", fr: "Inflammation", es: "Inflamación", de: "Entzündung", tr: "Enflamasyon" } },
+  { id: "nutrition", labels: { ar: "التغذية", en: "Nutrition", fr: "Nutrition", es: "Nutrición", de: "Ernährung", tr: "Beslenme" } },
+  { id: "mental health", labels: { ar: "الصحة النفسية", en: "Mental Health", fr: "Santé mentale", es: "Salud mental", de: "Psychische Gesundheit", tr: "Ruh Sağlığı" } },
+  { id: "longevity", labels: { ar: "طول العمر", en: "Longevity", fr: "Longévité", es: "Longevidad", de: "Langlebigkeit", tr: "Uzun Ömür" } },
+  { id: "diabetes", labels: { ar: "السكري", en: "Diabetes", fr: "Diabète", es: "Diabetes", de: "Diabetes", tr: "Diyabet" } },
+  { id: "microbiome", labels: { ar: "الميكروبيوم", en: "Microbiome", fr: "Microbiome", es: "Microbioma", de: "Mikrobiom", tr: "Mikrobiyom" } },
+  { id: "women's health", labels: { ar: "صحة المرأة", en: "Women's Health", fr: "Santé des femmes", es: "Salud de la mujer", de: "Frauengesundheit", tr: "Kadın Sağlığı" } },
 ];
 
 const EVIDENCE_COLORS: Record<string, string> = {
@@ -248,7 +248,7 @@ export default function ResearchHub() {
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
-                {isAr ? topic.labelAr : topic.labelEn}
+                {topic.labels[lang] || topic.labels.en}
               </button>
             ))}
           </div>

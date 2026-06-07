@@ -672,3 +672,10 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Generate German audio narration for Knowledge Hub
 - [x] Generate Turkish audio narration for Knowledge Hub
 - [x] Update Knowledge Hub page to switch audio based on selected language
+
+## Audit & Fixes - June 7, 2026
+- [x] Translate Blog category filter buttons to all 6 languages
+- [x] Translate Research Hub topic filter buttons to all 6 languages
+- [x] Fix article generation JSON parsing failures (added retry with shorter prompt)
+- [x] Schedule research discovery heartbeat job (was missing - now runs 8:00 and 16:00 UTC)
+- [x] Remove duplicate daily-seo-article heartbeat job

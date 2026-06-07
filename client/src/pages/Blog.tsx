@@ -4,19 +4,19 @@ import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const CATEGORIES = [
-  { id: "all", labelAr: "الكل", labelEn: "All" },
-  { id: "insulin-resistance", labelAr: "مقاومة الإنسولين", labelEn: "Insulin Resistance" },
-  { id: "sustainable-health", labelAr: "الصحة المستدامة", labelEn: "Sustainable Health" },
-  { id: "weight-management", labelAr: "إدارة الوزن", labelEn: "Weight Loss" },
-  { id: "gut-health", labelAr: "صحة الأمعاء", labelEn: "Gut Health" },
-  { id: "healthy-habits", labelAr: "عادات صحية", labelEn: "Healthy Habits" },
-  { id: "behavioral-nutrition", labelAr: "التغذية السلوكية", labelEn: "Behavioral Nutrition" },
-  { id: "hormonal-balance", labelAr: "التوازن الهرموني", labelEn: "Hormonal Balance" },
-  { id: "nutrition", labelAr: "التغذية", labelEn: "Nutrition" },
-  { id: "mental-wellness", labelAr: "الصحة النفسية", labelEn: "Mental Wellness" },
-  { id: "lifestyle-medicine", labelAr: "طب نمط الحياة", labelEn: "Lifestyle Medicine" },
-  { id: "intermittent-fasting", labelAr: "الصيام المتقطع", labelEn: "Intermittent Fasting" },
+const CATEGORIES: { id: string; labels: Record<string, string> }[] = [
+  { id: "all", labels: { ar: "الكل", en: "All", fr: "Tous", es: "Todos", de: "Alle", tr: "Tümü" } },
+  { id: "insulin-resistance", labels: { ar: "مقاومة الإنسولين", en: "Insulin Resistance", fr: "Résistance à l'insuline", es: "Resistencia a la insulina", de: "Insulinresistenz", tr: "İnsülin Direnci" } },
+  { id: "sustainable-health", labels: { ar: "الصحة المستدامة", en: "Sustainable Health", fr: "Santé durable", es: "Salud sostenible", de: "Nachhaltige Gesundheit", tr: "Sürdürülebilir Sağlık" } },
+  { id: "weight-management", labels: { ar: "إدارة الوزن", en: "Weight Loss", fr: "Perte de poids", es: "Pérdida de peso", de: "Gewichtsverlust", tr: "Kilo Verme" } },
+  { id: "gut-health", labels: { ar: "صحة الأمعاء", en: "Gut Health", fr: "Santé intestinale", es: "Salud intestinal", de: "Darmgesundheit", tr: "Bağırsak Sağlığı" } },
+  { id: "healthy-habits", labels: { ar: "عادات صحية", en: "Healthy Habits", fr: "Habitudes saines", es: "Hábitos saludables", de: "Gesunde Gewohnheiten", tr: "Sağlıklı Alışkanlıklar" } },
+  { id: "behavioral-nutrition", labels: { ar: "التغذية السلوكية", en: "Behavioral Nutrition", fr: "Nutrition comportementale", es: "Nutrición conductual", de: "Verhaltensernährung", tr: "Davranışsal Beslenme" } },
+  { id: "hormonal-balance", labels: { ar: "التوازن الهرموني", en: "Hormonal Balance", fr: "Équilibre hormonal", es: "Equilibrio hormonal", de: "Hormonelles Gleichgewicht", tr: "Hormonal Denge" } },
+  { id: "nutrition", labels: { ar: "التغذية", en: "Nutrition", fr: "Nutrition", es: "Nutrición", de: "Ernährung", tr: "Beslenme" } },
+  { id: "mental-wellness", labels: { ar: "الصحة النفسية", en: "Mental Wellness", fr: "Bien-être mental", es: "Bienestar mental", de: "Mentale Gesundheit", tr: "Zihinsel Sağlık" } },
+  { id: "lifestyle-medicine", labels: { ar: "طب نمط الحياة", en: "Lifestyle Medicine", fr: "Médecine du mode de vie", es: "Medicina del estilo de vida", de: "Lifestyle-Medizin", tr: "Yaşam Tarzı Tıbbı" } },
+  { id: "intermittent-fasting", labels: { ar: "الصيام المتقطع", en: "Intermittent Fasting", fr: "Jeûne intermittent", es: "Ayuno intermitente", de: "Intervallfasten", tr: "Aralıklı Oruç" } },
 ];
 
 // Helper to get multilingual article field
@@ -100,7 +100,7 @@ export default function Blog() {
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
-                {isAr ? cat.labelAr : cat.labelEn}
+                {cat.labels[lang] || cat.labels.en}
               </button>
             ))}
           </div>
@@ -140,7 +140,7 @@ export default function Blog() {
               >
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#1a5276]/10 text-[#1a5276]">
-                    {CATEGORIES.find((c) => c.id === article.category)?.[isAr ? "labelAr" : "labelEn"] ?? article.category}
+                    {CATEGORIES.find((c) => c.id === article.category)?.labels[lang] || CATEGORIES.find((c) => c.id === article.category)?.labels.en || article.category}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {article.readTimeMinutes} {t.minRead}

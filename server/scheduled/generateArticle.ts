@@ -529,7 +529,80 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
   });
 
   const raw = response.choices?.[0]?.message?.content;
-  return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  try {
+    return robustJsonParse(typeof raw === "string" ? raw : JSON.stringify(raw));
+  } catch (parseError) {
+    // Log failure details
+    console.error(`[GenerateArticle] JSON parse failed on main attempt. Raw length: ${(raw || "").length}. Attempting shorter retry...`);
+    console.error(`[GenerateArticle] Last 200 chars: ${String(raw).slice(-200)}`);
+    
+    // Retry with a simpler/shorter prompt to avoid truncation
+    const retryResponse = await invokeLLM({
+      messages: [
+        {
+          role: "system",
+          content: `You are a health content writer for Feras Alayed. Write a concise article. Return ONLY valid JSON. Keep content SHORT (600-900 words per language). No markdown code blocks.`,
+        },
+        {
+          role: "user",
+          content: `Write a health article about: "${topic}"
+Keyword: "${targetKeyword}"
+Search intent: ${searchIntent}
+Pillar: ${pillar.nameEn}
+
+Return JSON:
+{"titleAr":"...","titleEn":"...","metaTitleAr":"...","metaTitleEn":"...","metaDescriptionAr":"...","metaDescriptionEn":"...","excerptAr":"...","excerptEn":"...","contentAr":"<h2>...</h2><p>Arabic article 600-900 words with h2, h3, p, ul tags</p>","contentEn":"<h2>...</h2><p>English article 600-900 words with h2, h3, p, ul tags</p>","tags":["tag1","tag2","tag3"],"faqSchema":[{"question":"Q","answer":"A"}],"internalLinks":[],"heroImagePrompt":"health image prompt"}`,
+        },
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "article_retry",
+          strict: true,
+          schema: {
+            type: "object",
+            properties: {
+              titleAr: { type: "string" },
+              titleEn: { type: "string" },
+              metaTitleAr: { type: "string" },
+              metaTitleEn: { type: "string" },
+              metaDescriptionAr: { type: "string" },
+              metaDescriptionEn: { type: "string" },
+              excerptAr: { type: "string" },
+              excerptEn: { type: "string" },
+              contentAr: { type: "string" },
+              contentEn: { type: "string" },
+              tags: { type: "array", items: { type: "string" } },
+              faqSchema: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: { question: { type: "string" }, answer: { type: "string" } },
+                  required: ["question", "answer"],
+                  additionalProperties: false,
+                },
+              },
+              internalLinks: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: { slug: { type: "string" }, title: { type: "string" } },
+                  required: ["slug", "title"],
+                  additionalProperties: false,
+                },
+              },
+              heroImagePrompt: { type: "string" },
+            },
+            required: ["titleAr", "titleEn", "metaTitleAr", "metaTitleEn", "metaDescriptionAr", "metaDescriptionEn", "excerptAr", "excerptEn", "contentAr", "contentEn", "tags", "faqSchema", "internalLinks", "heroImagePrompt"],
+            additionalProperties: false,
+          },
+        },
+      },
+    });
+    const retryRaw = retryResponse.choices?.[0]?.message?.content;
+    console.log(`[GenerateArticle] Retry response length: ${(retryRaw || "").length}`);
+    return robustJsonParse(typeof retryRaw === "string" ? retryRaw : JSON.stringify(retryRaw));
+  }
   }); // end withRetry
 }
 
