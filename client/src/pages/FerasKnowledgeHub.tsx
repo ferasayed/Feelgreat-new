@@ -224,6 +224,23 @@ export default function FerasKnowledgeHub() {
         </div>
       </header>
 
+      {/* ===== AUDIO INTRO ===== */}
+      <section className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border-b">
+        <div className="container max-w-4xl py-6">
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-emerald-100 dark:border-emerald-800/30">
+            <div className="flex items-center gap-2 shrink-0">
+              <Mic className="w-5 h-5 text-emerald-600" />
+              <span className="text-sm font-medium text-foreground">
+                {isAr ? "رسالة فراس" : lang === 'fr' ? "Message de Feras" : lang === 'es' ? "Mensaje de Feras" : lang === 'de' ? "Feras' Nachricht" : lang === 'tr' ? "Feras'ın Mesajı" : "Feras's Message"}
+              </span>
+            </div>
+            <audio controls className="flex-1 h-10" preload="metadata">
+              <source src="/manus-storage/knowledge-hub-intro-ar_4929473b.wav" type="audio/wav" />
+            </audio>
+          </div>
+        </div>
+      </section>
+
       {/* ===== TABLE OF CONTENTS - Quick Navigation ===== */}
       <nav className="bg-muted/50 border-b sticky top-0 z-40 backdrop-blur-sm">
         <div className="container max-w-6xl py-3 overflow-x-auto">

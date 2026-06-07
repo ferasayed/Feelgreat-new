@@ -632,12 +632,12 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Vitest tests for newsletter system (7 tests passing)
 
 ### Knowledge Hub Video
-- [ ] Create 60-90 second intro video for Feras Knowledge Hub (pending)
-- [ ] Embed video in Knowledge Hub page (pending)
+- [x] Create 60-90 second intro audio for Feras Knowledge Hub (Arabic narration)
+- [x] Embed audio in Knowledge Hub page
 
 ### Backlinks Execution
-- [ ] Create actionable directory submission guide with direct links (pending)
-- [ ] Prepare submission templates for health directories (pending)
+- [x] Create actionable directory submission guide with direct links
+- [x] Prepare submission templates for health directories
 
 ## Translation & Localization Audit
 - [x] Add ar/en language support to About.tsx
