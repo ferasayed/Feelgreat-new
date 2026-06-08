@@ -1159,7 +1159,6 @@ export function HealthLibraryHub() {
               src="/manus-storage/feras-author-photo_7c3e9a1b.jpg"
               alt="Feras Alayed"
               className="w-16 h-16 rounded-full object-cover border-2 border-primary"
-              loading="lazy"
             />
             <div>
               <h3 className="font-bold text-foreground">
