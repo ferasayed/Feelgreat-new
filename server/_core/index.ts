@@ -117,6 +117,17 @@ async function startServer() {
     }
   });
 
+  // Batch research seed endpoint - generates studies for underserved topics
+  app.post("/api/scheduled/batchResearchSeed", async (req, res) => {
+    try {
+      const { batchResearchSeedHandler } = await import("../scheduled/batchResearchSeed");
+      return batchResearchSeedHandler(req, res);
+    } catch (error: any) {
+      console.error("[BatchResearchSeed] Error:", error);
+      return res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
   // Dynamic sitemap.xml - auto-includes all published blog articles AND research studies
   app.get("/sitemap.xml", async (req, res) => {
     try {
@@ -571,6 +582,9 @@ async function initArticleGenJobs() {
       { name: "auto-index-daily", cron: "0 30 7 * * *", description: "Daily auto-indexing: submit all URLs to IndexNow + ping Google/Bing (7:30 UTC)", path: "/api/scheduled/autoIndex" },
       { name: "auto-index-evening", cron: "0 30 19 * * *", description: "Evening auto-indexing: submit new content to search engines (19:30 UTC)", path: "/api/scheduled/autoIndex" },
       { name: "batch-image-regen", cron: "0 0 3 * * *", description: "Batch image regeneration: generate images for all content without images (3:00 UTC daily)", path: "/api/scheduled/batchImageRegen" },
+      { name: "research-seed-morning", cron: "0 0 8 * * *", description: "Research study generation - morning (8:00 UTC)", path: "/api/scheduled/batchResearchSeed" },
+      { name: "research-seed-afternoon", cron: "0 0 14 * * *", description: "Research study generation - afternoon (14:00 UTC)", path: "/api/scheduled/batchResearchSeed" },
+      { name: "research-seed-evening", cron: "0 0 20 * * *", description: "Research study generation - evening (20:00 UTC)", path: "/api/scheduled/batchResearchSeed" },
     ];
 
     for (const schedule of schedules) {

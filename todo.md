@@ -791,3 +791,8 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Update PartnerWithFeras.tsx image references to WebP
 - [x] Update SuccessStories.tsx image references to WebP
 - [x] Add loading="lazy" to all img tags across 11 pages
+
+## Batch Research Studies Generation - June 8, 2026
+- [ ] Generate 3+ research studies for each of the 12 topic categories (36+ total)
+- [ ] Ensure daily auto-generation includes research studies (not just articles)
+- [ ] Verify research studies appear correctly in the Research page
