@@ -116,7 +116,7 @@ function Navbar() {
 function HeroSection() {
   const { lang } = useLanguage();
 
-  const content: Record<string, { title: string; subtitle: string[]; cta1: string; cta2: string; cta3: string; cta4: string }> = {
+  const content: Record<string, { title: string; subtitle: string[]; cta1: string; cta2: string; cta3: string; cta4: string; cta5: string; cta6: string }> = {
     ar: {
       title: "استثمر في صحتك اليوم… وابنِ تأثيرك ودخلك غداً",
       subtitle: ["الصحة المستدامة", "بناء الدخل", "تطوير الذات", "العمل من أي مكان", "مجتمع عالمي"],
@@ -124,6 +124,8 @@ function HeroSection() {
       cta2: "اكتشف فرصة الشراكة",
       cta3: "احجز مكالمة تعريفية",
       cta4: "الأسئلة الشائعة",
+      cta5: "المقالات",
+      cta6: "الأبحاث العلمية",
     },
     en: {
       title: "Invest in Your Health Today… Build Your Impact & Income Tomorrow",
@@ -132,6 +134,8 @@ function HeroSection() {
       cta2: "Discover Partnership",
       cta3: "Book a Discovery Call",
       cta4: "FAQ",
+      cta5: "Articles",
+      cta6: "Research",
     },
     fr: {
       title: "Investissez dans votre santé aujourd'hui… Construisez votre impact et vos revenus demain",
@@ -140,6 +144,8 @@ function HeroSection() {
       cta2: "Découvrez le partenariat",
       cta3: "Réservez un appel",
       cta4: "FAQ",
+      cta5: "Articles",
+      cta6: "Recherche",
     },
     es: {
       title: "Invierte en tu salud hoy… Construye tu impacto e ingresos mañana",
@@ -148,6 +154,8 @@ function HeroSection() {
       cta2: "Descubre la asociación",
       cta3: "Reserva una llamada",
       cta4: "Preguntas Frecuentes",
+      cta5: "Artículos",
+      cta6: "Investigación",
     },
     de: {
       title: "Investiere heute in deine Gesundheit… Baue morgen deinen Einfluss und dein Einkommen auf",
@@ -156,6 +164,8 @@ function HeroSection() {
       cta2: "Entdecke die Partnerschaft",
       cta3: "Buche ein Gespräch",
       cta4: "Häufige Fragen",
+      cta5: "Artikel",
+      cta6: "Forschung",
     },
     tr: {
       title: "Bugün sağlığınıza yatırım yapın… Yarın etkinizi ve gelirinizi inşa edin",
@@ -164,6 +174,8 @@ function HeroSection() {
       cta2: "Ortaklığı keşfedin",
       cta3: "Tanışma görüşmesi ayırtın",
       cta4: "SSS",
+      cta5: "Makaleler",
+      cta6: "Araştırma",
     },
   };
 
@@ -235,6 +247,18 @@ function HeroSection() {
             <a href="/faq">
               <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-white/20 text-white/80 hover:bg-white/10 bg-transparent w-full sm:w-auto">
                 {c.cta4}
+              </Button>
+            </a>
+            <a href="/blog">
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-blue-400/40 text-blue-300 hover:bg-blue-500/10 bg-transparent w-full sm:w-auto">
+                <BookOpen className="w-5 h-5 me-2" />
+                {c.cta5}
+              </Button>
+            </a>
+            <a href="/research">
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-purple-400/40 text-purple-300 hover:bg-purple-500/10 bg-transparent w-full sm:w-auto">
+                <FlaskConical className="w-5 h-5 me-2" />
+                {c.cta6}
               </Button>
             </a>
           </div>
