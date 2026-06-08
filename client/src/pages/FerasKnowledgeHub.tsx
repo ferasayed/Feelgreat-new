@@ -640,7 +640,7 @@ export default function FerasKnowledgeHub() {
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="shrink-0">
               <div className="relative">
-                <img src="/manus-storage/feras-professional_115956a2.png" alt="Feras Alayed" className="w-48 h-48 lg:w-56 lg:h-56 rounded-full object-cover object-top shadow-2xl ring-4 ring-emerald-400/30" />
+                <img loading="lazy" src="/manus-storage/feras-professional_115956a2.png" alt="Feras Alayed" className="w-48 h-48 lg:w-56 lg:h-56 rounded-full object-cover object-top shadow-2xl ring-4 ring-emerald-400/30" />
                 <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                   15+ {t.countries}
                 </div>
@@ -857,13 +857,13 @@ export default function FerasKnowledgeHub() {
           </div>
           <div className="grid grid-cols-3 gap-4 mt-8">
             <div className="rounded-xl overflow-hidden shadow-md aspect-[4/3]">
-              <img src="/manus-storage/feras-speaking_97c75a22.jpg" alt="Feras Speaking" className="w-full h-full object-cover" loading="lazy" />
+              <img loading="lazy" src="/manus-storage/feras-speaking_97c75a22.jpg" alt="Feras Speaking" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[4/3]">
-              <img src="/manus-storage/feras-training_3e46aa5d.jpg" alt="Feras Training" className="w-full h-full object-cover" loading="lazy" />
+              <img loading="lazy" src="/manus-storage/feras-training_3e46aa5d.jpg" alt="Feras Training" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[4/3]">
-              <img src="/manus-storage/feras-library_9789048d.jpg" alt="Feras Research" className="w-full h-full object-cover" loading="lazy" />
+              <img loading="lazy" src="/manus-storage/feras-library_9789048d.jpg" alt="Feras Research" className="w-full h-full object-cover" />
             </div>
           </div>
         </section>

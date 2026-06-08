@@ -134,7 +134,7 @@ export default function AuthorPage() {
 
           <div className="flex flex-col md:flex-row items-start gap-8">
             {/* Author Avatar */}
-            <img
+            <img loading="lazy"
               src="/manus-storage/feras-professional_115956a2.png"
               alt="Feras Alayed - Therapeutic & Behavioral Nutrition Specialist"
               className="w-32 h-32 rounded-full object-cover object-top shrink-0 shadow-lg ring-4 ring-emerald-200 dark:ring-emerald-800"
@@ -210,22 +210,22 @@ export default function AuthorPage() {
           <h2 className="text-2xl font-bold mb-6">{isAr ? "معرض الصور" : "Gallery"}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="rounded-xl overflow-hidden shadow-md aspect-[3/4]">
-              <img src="/manus-storage/feras-library_9789048d.jpg" alt="Feras Alayed - Professional" className="w-full h-full object-cover" />
+              <img loading="lazy" src="/manus-storage/feras-library_9789048d.jpg" alt="Feras Alayed - Professional" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[3/4]">
-              <img src="/manus-storage/feras-speaking_97c75a22.jpg" alt="Feras Alayed - Speaking" className="w-full h-full object-cover" />
+              <img loading="lazy" src="/manus-storage/feras-speaking_97c75a22.jpg" alt="Feras Alayed - Speaking" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[3/4]">
-              <img src="/manus-storage/feras-smile_ab0e9182.jpg" alt="Feras Alayed - Casual" className="w-full h-full object-cover" />
+              <img loading="lazy" src="/manus-storage/feras-smile_ab0e9182.jpg" alt="Feras Alayed - Casual" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[3/4]">
-              <img src="/manus-storage/feras-training_3e46aa5d.jpg" alt="Feras Alayed - Training" className="w-full h-full object-cover" />
+              <img loading="lazy" src="/manus-storage/feras-training_3e46aa5d.jpg" alt="Feras Alayed - Training" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[3/4]">
-              <img src="/manus-storage/feras-casual_c846f5ed.jpg" alt="Feras Alayed - Consultation" className="w-full h-full object-cover" />
+              <img loading="lazy" src="/manus-storage/feras-casual_c846f5ed.jpg" alt="Feras Alayed - Consultation" className="w-full h-full object-cover" />
             </div>
             <div className="rounded-xl overflow-hidden shadow-md aspect-[3/4]">
-              <img src="/manus-storage/feras-professional_115956a2.png" alt="Feras Alayed - Professional" className="w-full h-full object-cover object-top" />
+              <img loading="lazy" src="/manus-storage/feras-professional_115956a2.png" alt="Feras Alayed - Professional" className="w-full h-full object-cover object-top" />
             </div>
           </div>
         </section>

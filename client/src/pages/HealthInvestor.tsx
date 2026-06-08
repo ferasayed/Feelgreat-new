@@ -47,7 +47,7 @@ export default function HealthInvestor() {
               </div>
             </div>
             <div className="flex justify-center">
-              <img
+              <img loading="lazy"
                 src="/manus-storage/feras-portrait-2_61f1860f.jpg"
                 alt="Feras Alayed - Health Investor Philosophy"
                 className="rounded-2xl shadow-2xl max-h-[450px] object-cover"
@@ -224,7 +224,7 @@ export default function HealthInvestor() {
       {/* Feras's Philosophy */}
       <section className="container max-w-4xl mx-auto px-4 py-16">
         <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-10 text-center">
-          <img
+          <img loading="lazy"
             src="/manus-storage/feras-portrait-1_d1f8a83f.png"
             alt="Feras Alayed"
             className="w-20 h-20 rounded-full object-cover mx-auto mb-6 border-2 border-amber-400/30"

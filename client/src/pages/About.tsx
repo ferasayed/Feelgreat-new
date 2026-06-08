@@ -24,10 +24,10 @@ const galleryPhotos: { section: string; sectionAr: string; desc: string; descAr:
     desc: "Stage, microphone, and presentations",
     descAr: "صور المسرح والمايكروفون والعروض",
     images: [
-      { src: "/manus-storage/IMG_6338_a000f1b3.JPG", alt: "Firas speaking on stage", caption: "فراس يلقي محاضرة أمام جمهور كبير — ورشة عمل تدريبية" },
-      { src: "/manus-storage/IMG_6339_cf6c0cde.JPG", alt: "Firas with microphone", caption: "فراس على المسرح يتفاعل مباشرة مع الحضور" },
-      { src: "/manus-storage/IMG_6344_b48f8b1c.JPG", alt: "Firas presenting", caption: "عرض تقديمي عن الصحة المستدامة وتغيير نمط الحياة" },
-      { src: "/manus-storage/IMG_6753_8a108a68.jpeg", alt: "Firas at large venue", caption: "مؤتمر دولي — فراس يقدم رؤيته للصحة والقيادة" },
+      { src: "/manus-storage/IMG_6338_84e2d359.webp", alt: "Firas speaking on stage", caption: "فراس يلقي محاضرة أمام جمهور كبير — ورشة عمل تدريبية" },
+      { src: "/manus-storage/IMG_6339_628520d7.webp", alt: "Firas with microphone", caption: "فراس على المسرح يتفاعل مباشرة مع الحضور" },
+      { src: "/manus-storage/IMG_6344_3a1d2992.webp", alt: "Firas presenting", caption: "عرض تقديمي عن الصحة المستدامة وتغيير نمط الحياة" },
+      { src: "/manus-storage/IMG_6753_f47731cb.webp", alt: "Firas at large venue", caption: "مؤتمر دولي — فراس يقدم رؤيته للصحة والقيادة" },
     ],
   },
   {
@@ -36,10 +36,10 @@ const galleryPhotos: { section: string; sectionAr: string; desc: string; descAr:
     desc: "Engaged audiences and interactive moments",
     descAr: "صور الجمهور المتفاعل ورفع الأيدي",
     images: [
-      { src: "/manus-storage/IMG_6340_3f7f858f.JPG", alt: "Audience engagement", caption: "الجمهور يتفاعل بحماس مع المحتوى التدريبي" },
-      { src: "/manus-storage/IMG_6341_6893f63b.JPG", alt: "Interactive session", caption: "جلسة تفاعلية — المشاركون يرفعون أيديهم للمشاركة" },
-      { src: "/manus-storage/IMG_6342_d395a1b2.JPG", alt: "Crowd interaction", caption: "تفاعل مباشر مع الحضور أثناء التدريب" },
-      { src: "/manus-storage/IMG_5295_7ab0dde0.JPG", alt: "Group engagement", caption: "مجموعة متحمسة خلال ورشة عمل تطويرية" },
+      { src: "/manus-storage/IMG_6340_25373439.webp", alt: "Audience engagement", caption: "الجمهور يتفاعل بحماس مع المحتوى التدريبي" },
+      { src: "/manus-storage/IMG_6341_e211111a.webp", alt: "Interactive session", caption: "جلسة تفاعلية — المشاركون يرفعون أيديهم للمشاركة" },
+      { src: "/manus-storage/IMG_6342_d07be201.webp", alt: "Crowd interaction", caption: "تفاعل مباشر مع الحضور أثناء التدريب" },
+      { src: "/manus-storage/IMG_5295_2a9e59fa.webp", alt: "Group engagement", caption: "مجموعة متحمسة خلال ورشة عمل تطويرية" },
     ],
   },
   {
@@ -48,10 +48,10 @@ const galleryPhotos: { section: string; sectionAr: string; desc: string; descAr:
     desc: "Different venues and diverse audiences",
     descAr: "صور القاعات المختلفة والجمهور المتنوع",
     images: [
-      { src: "/manus-storage/IMG_6343_2d150838.JPG", alt: "Training venue", caption: "قاعة تدريب متخصصة — بيئة مهنية للتعلم" },
-      { src: "/manus-storage/IMG_6345_d9d919cf.JPG", alt: "Different environment", caption: "فعالية في بيئة مختلفة — تنوع الأماكن والجمهور" },
-      { src: "/manus-storage/IMG_6347_bc642836.JPG", alt: "Diverse setting", caption: "جلسة تدريبية في قاعة مؤتمرات" },
-      { src: "/manus-storage/IMG_6346_beb62ff3.JPG", alt: "Another venue", caption: "فراس يقدم محتوى تدريبي في بيئة متنوعة" },
+      { src: "/manus-storage/IMG_6343_1525c63f.webp", alt: "Training venue", caption: "قاعة تدريب متخصصة — بيئة مهنية للتعلم" },
+      { src: "/manus-storage/IMG_6345_d52a3057.webp", alt: "Different environment", caption: "فعالية في بيئة مختلفة — تنوع الأماكن والجمهور" },
+      { src: "/manus-storage/IMG_6347_cddc96ea.webp", alt: "Diverse setting", caption: "جلسة تدريبية في قاعة مؤتمرات" },
+      { src: "/manus-storage/IMG_6346_4cea44d2.webp", alt: "Another venue", caption: "فراس يقدم محتوى تدريبي في بيئة متنوعة" },
     ],
   },
   {
@@ -60,11 +60,11 @@ const galleryPhotos: { section: string; sectionAr: string; desc: string; descAr:
     desc: "Explaining, gesturing, movement, and direct interaction",
     descAr: "صور الشرح، الإشارة، الحركة، والتفاعل المباشر",
     images: [
-      { src: "/manus-storage/IMG_5327_bf4b169f.JPG", alt: "Training style", caption: "فراس يشرح مفهوماً صحياً بأسلوب مبسط وعملي" },
-      { src: "/manus-storage/7725012a-64c1-4fb7-a6cd-6cf47ed2ec4e_b73ed242.jpg", alt: "Direct interaction", caption: "تفاعل مباشر مع المتدربين — أسلوب شخصي وقريب" },
-      { src: "/manus-storage/ff21e6c0-f6ae-41f4-bf27-bcf823c646aa_7570af89.jpg", alt: "Teaching moment", caption: "لحظة تعليمية — الحركة والإشارة لتوصيل الفكرة" },
-      { src: "/manus-storage/IMG_5333_6201f21c.jpeg", alt: "Coaching", caption: "جلسة تدريب فردية — اهتمام بكل متدرب" },
-      { src: "/manus-storage/IMG_5320_da234748.jpeg", alt: "Training session", caption: "ورشة عمل تفاعلية — التعلم بالممارسة" },
+      { src: "/manus-storage/IMG_5327_f06911e5.webp", alt: "Training style", caption: "فراس يشرح مفهوماً صحياً بأسلوب مبسط وعملي" },
+      { src: "/manus-storage/7725012a-64c1-4fb7-a6cd-6cf47ed2ec4e_58e0aa02.webp", alt: "Direct interaction", caption: "تفاعل مباشر مع المتدربين — أسلوب شخصي وقريب" },
+      { src: "/manus-storage/ff21e6c0-f6ae-41f4-bf27-bcf823c646aa_a31ec735.webp", alt: "Teaching moment", caption: "لحظة تعليمية — الحركة والإشارة لتوصيل الفكرة" },
+      { src: "/manus-storage/IMG_5333_1f9ead04.webp", alt: "Coaching", caption: "جلسة تدريب فردية — اهتمام بكل متدرب" },
+      { src: "/manus-storage/IMG_5320_be9cd65b.webp", alt: "Training session", caption: "ورشة عمل تفاعلية — التعلم بالممارسة" },
     ],
   },
   {
@@ -73,11 +73,11 @@ const galleryPhotos: { section: string; sectionAr: string; desc: string; descAr:
     desc: "Large attendance and formal organization",
     descAr: "الصور التي تظهر الحضور الكبير والتنظيم الرسمي",
     images: [
-      { src: "/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_472123c9.jpg", alt: "Large organized event", caption: "فعالية كبيرة منظمة — حضور مئات المشاركين" },
-      { src: "/manus-storage/IMG_4955_32c556b6.PNG", alt: "Professional authority", caption: "فراس في مؤتمر رسمي — سلطة معرفية معترف بها" },
-      { src: "/manus-storage/404bb448-c42c-48ca-98c8-49f7be351aa3_20b438be.jpg", alt: "Formal setting", caption: "إطار رسمي واحترافي — تنظيم عالمي المستوى" },
-      { src: "/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_f4c031d4.jpg", alt: "Large audience", caption: "جمهور كبير — تأثير يمتد لآلاف الأشخاص" },
-      { src: "/manus-storage/IMG_6751_88a39e0b.JPG", alt: "Authority presence", caption: "حضور قيادي ومصداقية مبنية على الخبرة" },
+      { src: "/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_09ff40fd.webp", alt: "Large organized event", caption: "فعالية كبيرة منظمة — حضور مئات المشاركين" },
+      { src: "/manus-storage/IMG_4955_d3aa3e87.webp", alt: "Professional authority", caption: "فراس في مؤتمر رسمي — سلطة معرفية معترف بها" },
+      { src: "/manus-storage/404bb448-c42c-48ca-98c8-49f7be351aa3_b9ce14e1.webp", alt: "Formal setting", caption: "إطار رسمي واحترافي — تنظيم عالمي المستوى" },
+      { src: "/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_baeeb0d1.webp", alt: "Large audience", caption: "جمهور كبير — تأثير يمتد لآلاف الأشخاص" },
+      { src: "/manus-storage/IMG_6751_a9a9a88a.webp", alt: "Authority presence", caption: "حضور قيادي ومصداقية مبنية على الخبرة" },
     ],
   },
 ];
@@ -116,7 +116,7 @@ function GallerySection({ isAr }: { isAr: boolean }) {
             const idx = sectionStart + iIdx;
             return (
               <div key={iIdx} className="group relative overflow-hidden rounded-xl cursor-pointer" onClick={() => openLightbox(idx)}>
-                <img
+                <img loading="lazy"
                   src={img.src}
                   alt={img.alt}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
@@ -278,7 +278,7 @@ export default function About() {
             </div>
             <div className="flex justify-center">
               <div className="relative">
-                <img
+                <img loading="lazy"
                   src="/manus-storage/feras-portrait-1_d1f8a83f.png"
                   alt="Feras Alayed - Global Trainer & Health Strategist"
                   className="rounded-2xl shadow-2xl max-h-[500px] object-cover"
@@ -374,7 +374,7 @@ export default function About() {
             </div>
           </div>
           <div className="flex justify-center">
-            <img
+            <img loading="lazy"
               src="/manus-storage/feras-portrait-2_61f1860f.jpg"
               alt="Feras Alayed - Speaker & Trainer"
               className="rounded-2xl shadow-2xl max-h-[450px] object-cover"

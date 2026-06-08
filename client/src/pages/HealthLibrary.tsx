@@ -1155,7 +1155,7 @@ export function HealthLibraryHub() {
         {/* Author Authority Section */}
         <section className="bg-muted/50 rounded-xl p-8 border border-border">
           <div className="flex items-start gap-4">
-            <img
+            <img loading="lazy"
               src="/manus-storage/feras-author-photo_7c3e9a1b.jpg"
               alt="Feras Alayed"
               className="w-16 h-16 rounded-full object-cover border-2 border-primary"

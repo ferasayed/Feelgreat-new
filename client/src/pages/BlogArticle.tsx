@@ -301,7 +301,7 @@ export default function BlogArticle() {
       {/* Hero Image */}
       {article.heroImageUrl && (
         <div className="w-full max-h-[400px] overflow-hidden">
-          <img
+          <img loading="lazy"
             src={article.heroImageUrl}
             alt={title}
             className="w-full h-full object-cover"
@@ -334,7 +334,7 @@ export default function BlogArticle() {
           {/* Author & EEAT Section */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-6 pt-6 border-t border-white/10">
             <div className="flex items-center gap-3">
-              <img
+              <img loading="lazy"
                 src="/manus-storage/feras-professional_115956a2.png"
                 alt="Feras Alayed"
                 className="w-10 h-10 rounded-full object-cover object-top"

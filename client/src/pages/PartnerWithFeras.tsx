@@ -169,12 +169,12 @@ export default function PartnerWithFeras() {
       {/* Firas in Action - Photo Strip */}
       <section className="container max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-          <img src="/manus-storage/IMG_6338_a000f1b3.JPG" alt="Firas speaking" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/IMG_6340_3f7f858f.JPG" alt="Audience engagement" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/IMG_5327_bf4b169f.JPG" alt="Training" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_f4c031d4.jpg" alt="Large event" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/IMG_6753_8a108a68.jpeg" alt="Conference" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/IMG_5295_7ab0dde0.JPG" alt="Group" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_6338_84e2d359.webp" alt="Firas speaking" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_6340_25373439.webp" alt="Audience engagement" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_5327_f06911e5.webp" alt="Training" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/9FB5609C-0A12-42C9-8A81-E89AFEA20273_baeeb0d1.webp" alt="Large event" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_6753_f47731cb.webp" alt="Conference" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_5295_2a9e59fa.webp" alt="Group" className="rounded-lg object-cover w-full h-28 md:h-36 opacity-80 hover:opacity-100 transition-opacity" />
         </div>
       </section>
 

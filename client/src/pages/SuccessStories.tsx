@@ -547,10 +547,10 @@ export default function SuccessStories() {
           {isRtl ? "من جلسات فراس التدريبية" : "From Firas's Training Sessions"}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <img src="/manus-storage/IMG_6341_6893f63b.JPG" alt="Interactive training" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/IMG_6344_b48f8b1c.JPG" alt="Presentation" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_472123c9.jpg" alt="Large event" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
-          <img src="/manus-storage/IMG_5320_da234748.jpeg" alt="Workshop" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_6341_e211111a.webp" alt="Interactive training" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_6344_3a1d2992.webp" alt="Presentation" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/5E77A9D4-A309-4744-AE57-91FD8EFEF2F8_09ff40fd.webp" alt="Large event" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
+          <img loading="lazy" src="/manus-storage/IMG_5320_be9cd65b.webp" alt="Workshop" className="rounded-xl object-cover w-full h-40 opacity-80 hover:opacity-100 transition-opacity" />
         </div>
       </section>
 

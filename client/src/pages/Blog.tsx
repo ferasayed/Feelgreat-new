@@ -140,7 +140,7 @@ export default function Blog() {
               >
                 {(article as any).heroImageUrl && (
                   <div className="w-full h-40 overflow-hidden">
-                    <img
+                    <img loading="lazy"
                       src={(article as any).heroImageUrl}
                       alt={getArticleField(article, 'title', lang)}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

@@ -66,7 +66,7 @@ function StudyCard({ study, isAr, lang }: { study: any; isAr: boolean; lang: str
       <article className="group bg-card rounded-xl border border-border/50 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 cursor-pointer h-full flex flex-col">
         {study.heroImageUrl && (
           <div className="aspect-[16/9] overflow-hidden">
-            <img
+            <img loading="lazy"
               src={study.heroImageUrl}
               alt={title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
