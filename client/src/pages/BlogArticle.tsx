@@ -301,7 +301,7 @@ export default function BlogArticle() {
       {/* Hero Image */}
       {article.heroImageUrl && (
         <div className="w-full max-h-[400px] overflow-hidden">
-          <img loading="lazy"
+          <img
             src={article.heroImageUrl}
             alt={title}
             className="w-full h-full object-cover"
