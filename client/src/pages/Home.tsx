@@ -113,6 +113,133 @@ function Navbar() {
   );
 }
 
+function ContentButtons({ lang, cta5, cta6 }: { lang: string; cta5: string; cta6: string }) {
+  const { data: blogData } = trpc.blog.list.useQuery({ limit: 1, offset: 0 });
+  const { data: researchData } = trpc.research.list.useQuery({ limit: 1 });
+  const articleCount = blogData?.total ?? 0;
+  const researchCount = researchData?.total ?? 0;
+
+  return (
+    <div className="flex flex-row gap-3 justify-center mt-3 animate-fade-in-up stagger-3">
+      <a href="/blog">
+        <Button size="lg" variant="outline" className="text-base px-5 sm:px-8 py-5 border-blue-400/40 text-blue-300 hover:bg-blue-500/10 bg-transparent w-full sm:w-auto">
+          <BookOpen className="w-5 h-5 me-2" />
+          {cta5}{articleCount > 0 && ` (${articleCount})`}
+        </Button>
+      </a>
+      <a href="/research">
+        <Button size="lg" variant="outline" className="text-base px-5 sm:px-8 py-5 border-purple-400/40 text-purple-300 hover:bg-purple-500/10 bg-transparent w-full sm:w-auto">
+          <FlaskConical className="w-5 h-5 me-2" />
+          {cta6}{researchCount > 0 && ` (${researchCount})`}
+        </Button>
+      </a>
+    </div>
+  );
+}
+
+function AutoPlayAudio({ lang }: { lang: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const audioSrc = {
+    ar: '/manus-storage/feras-intro-ar_62a1c58b.wav',
+    en: '/manus-storage/feras-intro-en_adcbb476.wav',
+    fr: '/manus-storage/feras-intro-fr_45dd79f3.wav',
+    es: '/manus-storage/feras-intro-es_889943c2.wav',
+    de: '/manus-storage/feras-intro-de_6b6facb3.wav',
+    tr: '/manus-storage/feras-intro-tr_d9118264.wav',
+  }[lang] || '/manus-storage/feras-intro-en_adcbb476.wav';
+
+  const audioLabel = {
+    ar: 'استمع لرسالة فراس',
+    en: "Listen to Feras's Message",
+    fr: 'Écoutez le message de Feras',
+    es: 'Escucha el mensaje de Feras',
+    de: 'Hören Sie Feras\' Nachricht',
+    tr: "Feras'ın mesajını dinleyin",
+  }[lang] || "Listen to Feras's Message";
+
+  useEffect(() => {
+    // Try to auto-play on first user interaction with the page
+    const tryAutoPlay = () => {
+      if (!hasInteracted && audioRef.current) {
+        setHasInteracted(true);
+        audioRef.current.volume = 0.7;
+        audioRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch(() => {
+          // Browser blocked autoplay, that's fine
+        });
+      }
+    };
+
+    // Also try immediate autoplay (works on some browsers)
+    if (audioRef.current && !hasInteracted) {
+      audioRef.current.volume = 0.7;
+      audioRef.current.play().then(() => {
+        setHasInteracted(true);
+        setIsPlaying(true);
+      }).catch(() => {
+        // Blocked - wait for user interaction
+      });
+    }
+
+    document.addEventListener('click', tryAutoPlay, { once: true });
+    document.addEventListener('touchstart', tryAutoPlay, { once: true });
+    document.addEventListener('scroll', tryAutoPlay, { once: true });
+
+    return () => {
+      document.removeEventListener('click', tryAutoPlay);
+      document.removeEventListener('touchstart', tryAutoPlay);
+      document.removeEventListener('scroll', tryAutoPlay);
+    };
+  }, [hasInteracted]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      const onEnded = () => setIsPlaying(false);
+      audio.addEventListener('ended', onEnded);
+      return () => audio.removeEventListener('ended', onEnded);
+    }
+  }, []);
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  return (
+    <div className="mt-8 animate-fade-in-up stagger-4">
+      <button
+        onClick={togglePlay}
+        className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer"
+      >
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-amber-400/20 animate-pulse' : 'bg-amber-400/10'}`}>
+          <Play className={`w-4 h-4 text-amber-400 ${isPlaying ? 'hidden' : ''}`} />
+          {isPlaying && (
+            <div className="flex items-center gap-0.5">
+              <span className="w-0.5 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-0.5 h-4 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-0.5 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          )}
+        </div>
+        <span className="text-white/80 text-sm">{audioLabel}</span>
+      </button>
+      <audio ref={audioRef} key={lang} src={audioSrc} preload="auto" />
+    </div>
+  );
+}
+
 function HeroSection() {
   const { lang } = useLanguage();
 
@@ -225,8 +352,8 @@ function HeroSection() {
             ))}
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up stagger-3">
+          {/* CTAs - Main Actions */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up stagger-3">
             <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-6 gradient-gold text-foreground font-bold border-0 hover:opacity-90 w-full sm:w-auto">
                 {c.cta1}
@@ -249,49 +376,13 @@ function HeroSection() {
                 {c.cta4}
               </Button>
             </a>
-            <a href="/blog">
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-blue-400/40 text-blue-300 hover:bg-blue-500/10 bg-transparent w-full sm:w-auto">
-                <BookOpen className="w-5 h-5 me-2" />
-                {c.cta5}
-              </Button>
-            </a>
-            <a href="/research">
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-purple-400/40 text-purple-300 hover:bg-purple-500/10 bg-transparent w-full sm:w-auto">
-                <FlaskConical className="w-5 h-5 me-2" />
-                {c.cta6}
-              </Button>
-            </a>
           </div>
 
-          {/* Audio Introduction - All 6 Languages */}
-          <div className="mt-10 animate-fade-in-up stagger-4">
-            <div className="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-              <Play className="w-5 h-5 text-amber-400" />
-              <span className="text-white/80 text-sm">
-                {{
-                  ar: 'استمع لرسالة فراس',
-                  en: "Listen to Feras's Message",
-                  fr: 'Écoutez le message de Feras',
-                  es: 'Escucha el mensaje de Feras',
-                  de: 'Hören Sie Feras\' Nachricht',
-                  tr: "Feras'ın mesajını dinleyin",
-                }[lang]}
-              </span>
-              <audio
-                key={lang}
-                controls
-                className="h-8 max-w-[200px] sm:max-w-[280px]"
-                src={{
-                  ar: '/manus-storage/feras-intro-ar_62a1c58b.wav',
-                  en: '/manus-storage/feras-intro-en_adcbb476.wav',
-                  fr: '/manus-storage/feras-intro-fr_45dd79f3.wav',
-                  es: '/manus-storage/feras-intro-es_889943c2.wav',
-                  de: '/manus-storage/feras-intro-de_6b6facb3.wav',
-                  tr: '/manus-storage/feras-intro-tr_d9118264.wav',
-                }[lang]}
-              />
-            </div>
-          </div>
+          {/* CTAs - Content (Articles & Research) - Separate Row */}
+          <ContentButtons lang={lang} cta5={c.cta5} cta6={c.cta6} />
+
+          {/* Audio Introduction - Auto-play */}
+          <AutoPlayAudio lang={lang} />
         </div>
       </div>
     </section>

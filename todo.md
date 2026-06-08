@@ -770,3 +770,9 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add captions/descriptions to all gallery photos (Arabic captions for each photo)
 - [x] Reuse photos in Partner With Feras page (6-photo strip after hero)
 - [x] Reuse photos in Success Stories page (4-photo section before CTA)
+
+## Homepage Enhancements - June 8, 2026
+- [x] Add article/research count inside CTA buttons (e.g. "المقالات (12)")
+- [x] Reorganize CTA buttons on mobile - content buttons in separate row below main CTAs
+- [x] "Latest Articles" section already exists below hero (6 article cards with images)
+- [x] Auto-play audio on first user interaction (click/touch/scroll) with animated visualizer
