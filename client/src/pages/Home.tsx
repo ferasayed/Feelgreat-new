@@ -143,13 +143,13 @@ function AutoPlayAudio({ lang }: { lang: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const audioSrc = {
-    ar: '/manus-storage/feras-intro-ar_62a1c58b.wav',
-    en: '/manus-storage/feras-intro-en_adcbb476.wav',
-    fr: '/manus-storage/feras-intro-fr_45dd79f3.wav',
-    es: '/manus-storage/feras-intro-es_889943c2.wav',
-    de: '/manus-storage/feras-intro-de_6b6facb3.wav',
-    tr: '/manus-storage/feras-intro-tr_d9118264.wav',
-  }[lang] || '/manus-storage/feras-intro-en_adcbb476.wav';
+    ar: '/manus-storage/feras-intro-ar_1c71ae49.mp3',
+    en: '/manus-storage/feras-intro-en_b0d13d24.mp3',
+    fr: '/manus-storage/feras-intro-fr_3c79eebe.mp3',
+    es: '/manus-storage/feras-intro-es_0c39002f.mp3',
+    de: '/manus-storage/feras-intro-de_fbfb9252.mp3',
+    tr: '/manus-storage/feras-intro-tr_b1a2d71b.mp3',
+  }[lang] || '/manus-storage/feras-intro-en_b0d13d24.mp3';
 
   const audioLabel = {
     ar: 'استمع لرسالة فراس',

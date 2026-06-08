@@ -678,13 +678,13 @@ export default function FerasKnowledgeHub() {
             </div>
             <audio controls className="flex-1 h-10" preload="metadata" key={l}>
               <source src={{
-                ar: '/manus-storage/knowledge-hub-intro-ar_4929473b.wav',
-                en: '/manus-storage/knowledge-hub-intro-en_a368a891.wav',
-                fr: '/manus-storage/knowledge-hub-intro-fr_b6b09144.wav',
-                es: '/manus-storage/knowledge-hub-intro-es_0d4506f9.wav',
-                de: '/manus-storage/knowledge-hub-intro-de_5aeae630.wav',
-                tr: '/manus-storage/knowledge-hub-intro-tr_2c6da963.wav',
-              }[l] || '/manus-storage/knowledge-hub-intro-en_a368a891.wav'} type="audio/wav" />
+                ar: '/manus-storage/knowledge-hub-intro-ar_607fe950.mp3',
+                en: '/manus-storage/knowledge-hub-intro-en_d4bcbb3b.mp3',
+                fr: '/manus-storage/knowledge-hub-intro-fr_d3ee70cf.mp3',
+                es: '/manus-storage/knowledge-hub-intro-es_90299dd9.mp3',
+                de: '/manus-storage/knowledge-hub-intro-de_3d458b34.mp3',
+                tr: '/manus-storage/knowledge-hub-intro-tr_be9b63da.mp3',
+              }[l] || '/manus-storage/knowledge-hub-intro-en_d4bcbb3b.mp3'} type="audio/mpeg" />
             </audio>
           </div>
         </div>

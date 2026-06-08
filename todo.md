@@ -776,3 +776,10 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Reorganize CTA buttons on mobile - content buttons in separate row below main CTAs
 - [x] "Latest Articles" section already exists below hero (6 article cards with images)
 - [x] Auto-play audio on first user interaction (click/touch/scroll) with animated visualizer
+
+## Audio Performance Optimization - June 8, 2026
+- [x] Convert 6 homepage WAV files to MP3 (reduced ~70% size)
+- [x] Convert 6 knowledge hub WAV files to MP3 (reduced ~70% size)
+- [x] Upload all 12 MP3 files to webdev storage
+- [x] Update Home.tsx audio references to MP3
+- [x] Update FerasKnowledgeHub.tsx audio references to MP3
