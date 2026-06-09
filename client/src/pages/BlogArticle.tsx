@@ -434,6 +434,7 @@ export default function BlogArticle() {
             [&_.cta-assess]:bg-[#1a5276] [&_.cta-assess]:text-white [&_.cta-assess]:px-6 [&_.cta-assess]:py-3 [&_.cta-assess]:rounded-lg [&_.cta-assess]:font-bold [&_.cta-assess]:no-underline [&_.cta-assess]:hover:bg-[#1e6a9c]
             [&_.cta-stories]:bg-white/10 [&_.cta-stories]:text-white [&_.cta-stories]:px-6 [&_.cta-stories]:py-3 [&_.cta-stories]:rounded-lg [&_.cta-stories]:font-medium [&_.cta-stories]:no-underline [&_.cta-stories]:border [&_.cta-stories]:border-white/30 [&_.cta-stories]:hover:bg-white/20
             [&_.pillar-link]:text-gray-400 [&_.pillar-link]:text-sm [&_.pillar-link]:mt-4 [&_.pillar-link_a]:text-[#c8a951] [&_.pillar-link_a]:no-underline [&_.pillar-link_a]:hover:underline
+            [&_.cta-btn]:inline-block [&_.cta-btn]:bg-amber-500 [&_.cta-btn]:text-slate-900 [&_.cta-btn]:px-6 [&_.cta-btn]:py-3 [&_.cta-btn]:rounded-lg [&_.cta-btn]:font-bold [&_.cta-btn]:no-underline [&_.cta-btn]:hover:bg-amber-400 [&_.cta-btn]:transition-colors [&_.cta-btn]:mt-2
           "
           dangerouslySetInnerHTML={{ __html: content }}
         />

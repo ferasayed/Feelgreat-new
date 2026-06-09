@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle, Heart, Activity, Brain, Scale, Zap, Moon, Chev
 import { trpc } from "@/lib/trpc";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-type Step = "assessment" | "results" | "consultation";
+type Step = "assessment" | "loading" | "results" | "consultation";
 
 interface AssessmentAnswers {
   age: string;
@@ -23,6 +23,7 @@ export default function HealthAssessment() {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
   const [step, setStep] = useState<Step>("assessment");
+  const [aiReport, setAiReport] = useState<any>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<AssessmentAnswers>({
     age: "",
@@ -116,6 +117,18 @@ export default function HealthAssessment() {
   ];
 
   const registerLead = trpc.leads.register.useMutation();
+  const generateReport = trpc.assessment.generateAIReport.useMutation({
+    onSuccess: (data) => {
+      if (data.success && data.report) {
+        setAiReport(data.report);
+        setStep("results");
+      }
+    },
+    onError: () => {
+      // Fallback to basic results
+      setStep("results");
+    },
+  });
 
   const handleAnswer = (value: string) => {
     const key = questions[currentQuestion].key as keyof AssessmentAnswers;
@@ -124,7 +137,13 @@ export default function HealthAssessment() {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
     } else {
-      setStep("results");
+      setStep("loading");
+      // Generate AI-powered report
+      generateReport.mutate({
+        answers: updated,
+        language: lang,
+        source: "health-assessment",
+      });
       // Track assessment completion
       registerLead.mutate({
         fullName: "Health Assessment",
@@ -391,10 +410,201 @@ export default function HealthAssessment() {
     </div>
   );
 
+  const renderLoading = () => (
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex items-center justify-center" dir={isAr ? "rtl" : "ltr"}>
+      <div className="text-center">
+        <div className="w-20 h-20 border-4 border-amber-400/30 border-t-amber-400 rounded-full animate-spin mx-auto mb-8"></div>
+        <h2 className="text-2xl font-bold mb-3">{isAr ? "جاري تحليل إجاباتك بالذكاء الاصطناعي..." : "AI is analyzing your answers..."}</h2>
+        <p className="text-slate-400 max-w-md mx-auto">{isAr ? "نقوم بإنشاء تقرير صحي مخصص لك بناءً على أحدث الأبحاث العلمية" : "Creating your personalized health report based on the latest scientific research"}</p>
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" style={{animationDelay: "0.2s"}}></div>
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" style={{animationDelay: "0.4s"}}></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAIResults = () => {
+    if (!aiReport) return null;
+    const scoreColor = aiReport.score >= 70 ? "text-green-400" : aiReport.score >= 50 ? "text-amber-400" : "text-red-400";
+    const riskBg = aiReport.riskLevel === "critical" ? "bg-red-500/10 border-red-500/30" : aiReport.riskLevel === "high" ? "bg-orange-500/10 border-orange-500/30" : aiReport.riskLevel === "moderate" ? "bg-amber-500/10 border-amber-500/30" : "bg-green-500/10 border-green-500/30";
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
+        <div className="container max-w-3xl mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "تقريرك الصحي المخصص بالذكاء الاصطناعي" : "Your AI-Powered Health Report"}</h1>
+            <p className="text-slate-400">{isAr ? "تم تحليل إجاباتك بواسطة خوارزمية متقدمة مبنية على أحدث الأبحاث" : "Your answers were analyzed by an advanced algorithm based on the latest research"}</p>
+          </div>
+
+          {/* Score Card */}
+          <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 text-center mb-8">
+            <p className="text-slate-400 text-sm uppercase tracking-wider mb-2">{isAr ? "درجة صحتك الأيضية" : "Metabolic Health Score"}</p>
+            <div className={`text-7xl font-bold ${scoreColor} mb-2`}>{aiReport.score}</div>
+            <p className={`text-lg font-medium ${scoreColor} capitalize`}>{aiReport.riskLevel === "critical" ? (isAr ? "يحتاج تدخل فوري" : "Needs Immediate Action") : aiReport.riskLevel === "high" ? (isAr ? "خطورة عالية" : "High Risk") : aiReport.riskLevel === "moderate" ? (isAr ? "يحتاج تحسين" : "Needs Improvement") : (isAr ? "جيد" : "Good")}</p>
+            <div className="w-full bg-slate-700 rounded-full h-3 mt-6">
+              <div className={`h-3 rounded-full transition-all duration-1000 ${aiReport.score >= 70 ? "bg-green-400" : aiReport.score >= 50 ? "bg-amber-400" : "bg-red-400"}`} style={{ width: `${aiReport.score}%` }} />
+            </div>
+          </div>
+
+          {/* Risk Alerts */}
+          {aiReport.topRisks && aiReport.topRisks.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-amber-400" />
+                {isAr ? "المخاطر المحددة" : "Identified Risks"}
+              </h2>
+              <div className="space-y-3">
+                {aiReport.topRisks.map((risk: any, i: number) => (
+                  <div key={i} className={`p-4 rounded-xl border ${risk.urgency === "immediate" ? "border-red-500/40 bg-red-500/5" : risk.urgency === "soon" ? "border-amber-500/40 bg-amber-500/5" : "border-slate-600 bg-slate-800/30"}`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-semibold">{risk.risk}</h3>
+                        <p className="text-sm text-slate-400 mt-1">{risk.explanation}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${risk.urgency === "immediate" ? "bg-red-500/20 text-red-300" : risk.urgency === "soon" ? "bg-amber-500/20 text-amber-300" : "bg-slate-600 text-slate-300"}`}>
+                        {risk.urgency === "immediate" ? (isAr ? "فوري" : "Urgent") : risk.urgency === "soon" ? (isAr ? "قريباً" : "Soon") : (isAr ? "مراقبة" : "Monitor")}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 90-Day Action Plan */}
+          {aiReport.actionPlan && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-400" />
+                {isAr ? "خطة العمل لـ 90 يوم" : "Your 90-Day Action Plan"}
+              </h2>
+              <div className="space-y-4">
+                {[aiReport.actionPlan.phase1, aiReport.actionPlan.phase2, aiReport.actionPlan.phase3].map((phase: any, i: number) => (
+                  <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 bg-amber-400/20 rounded-full flex items-center justify-center text-amber-400 font-bold text-sm">{i + 1}</div>
+                      <h3 className="font-semibold">{phase?.title}</h3>
+                    </div>
+                    <ul className="space-y-2 ms-11">
+                      {phase?.actions?.map((action: string, j: number) => (
+                        <li key={j} className="flex items-start gap-2 text-slate-300">
+                          <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                          <span className="text-sm">{action}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Products */}
+          {aiReport.products && aiReport.products.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Heart className="w-5 h-5 text-amber-400" />
+                {isAr ? "المنتجات الموصى بها" : "Recommended Products"}
+              </h2>
+              <div className="space-y-3">
+                {aiReport.products.map((product: any, i: number) => (
+                  <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex items-start gap-4">
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${product.priority === "essential" ? "bg-red-500/20 text-red-300" : product.priority === "recommended" ? "bg-amber-500/20 text-amber-300" : "bg-slate-600 text-slate-300"}`}>
+                      {product.priority === "essential" ? (isAr ? "أساسي" : "Essential") : product.priority === "recommended" ? (isAr ? "موصى" : "Recommended") : (isAr ? "اختياري" : "Optional")}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{product.name}</h3>
+                      <p className="text-sm text-slate-400 mt-1">{product.reason}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Timeline */}
+          {aiReport.timeline && aiReport.timeline.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                <Scale className="w-5 h-5 text-amber-400" />
+                {isAr ? "الجدول الزمني المتوقع" : "Expected Timeline"}
+              </h2>
+              <div className="relative">
+                <div className="absolute top-0 bottom-0 start-4 w-0.5 bg-amber-400/20"></div>
+                <div className="space-y-4">
+                  {aiReport.timeline.map((item: any, i: number) => (
+                    <div key={i} className="flex items-start gap-4 ps-4">
+                      <div className="w-3 h-3 bg-amber-400 rounded-full mt-1.5 -ms-[7px] relative z-10"></div>
+                      <div>
+                        <p className="font-medium text-amber-300">{item.week}</p>
+                        <p className="text-sm text-slate-400">{item.expectedChange}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Motivation */}
+          {aiReport.motivation && (
+            <div className={`${riskBg} border rounded-xl p-6 mb-8 text-center`}>
+              <p className="text-lg italic text-slate-200">"{aiReport.motivation}"</p>
+            </div>
+          )}
+
+          {/* Multi-stage CTA */}
+          <div className="bg-gradient-to-r from-amber-400/10 to-amber-500/10 border border-amber-400/30 rounded-2xl p-8 text-center">
+            <h3 className="text-2xl font-bold mb-3">{isAr ? "ابدأ رحلة التحول الآن" : "Start Your Transformation Journey"}</h3>
+            <p className="text-slate-300 mb-6 max-w-lg mx-auto">
+              {isAr ? "بناءً على تقريرك، يمكن لنظام Feel Great مساعدتك في تحقيق تحسينات ملموسة خلال 90 يوماً." : "Based on your report, the Feel Great system can help you achieve measurable improvements within 90 days."}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => setStep("consultation")}
+                className="px-8 py-4 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors flex items-center justify-center gap-2"
+              >
+                {isAr ? "احجز استشارة مجانية" : "Book Free Consultation"} <ArrowRight className="w-5 h-5" />
+              </button>
+              <a
+                href="https://wa.me/96877020770?text=I%20just%20completed%20the%20AI%20health%20assessment%20and%20would%20like%20to%20learn%20more"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 border border-green-500 text-green-400 font-bold rounded-xl hover:bg-green-500/10 transition-colors"
+              >
+                {isAr ? "تحدث عبر واتساب" : "Chat on WhatsApp"}
+              </a>
+            </div>
+          </div>
+
+          {/* Trust */}
+          <div className="mt-10 grid grid-cols-3 gap-4 text-center">
+            <div className="p-4">
+              <div className="text-2xl font-bold text-amber-400">10,000+</div>
+              <div className="text-sm text-slate-400">{isAr ? "شخص تمت مساعدته" : "People Helped"}</div>
+            </div>
+            <div className="p-4">
+              <div className="text-2xl font-bold text-amber-400">30+</div>
+              <div className="text-sm text-slate-400">{isAr ? "دولة" : "Countries"}</div>
+            </div>
+            <div className="p-4">
+              <div className="text-2xl font-bold text-amber-400">15+ yrs</div>
+              <div className="text-sm text-slate-400">{isAr ? "سنوات خبرة" : "Experience"}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       {step === "assessment" && renderAssessment()}
-      {step === "results" && renderResults()}
+      {step === "loading" && renderLoading()}
+      {step === "results" && (aiReport ? renderAIResults() : renderResults())}
       {step === "consultation" && renderConsultation()}
 
       {/* JSON-LD Schema */}

@@ -99,6 +99,24 @@ export default function AuthorPage() {
     { en: "Success Stories & Case Studies", ar: "قصص نجاح ودراسات حالة" },
   ];
 
+  // Thought leadership pillars (inspired by competitor analysis)
+  const thoughtLeadership = [
+    { en: "Behavioral Nutrition", ar: "التغذية السلوكية", descEn: "Changing habits through psychology-backed nutrition strategies, not willpower.", descAr: "تغيير العادات من خلال استراتيجيات تغذية مدعومة بعلم النفس، وليس قوة الإرادة." },
+    { en: "Sustainable Health", ar: "الصحة المستدامة", descEn: "Long-term metabolic optimization over quick fixes. Science-backed protocols that last.", descAr: "تحسين أيضي طويل المدى بدلاً من الحلول السريعة. بروتوكولات مبنية على العلم تدوم." },
+    { en: "Behavioral Change", ar: "التغيير السلوكي", descEn: "The missing link between knowing what to do and actually doing it consistently.", descAr: "الحلقة المفقودة بين معرفة ما يجب فعله والقيام به فعلاً بشكل مستمر." },
+    { en: "Health Empowerment", ar: "التمكين الصحي", descEn: "Giving people the tools and knowledge to take control of their own health journey.", descAr: "منح الناس الأدوات والمعرفة للسيطرة على رحلتهم الصحية." },
+    { en: "Financial Empowerment", ar: "التمكين المالي", descEn: "Building sustainable income through health advocacy and partnership programs.", descAr: "بناء دخل مستدام من خلال المناصرة الصحية وبرامج الشراكة." },
+  ];
+
+  const impactNumbers = [
+    { value: "10,000+", labelEn: "Lives Transformed", labelAr: "حياة تم تحويلها" },
+    { value: "30+", labelEn: "Countries Reached", labelAr: "دولة" },
+    { value: "15+", labelEn: "Years of Expertise", labelAr: "سنة خبرة" },
+    { value: "100+", labelEn: "Published Articles", labelAr: "مقال منشور" },
+    { value: "87%", labelEn: "Client Success Rate", labelAr: "نسبة نجاح العملاء" },
+    { value: "Presidential", labelEn: "Sapphire Rank", labelAr: "رتبة الياقوت الرئاسي" },
+  ];
+
   useEffect(() => {
     document.title = isAr ? "فراس العايد - أخصائي التغذية العلاجية والسلوكية" : "Feras Alayed - Therapeutic & Behavioral Nutrition Specialist";
     // Inject JSON-LD schemas
@@ -329,6 +347,48 @@ export default function AuthorPage() {
           </div>
         </section>
 
+        {/* Impact Numbers */}
+        <section>
+          <h2 className="text-2xl font-bold mb-6 text-center">{isAr ? "الأثر" : "Impact"}</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {impactNumbers.map((item, i) => (
+              <Card key={i} className="text-center">
+                <CardContent className="p-4">
+                  <div className="text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{item.value}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{isAr ? item.labelAr : item.labelEn}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <Separator />
+
+        {/* Thought Leadership Pillars */}
+        <section>
+          <h2 className="text-2xl font-bold mb-2">{isAr ? "أركان القيادة الفكرية" : "Thought Leadership Pillars"}</h2>
+          <p className="text-muted-foreground mb-6">{isAr ? "ما يميز فراس عن مجرد بائع منتجات — رؤية شاملة للتحول الصحي والمالي" : "What sets Feras apart from just selling products — a holistic vision for health and financial transformation"}</p>
+          <div className="space-y-4">
+            {thoughtLeadership.map((pillar, i) => (
+              <Card key={i} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-bold shrink-0">
+                      {i + 1}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{isAr ? pillar.ar : pillar.en}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{isAr ? pillar.descAr : pillar.descEn}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <Separator />
+
         {/* Trust Statement */}
         <Card className="bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800">
           <CardContent className="p-6 text-center">
@@ -338,6 +398,24 @@ export default function AuthorPage() {
                 ? "جميع المقالات والملخصات البحثية تستند إلى دراسات محكّمة من PubMed وNIH والمجلات الطبية الرائدة. لا ننشر أي ادعاءات علاجية غير مدعومة بالأدلة. نوضح دائماً الفرق بين الدراسات الأولية والنتائج المثبتة على البشر."
                 : "All articles and research summaries are grounded in peer-reviewed studies from PubMed, NIH, and leading medical journals. We never publish unsupported therapeutic claims. We always clarify the difference between preliminary studies and proven human results."}
             </p>
+          </CardContent>
+        </Card>
+
+        {/* CTA */}
+        <Card className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-0">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-2xl font-bold mb-3">{isAr ? "مستعد لبدء رحلتك الصحية؟" : "Ready to Start Your Health Journey?"}</h3>
+            <p className="text-emerald-100 mb-6 max-w-lg mx-auto">
+              {isAr ? "احجز استشارة مجانية مع فراس لمناقشة أهدافك الصحية والحصول على خطة مخصصة." : "Book a free consultation with Feras to discuss your health goals and get a personalized plan."}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/health-assessment" className="px-6 py-3 bg-white text-emerald-700 font-bold rounded-xl hover:bg-emerald-50 transition-colors">
+                {isAr ? "ابدأ التقييم المجاني" : "Start Free Assessment"}
+              </Link>
+              <a href="https://wa.me/96877020770" target="_blank" rel="noopener noreferrer" className="px-6 py-3 border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition-colors">
+                {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
+              </a>
+            </div>
           </CardContent>
         </Card>
       </main>
