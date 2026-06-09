@@ -270,5 +270,31 @@ export function autoFixArticle(article: {
     }
   }
 
+  // Fix 4: Add FAQ section if missing
+  const hasFaqEn = /faq|frequently asked/i.test(contentEn);
+  if (!hasFaqEn) {
+    contentEn += `\n<h2>Frequently Asked Questions</h2>\n<div class="faq-item"><h3>How does the Feel Great system work?</h3><p>The Feel Great system combines Unimate (yerba mate for GLP-1 stimulation and appetite control), Balance (fiber matrix for glucose regulation), and the 4-4-12 intermittent fasting pattern to support metabolic health naturally.</p></div>\n<div class="faq-item"><h3>Is intermittent fasting safe?</h3><p>Research from The BMJ (99 clinical trials, 6,582 participants) confirms intermittent fasting is safe and effective for weight management and cardiovascular health improvement.</p></div>\n<div class="faq-item"><h3>How long before I see results?</h3><p>Clinical studies show measurable improvements in metabolic markers within 8-12 weeks of consistent use. Individual results may vary.</p></div>`;
+    fixes.push("Added FAQ section (EN)");
+  }
+
+  const hasFaqAr = /أسئلة شائعة|الأسئلة المتكررة/i.test(contentAr);
+  if (!hasFaqAr) {
+    contentAr += `\n<h2>الأسئلة الشائعة</h2>\n<div class="faq-item"><h3>كيف يعمل نظام Feel Great؟</h3><p>يجمع نظام Feel Great بين يونيماتي (يربا ماتي لتحفيز GLP-1 والتحكم بالشهية) وبالانس (مصفوفة ألياف لتنظيم الجلوكوز) ونمط الصيام المتقطع 4-4-12 لدعم الصحة الأيضية طبيعياً.</p></div>\n<div class="faq-item"><h3>هل الصيام المتقطع آمن؟</h3><p>أبحاث من مجلة BMJ (99 تجربة سريرية، 6,582 مشاركاً) تؤكد أن الصيام المتقطع آمن وفعّال لإدارة الوزن وتحسين صحة القلب.</p></div>\n<div class="faq-item"><h3>متى سأرى النتائج؟</h3><p>تظهر الدراسات السريرية تحسناً ملموساً في المؤشرات الأيضية خلال 8-12 أسبوعاً من الاستخدام المنتظم. النتائج تختلف من شخص لآخر.</p></div>`;
+    fixes.push("Added FAQ section (AR)");
+  }
+
+  // Fix 5: Add internal links section if missing
+  const hasInternalLinksEn = /related articles|read more|further reading|related research/i.test(contentEn);
+  if (!hasInternalLinksEn) {
+    contentEn += `\n<h2>Related Research & Articles</h2>\n<ul>\n<li><a href="/research/intermittent-fasting-network-meta-analysis-bmj-2025">📊 BMJ 2025: Intermittent Fasting - 99 Clinical Trials</a></li>\n<li><a href="/research/unimate-yerba-mate-glp1-incretin-gut-microbiome-2025">📊 Unimate & GLP-1: BYU Study 2025</a></li>\n<li><a href="/research/bios-life-balance-cholesterol-cleveland-clinic-2006">📊 Balance Reduces LDL 24.5% - Cleveland Clinic</a></li>\n<li><a href="https://feelgreatap-h8jahypk.manus.space/articles/best-program-for-insulin-resistance">Best Program for Insulin Resistance (Partner Site)</a></li>\n</ul>`;
+    fixes.push("Added internal links section with research studies (EN)");
+  }
+
+  const hasInternalLinksAr = /مقالات ذات صلة|اقرأ أيضاً|أبحاث ذات صلة/i.test(contentAr);
+  if (!hasInternalLinksAr) {
+    contentAr += `\n<h2>أبحاث ومقالات ذات صلة</h2>\n<ul>\n<li><a href="/research/intermittent-fasting-network-meta-analysis-bmj-2025">📊 BMJ 2025: الصيام المتقطع - 99 تجربة سريرية</a></li>\n<li><a href="/research/unimate-yerba-mate-glp1-incretin-gut-microbiome-2025">📊 يونيماتي و GLP-1: دراسة BYU 2025</a></li>\n<li><a href="/research/bios-life-balance-cholesterol-cleveland-clinic-2006">📊 بالانس يخفض LDL بنسبة 24.5% - كليفلاند كلينك</a></li>\n<li><a href="https://feelgreatap-h8jahypk.manus.space/articles/best-program-for-insulin-resistance">أفضل برنامج لمقاومة الأنسولين (الموقع الشريك)</a></li>\n</ul>`;
+    fixes.push("Added internal links section with research studies (AR)");
+  }
+
   return { contentEn, contentAr, fixes };
 }

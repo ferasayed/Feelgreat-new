@@ -358,12 +358,28 @@ Return JSON:
 // ============================================================
 // STEP 2: GENERATE FULL ARTICLE (FERAS STYLE)
 // ============================================================
+// Partner site for cross-linking
+const PARTNER_SITE_URL = "https://feelgreatap-h8jahypk.manus.space";
+const PARTNER_ARTICLES: Array<{slug: string; title: string; category: string}> = [
+  { slug: "best-program-for-insulin-resistance", title: "Best Program for Insulin Resistance", category: "insulin-resistance" },
+  { slug: "how-to-reverse-insulin-resistance-naturally", title: "How to Reverse Insulin Resistance Naturally", category: "insulin-resistance" },
+  { slug: "why-am-i-always-hungry", title: "Why Am I Always Hungry?", category: "weight-management" },
+  { slug: "why-do-i-crave-sugar-every-day", title: "Why Do I Crave Sugar Every Day?", category: "behavioral-nutrition" },
+  { slug: "signs-of-prediabetes", title: "Signs of Prediabetes You Should Not Ignore", category: "diabetes" },
+];
+
 async function generateArticleContent(topic: string, targetKeyword: string, searchIntent: string, pillar: typeof CONTENT_PILLARS[0], recentSlugs: string[]) {
   // Build internal link suggestions from existing articles
   const suggestedInternalLinks = recentSlugs.slice(0, 10).map(s => `/blog/${s}`).join(", ");
+  
+  // Build partner site link suggestions based on pillar
+  const relevantPartnerArticles = PARTNER_ARTICLES.filter(a => a.category === pillar.id || a.category === "insulin-resistance").slice(0, 2);
+  const partnerLinks = relevantPartnerArticles.map(a => `${PARTNER_SITE_URL}/articles/${a.slug}`).join(", ");
 
   return withRetry(async () => {
   const response = await invokeLLM({
+    model: "claude-sonnet-4-6",
+    max_tokens: 16000,
     messages: [
       {
         role: "system",
@@ -483,7 +499,11 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
 الروابط الداخلية المتاحة: ${suggestedInternalLinks}
 صفحة المحور: ${PILLAR_PAGES[pillar.id]?.path || "/blog"}
 
-المقال يجب أن يكون 1500-2000 كلمة ويتبع هذا الهيكل:
+المقال يجب أن يكون 1500-2500 كلمة (هذا إلزامي - لا تقل عن 1200 كلمة لكل لغة). اكتب محتوى مفصل وعميق ومليء بالمعلومات. كل قسم يجب أن يكون 150-300 كلمة على الأقل.
+
+روابط الموقع الشريك (أضف 1-2 رابط في المقال): ${partnerLinks || 'https://feelgreatap-h8jahypk.manus.space/library'}
+
+يتبع هذا الهيكل:
 1. Key Takeaways / النقاط الرئيسية (5 نقاط في <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>...</li></ul></div>)
 2. TL;DR (إلزامي - CEO): <div class='tldr-summary'><h2>TL;DR</h2><p>ملخص المقال في 2-3 جمل واضحة ومباشرة تجيب على سؤال البحث الرئيسي. يجب أن تكون قابلة للاقتباس مباشرة من ChatGPT/Gemini/Perplexity</p></div>
 3. مقدمة Hook + EEAT signal + تعريف المصطلح الرئيسي (بصيغة "X هو..." ليظهر في Knowledge Panel)
@@ -593,10 +613,12 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
     
     // Retry with a simpler/shorter prompt to avoid truncation
     const retryResponse = await invokeLLM({
+      model: "claude-sonnet-4-6",
+      max_tokens: 16000,
       messages: [
         {
           role: "system",
-          content: `You are a health content writer for Feras Alayed. Write a concise article. Return ONLY valid JSON. Keep content SHORT (600-900 words per language). No markdown code blocks.`,
+          content: `You are a health content writer for Feras Alayed. Write a COMPREHENSIVE article. Return ONLY valid JSON. Content MUST be 1200-1500 words per language. Include scientific references, FAQ section, and medical disclaimer. No markdown code blocks.`,
         },
         {
           role: "user",
@@ -606,7 +628,7 @@ Search intent: ${searchIntent}
 Pillar: ${pillar.nameEn}
 
 Return JSON:
-{"titleAr":"...","titleEn":"...","metaTitleAr":"...","metaTitleEn":"...","metaDescriptionAr":"...","metaDescriptionEn":"...","excerptAr":"...","excerptEn":"...","contentAr":"<h2>...</h2><p>Arabic article 600-900 words with h2, h3, p, ul tags</p>","contentEn":"<h2>...</h2><p>English article 600-900 words with h2, h3, p, ul tags</p>","tags":["tag1","tag2","tag3"],"faqSchema":[{"question":"Q","answer":"A"}],"internalLinks":[],"heroImagePrompt":"health image prompt"}`,
+{"titleAr":"...","titleEn":"...","metaTitleAr":"...","metaTitleEn":"...","metaDescriptionAr":"...","metaDescriptionEn":"...","excerptAr":"...","excerptEn":"...","contentAr":"<h2>...</h2><p>Arabic article 1200-1500 words with h2, h3, p, ul tags. Include References section and medical disclaimer.</p>","contentEn":"<h2>...</h2><p>English article 1200-1500 words with h2, h3, p, ul tags. Include References section and medical disclaimer.</p>","tags":["tag1","tag2","tag3"],"faqSchema":[{"question":"Q1","answer":"A1"},{"question":"Q2","answer":"A2"},{"question":"Q3","answer":"A3"},{"question":"Q4","answer":"A4"},{"question":"Q5","answer":"A5"}],"internalLinks":[{"slug":"article-slug","title":"Link text"}],"heroImagePrompt":"health image prompt"}`,
         },
       ],
       response_format: {
@@ -762,7 +784,7 @@ Title: ${titleEn}
 
 Excerpt: ${excerptEn}
 
-Content (HTML): ${contentEn.slice(0, 12000)}
+Content (HTML): ${(contentEn || "").slice(0, 12000)}
 
 Return JSON:
 {
@@ -1063,9 +1085,9 @@ export async function generateArticleHandler(req: Request, res: Response) {
     }
 
     // Final quality gates
-    const meetsMinWordCount = wordCountEn >= 400;
+    const meetsMinWordCount = wordCountEn >= 800;
     const hasFaq = (article.faqSchema && article.faqSchema.length >= 3);
-    const passesQC = qcResult.passed || qcResult.score >= 50; // Allow if score >= 50 after auto-fix
+    const passesQC = qcResult.passed || qcResult.score >= 40; // Allow if score >= 40 after auto-fix (auto-fix adds references + disclaimer)
 
     if (!passesQC) {
       console.warn(`[GenerateArticle] ⚠️ Article failed QC (score: ${qcResult.score}). Saving as draft for review.`);

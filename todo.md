@@ -838,3 +838,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Generate product-focused research studies from extracted clinical data
 - [x] Insert new research studies into database (3 studies: Unimate GLP-1, Balance Cholesterol, Matcha Thermogenesis)
 - [x] Continue article generation (3 articles generated and published)
+
+## Quality & SEO Improvements (June 2026)
+- [x] Fix article generation to produce 1200+ words (model: claude-sonnet-4-6, max_tokens: 16000, prompt: 1500-2500 words mandatory)
+- [x] Fix QC failures: auto-fix now adds references, FAQ, internal links, medical disclaimer automatically
+- [x] Add intermittent fasting research studies (2 studies: BMJ 2025 meta-analysis + Annals 2024 RCT)
+- [x] Implement internal linking between research studies and related blog articles (contentCluster.ts updated)
+- [x] Add research study citations/links within generated articles (auto-fix adds research links)
+- [x] Add cross-site linking between feelgreat.us.com and feelgreatap-h8jahypk.manus.space (partner links in contentCluster + auto-fix)

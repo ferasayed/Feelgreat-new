@@ -214,8 +214,74 @@ export function generateInternalLinks(
     relevanceScore: 4,
   });
 
-  // Sort by relevance and return top 5
-  return links.sort((a, b) => b.relevanceScore - a.relevanceScore).slice(0, 7);
+  // 5. Cross-site links to partner site
+  const PARTNER_SITE = "https://feelgreatap-h8jahypk.manus.space";
+  const partnerLinks: Record<string, { path: string; titleEn: string; titleAr: string }[]> = {
+    "insulin-resistance": [
+      { path: "/articles/best-program-for-insulin-resistance", titleEn: "Best Program for Insulin Resistance", titleAr: "أفضل برنامج لمقاومة الأنسولين" },
+    ],
+    "intermittent-fasting": [
+      { path: "/articles/intermittent-fasting-feel-great", titleEn: "Intermittent Fasting with Feel Great", titleAr: "الصيام المتقطع مع Feel Great" },
+    ],
+    "weight-management": [
+      { path: "/articles/weight-management-feel-great", titleEn: "Weight Management with Feel Great System", titleAr: "إدارة الوزن مع نظام Feel Great" },
+    ],
+    "gut-health": [
+      { path: "/articles/gut-health-microbiome", titleEn: "Gut Health & Microbiome Guide", titleAr: "دليل صحة الأمعاء والميكروبيوم" },
+    ],
+    "feel-great": [
+      { path: "/", titleEn: "Feel Great Partner Program", titleAr: "برنامج شراكة Feel Great" },
+    ],
+  };
+
+  const partnerClusterLinks = partnerLinks[articleClusterId] || partnerLinks["feel-great"] || [];
+  for (const pl of partnerClusterLinks.slice(0, 1)) {
+    links.push({
+      url: `${PARTNER_SITE}${pl.path}`,
+      anchorTextEn: pl.titleEn,
+      anchorTextAr: pl.titleAr,
+      relevanceScore: 5,
+    });
+  }
+
+  // 6. Link to related research studies
+  const researchTopicMap: Record<string, { slug: string; titleEn: string; titleAr: string }[]> = {
+    "insulin-resistance": [
+      { slug: "bios-life-balance-cholesterol-cleveland-clinic-2006", titleEn: "Balance Reduces LDL by 24.5% - Clinical Trial", titleAr: "بالانس يخفض LDL بنسبة 24.5% - دراسة سريرية" },
+    ],
+    "intermittent-fasting": [
+      { slug: "intermittent-fasting-network-meta-analysis-bmj-2025", titleEn: "BMJ 2025: IF Works - 99 Clinical Trials", titleAr: "BMJ 2025: الصيام المتقطع فعّال - 99 تجربة" },
+      { slug: "time-restricted-eating-metabolic-syndrome-annals-2024", titleEn: "TRE Improves Metabolic Syndrome - RCT", titleAr: "الأكل المقيد زمنياً يحسن المتلازمة الأيضية" },
+    ],
+    "weight-management": [
+      { slug: "unimate-yerba-mate-glp1-incretin-gut-microbiome-2025", titleEn: "Unimate Stimulates GLP-1 Naturally", titleAr: "يونيماتي يحفز GLP-1 طبيعياً" },
+      { slug: "intermittent-fasting-network-meta-analysis-bmj-2025", titleEn: "BMJ: All IF Strategies Reduce Weight", titleAr: "BMJ: جميع أنماط الصيام تخفض الوزن" },
+    ],
+    "gut-health": [
+      { slug: "unimate-yerba-mate-glp1-incretin-gut-microbiome-2025", titleEn: "Yerba Mate & Gut Microbiome - GLP-1 Study", titleAr: "يربا ماتي والميكروبيوم - دراسة GLP-1" },
+    ],
+    "feel-great": [
+      { slug: "unimate-yerba-mate-glp1-incretin-gut-microbiome-2025", titleEn: "Unimate GLP-1 Research", titleAr: "بحث يونيماتي و GLP-1" },
+      { slug: "bios-life-balance-cholesterol-cleveland-clinic-2006", titleEn: "Balance Cholesterol Clinical Trial", titleAr: "دراسة بالانس والكوليسترول" },
+    ],
+    "diabetes": [
+      { slug: "bios-life-balance-cholesterol-cleveland-clinic-2006", titleEn: "Balance Clinical Evidence", titleAr: "أدلة بالانس السريرية" },
+      { slug: "time-restricted-eating-metabolic-syndrome-annals-2024", titleEn: "TRE for Metabolic Health", titleAr: "TRE للصحة الأيضية" },
+    ],
+  };
+
+  const researchLinks = researchTopicMap[articleClusterId] || researchTopicMap["feel-great"] || [];
+  for (const rl of researchLinks.slice(0, 2)) {
+    links.push({
+      url: `/research/${rl.slug}`,
+      anchorTextEn: `📊 Research: ${rl.titleEn}`,
+      anchorTextAr: `📊 بحث: ${rl.titleAr}`,
+      relevanceScore: 7,
+    });
+  }
+
+  // Sort by relevance and return top 8
+  return links.sort((a, b) => b.relevanceScore - a.relevanceScore).slice(0, 8);
 }
 
 /**
