@@ -802,3 +802,9 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Reduce research study generation from 3x daily to 1x daily (20:00 UTC)
 - [x] Reduce images per article from 3 (Hero+Infographic+Product) to 1 (Hero only)
 - [x] Disable old obsolete heartbeat jobs (article-gen-morning/afternoon/evening, research-seed-morning/afternoon/evening)
+
+## SEO Levels Optimization (AEO + CEO)
+- [x] Add TL;DR summary section at the beginning of each generated article (CEO optimization for LLMs)
+- [x] Add People Also Ask (PAA) questions targeting in article generation (AEO optimization)
+- [x] Render TL;DR and PAA sections in BlogArticle.tsx with proper Schema markup
+- [x] Add HowTo Schema and speakable Schema for voice search optimization

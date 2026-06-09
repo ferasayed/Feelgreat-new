@@ -411,18 +411,27 @@ PubMed, NIH, NCBI, Harvard Health, Mayo Clinic, Cleveland Clinic, Johns Hopkins 
 - اكتب إجابات مباشرة في أول 2-3 جمل من كل قسم (لـ AI Overviews)
 - أضف تعريفات واضحة، إحصائيات، نقاط مختصرة، جداول مقارنة
 - اكتب FAQ بأسلوب People Also Ask
-- أضف ملخص تنفيذي في بداية المقال (Executive Summary) داخل <div class='key-takeaways'>
 - هيكل المقال ليظهر في Featured Snippets
 
-=== AI CITATION LAYER (إلزامي) ===
+=== AI CITATION LAYER (إلزامي - CEO Optimization) ===
 لجعل المحتوى قابلاً للاقتباس من ChatGPT, Gemini, Perplexity, Claude:
-1. Executive Summary: أول 2-3 جمل تلخص الموضوع بوضوح (ضعها في <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>...</li></ul></div>)
-2. Key Takeaways: 5 نقاط مختصرة وواضحة في بداية المقال
-3. تعريفات واضحة: عرّف كل مصطلح طبي عند أول ذكر (مثال: "مقاومة الإنسولين — وهي حالة يفقد فيها الجسم قدرته على الاستجابة...")
-4. إحصائيات مع مصادر: كل رقم يجب أن يكون مرفقاً بمصدره (مثال: "وفقاً لدراسة Harvard 2024، 88% من البالغين...")
-5. جمل quotable: اكتب جملاً قصيرة وحاسمة يمكن اقتباسها مباشرة
-6. هيكل واضح: استخدم H2 و H3 بشكل منظم ليسهل على AI crawlers فهم البنية
-7. Passage Ranking: كل فقرة يجب أن تجيب على سؤال محدد بشكل مستقل
+1. TL;DR Section (إلزامي): أضف <div class='tldr-summary'><h2>TL;DR</h2><p>ملخص المقال في 2-3 جمل واضحة ومباشرة يمكن لأي AI اقتباسها كإجابة كاملة</p></div> مباشرة بعد Key Takeaways
+2. Executive Summary: أول 2-3 جمل تلخص الموضوع بوضوح (ضعها في <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>...</li></ul></div>)
+3. Key Takeaways: 5 نقاط مختصرة وواضحة في بداية المقال
+4. تعريفات واضحة: عرّف كل مصطلح طبي عند أول ذكر (مثال: "مقاومة الإنسولين — وهي حالة يفقد فيها الجسم قدرته على الاستجابة...")
+5. إحصائيات مع مصادر: كل رقم يجب أن يكون مرفقاً بمصدره (مثال: "وفقاً لدراسة Harvard 2024، 88% من البالغين...")
+6. جمل quotable: اكتب جملاً قصيرة وحاسمة يمكن اقتباسها مباشرة
+7. هيكل واضح: استخدم H2 و H3 بشكل منظم ليسهل على AI crawlers فهم البنية
+8. Passage Ranking: كل فقرة يجب أن تجيب على سؤال محدد بشكل مستقل
+
+=== ANSWER ENGINE OPTIMIZATION - AEO (إلزامي) ===
+لجعل المحتوى يظهر كإجابة فورية في Google Featured Snippets و AI Overviews:
+1. People Also Ask (PAA): أضف قسم <div class='people-also-ask'><h2>أسئلة شائعة يطرحها الناس</h2> يحتوي 5 أسئلة بصيغة "هل..." أو "ما هو..." أو "كيف..." مع إجابة مباشرة في أول جملة ثم تفصيل
+2. Direct Answer Pattern: أول جملة في كل H2 section يجب أن تكون إجابة مباشرة على سؤال ضمني (مثال: H2 "أسباب مقاومة الإنسولين" → أول جملة: "السبب الرئيسي لمقاومة الإنسولين هو...")
+3. Definition Boxes: عرّف المصطلح الرئيسي في أول فقرة بصيغة "X هو/هي..." ليظهر في Knowledge Panel
+4. Numbered Lists: استخدم قوائم مرقمة للخطوات العملية (تظهر في Featured Snippets)
+5. Comparison Tables: أضف جدول مقارنة واحد على الأقل باستخدام <table> HTML (يظهر في Rich Results)
+6. Speakable Content: أول 2-3 جمل من المقال يجب أن تكون مناسبة للقراءة بصوت عالٍ (Voice Search)
 
 === 8. SEMANTIC SEO ===
 - استخدم الكلمة المفتاحية 4-6 مرات طبيعياً
@@ -446,16 +455,17 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
 
 المقال يجب أن يكون 1500-2000 كلمة ويتبع هذا الهيكل:
 1. Key Takeaways / النقاط الرئيسية (5 نقاط في <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>...</li></ul></div>)
-2. ملخص تنفيذي (Executive Summary) - 3-4 جمل قابلة للاقتباس مباشرة من AI
-3. مقدمة Hook + EEAT signal + تعريف المصطلح الرئيسي
-4. ما هي المشكلة؟ لماذا تحدث؟ أهم الأعراض والأسباب (مع إحصائيات موثقة)
+2. TL;DR (إلزامي - CEO): <div class='tldr-summary'><h2>TL;DR</h2><p>ملخص المقال في 2-3 جمل واضحة ومباشرة تجيب على سؤال البحث الرئيسي. يجب أن تكون قابلة للاقتباس مباشرة من ChatGPT/Gemini/Perplexity</p></div>
+3. مقدمة Hook + EEAT signal + تعريف المصطلح الرئيسي (بصيغة "X هو..." ليظهر في Knowledge Panel)
+4. ما هي المشكلة؟ لماذا تحدث؟ أهم الأعراض والأسباب (مع إحصائيات موثقة + جدول مقارنة <table>)
 5. ماذا تقول الدراسات؟ (مع مراجع حقيقية وأرقام محددة)
-6. خطوات عملية قابلة للتطبيق
+6. خطوات عملية قابلة للتطبيق (قوائم مرقمة للظهور في Featured Snippets)
 7. دور نمط الحياة والتغذية
 8. دور Feel Great كأداة داعمة (بدون ادعاءات)
-9. FAQ (5 أسئلة بأسلوب People Also Ask)
-10. References & Scientific Sources
-11. Disclaimer طبي
+9. People Also Ask (إلزامي - AEO): <div class='people-also-ask'><h2>أسئلة شائعة يطرحها الناس</h2> مع 5 أسئلة بصيغة "هل/ما/كيف" + إجابة مباشرة في أول جملة (باستخدام <div class='paa-item'><h3>السؤال</h3><p>الإجابة المباشرة ثم التفصيل</p></div>)
+10. FAQ Schema (5 أسئلة إضافية بأسلوب People Also Ask للـ faqSchema field)
+11. References & Scientific Sources
+12. Disclaimer طبي
 
 أرجع JSON بهذا الهيكل:
 {
@@ -467,8 +477,8 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
   "metaDescriptionEn": "Meta description 150-160 chars that drives clicks",
   "excerptAr": "ملخص جذاب 2-3 جمل",
   "excerptEn": "Engaging excerpt 2-3 sentences",
-  "contentAr": "المقال الكامل بالعربية بـ HTML. يبدأ بـ <div class='key-takeaways'><h2>النقاط الرئيسية</h2><ul><li>5 نقاط</li></ul></div> ثم المقال. أضف FAQ باستخدام <div class='faq-item'><h3>السؤال</h3><p>الجواب</p></div>",
-  "contentEn": "Full English article with HTML. MUST start with <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>5 points</li></ul></div> then the article. Add FAQ using <div class='faq-item'><h3>Question</h3><p>Answer</p></div>",
+  "contentAr": "المقال الكامل بالعربية بـ HTML. يبدأ بـ <div class='key-takeaways'><h2>النقاط الرئيسية</h2><ul><li>5 نقاط</li></ul></div> ثم <div class='tldr-summary'><h2>TL;DR</h2><p>ملخص 2-3 جمل قابلة للاقتباس من AI</p></div> ثم المقال. أضف <div class='people-also-ask'><h2>أسئلة شائعة</h2><div class='paa-item'><h3>السؤال</h3><p>الجواب</p></div></div> و FAQ باستخدام <div class='faq-item'><h3>السؤال</h3><p>الجواب</p></div>",
+  "contentEn": "Full English article with HTML. MUST start with <div class='key-takeaways'><h2>Key Takeaways</h2><ul><li>5 points</li></ul></div> then <div class='tldr-summary'><h2>TL;DR</h2><p>2-3 sentence summary quotable by AI</p></div> then the article. Add <div class='people-also-ask'><h2>People Also Ask</h2><div class='paa-item'><h3>Question</h3><p>Direct answer then detail</p></div></div> and FAQ using <div class='faq-item'><h3>Question</h3><p>Answer</p></div>",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
   "faqSchema": [{"question":"Q1","answer":"A1"},{"question":"Q2","answer":"A2"},{"question":"Q3","answer":"A3"},{"question":"Q4","answer":"A4"},{"question":"Q5","answer":"A5"}],
   "internalLinks": [{"slug":"existing-article-slug","title":"Link text"}],

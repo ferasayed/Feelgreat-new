@@ -107,7 +107,7 @@ export default function BlogArticle() {
         isAccessibleForFree: true,
         speakable: {
           "@type": "SpeakableSpecification",
-          cssSelector: [".article-headline", ".article-summary", ".key-takeaways"]
+          cssSelector: [".article-headline", ".article-summary", ".key-takeaways", ".tldr-summary"]
         },
         articleSection: article.category,
       };
@@ -398,6 +398,14 @@ export default function BlogArticle() {
             [&_.key-takeaways_h2]:text-lg [&_.key-takeaways_h2]:font-bold [&_.key-takeaways_h2]:text-emerald-800 [&_.key-takeaways_h2]:dark:text-emerald-300 [&_.key-takeaways_h2]:border-0 [&_.key-takeaways_h2]:mt-0 [&_.key-takeaways_h2]:mb-3 [&_.key-takeaways_h2]:pb-0
             [&_.key-takeaways_ul]:space-y-2 [&_.key-takeaways_ul]:list-none [&_.key-takeaways_ul]:pl-0
             [&_.key-takeaways_li]:text-sm [&_.key-takeaways_li]:text-emerald-900 [&_.key-takeaways_li]:dark:text-emerald-200 [&_.key-takeaways_li]:pl-5 [&_.key-takeaways_li]:relative [&_.key-takeaways_li]:before:content-['✓'] [&_.key-takeaways_li]:before:absolute [&_.key-takeaways_li]:before:left-0 [&_.key-takeaways_li]:before:text-emerald-600
+            [&_.tldr-summary]:bg-gradient-to-r [&_.tldr-summary]:from-blue-50 [&_.tldr-summary]:to-indigo-50 [&_.tldr-summary]:dark:from-blue-950/30 [&_.tldr-summary]:dark:to-indigo-950/30 [&_.tldr-summary]:rounded-xl [&_.tldr-summary]:p-6 [&_.tldr-summary]:mb-8 [&_.tldr-summary]:border [&_.tldr-summary]:border-blue-200 [&_.tldr-summary]:dark:border-blue-800/40 [&_.tldr-summary]:relative
+            [&_.tldr-summary_h2]:text-lg [&_.tldr-summary_h2]:font-bold [&_.tldr-summary_h2]:text-blue-800 [&_.tldr-summary_h2]:dark:text-blue-300 [&_.tldr-summary_h2]:border-0 [&_.tldr-summary_h2]:mt-0 [&_.tldr-summary_h2]:mb-3 [&_.tldr-summary_h2]:pb-0
+            [&_.tldr-summary_p]:text-sm [&_.tldr-summary_p]:text-blue-900 [&_.tldr-summary_p]:dark:text-blue-200 [&_.tldr-summary_p]:leading-relaxed [&_.tldr-summary_p]:mb-0
+            [&_.people-also-ask]:bg-gradient-to-r [&_.people-also-ask]:from-amber-50 [&_.people-also-ask]:to-orange-50 [&_.people-also-ask]:dark:from-amber-950/30 [&_.people-also-ask]:dark:to-orange-950/30 [&_.people-also-ask]:rounded-xl [&_.people-also-ask]:p-6 [&_.people-also-ask]:my-8 [&_.people-also-ask]:border [&_.people-also-ask]:border-amber-200 [&_.people-also-ask]:dark:border-amber-800/40
+            [&_.people-also-ask_h2]:text-lg [&_.people-also-ask_h2]:font-bold [&_.people-also-ask_h2]:text-amber-800 [&_.people-also-ask_h2]:dark:text-amber-300 [&_.people-also-ask_h2]:border-0 [&_.people-also-ask_h2]:mt-0 [&_.people-also-ask_h2]:mb-4 [&_.people-also-ask_h2]:pb-0
+            [&_.paa-item]:bg-white/60 [&_.paa-item]:dark:bg-white/5 [&_.paa-item]:rounded-lg [&_.paa-item]:p-4 [&_.paa-item]:mb-3 [&_.paa-item]:border [&_.paa-item]:border-amber-100 [&_.paa-item]:dark:border-amber-800/30
+            [&_.paa-item_h3]:text-base [&_.paa-item_h3]:font-semibold [&_.paa-item_h3]:text-amber-900 [&_.paa-item_h3]:dark:text-amber-200 [&_.paa-item_h3]:mb-2
+            [&_.paa-item_p]:text-sm [&_.paa-item_p]:text-foreground/80 [&_.paa-item_p]:mb-0
             [&_.faq-item]:bg-muted/30 [&_.faq-item]:rounded-lg [&_.faq-item]:p-4 [&_.faq-item]:mb-3 [&_.faq-item]:border [&_.faq-item]:border-border
             [&_.faq-item_h3]:text-base [&_.faq-item_h3]:font-semibold [&_.faq-item_h3]:text-foreground [&_.faq-item_h3]:mb-2
             [&_.article-cta]:bg-gradient-to-r [&_.article-cta]:from-[#0a1628] [&_.article-cta]:to-[#1a5276] [&_.article-cta]:rounded-xl [&_.article-cta]:p-8 [&_.article-cta]:mt-12 [&_.article-cta]:text-center
