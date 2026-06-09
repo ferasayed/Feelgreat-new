@@ -19,7 +19,7 @@ import { weeklyNewsletterHandler } from "../scheduled/weeklyNewsletter";
 import { weeklyReportHandler } from "../scheduled/weeklyReport";
 import { resendWebhookHandler } from "../emailAnalytics";
 import { batchImageRegenHandler } from "../scheduled/batchImageRegen";
-import { createHeartbeatJob, listHeartbeatJobs } from "./heartbeat";
+import { createHeartbeatJob, listHeartbeatJobs, updateHeartbeatJob } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
 
@@ -575,16 +575,35 @@ async function initArticleGenJobs() {
     const existing = await listHeartbeatJobs("");
     const existingNames = existing.jobs.map((j) => j.name);
 
+    // Disable old jobs that were replaced by the new reduced schedule
+    const obsoleteJobs = [
+      "article-gen-morning",
+      "article-gen-afternoon",
+      "article-gen-evening",
+      "research-seed-morning",
+      "research-seed-afternoon",
+      "research-seed-evening",
+    ];
+    for (const oldName of obsoleteJobs) {
+      const oldJob = existing.jobs.find((j) => j.name === oldName);
+      if (oldJob && oldJob.isEnable) {
+        try {
+          await updateHeartbeatJob(oldJob.taskUid, { enable: false }, "");
+          console.log(`[Heartbeat] Disabled obsolete job: ${oldName}`);
+        } catch (e) {
+          console.warn(`[Heartbeat] Could not disable ${oldName}:`, e);
+        }
+      }
+    }
+
     const schedules = [
-      { name: "article-gen-morning", cron: "0 0 6 * * *", description: "Morning SEO article generation (6:00 UTC)", path: "/api/scheduled/generateArticle" },
-      { name: "article-gen-afternoon", cron: "0 0 12 * * *", description: "Afternoon SEO article generation (12:00 UTC)", path: "/api/scheduled/generateArticle" },
-      { name: "article-gen-evening", cron: "0 0 18 * * *", description: "Evening SEO article generation (18:00 UTC)", path: "/api/scheduled/generateArticle" },
-      { name: "auto-index-daily", cron: "0 30 7 * * *", description: "Daily auto-indexing: submit all URLs to IndexNow + ping Google/Bing (7:30 UTC)", path: "/api/scheduled/autoIndex" },
+      // 1 article per day at 8:00 UTC (reduced from 3x daily to conserve LLM credits)
+      { name: "article-gen-daily", cron: "0 0 8 * * *", description: "Daily SEO article generation (8:00 UTC) - 1 article/day", path: "/api/scheduled/generateArticle" },
+      { name: "auto-index-daily", cron: "0 30 9 * * *", description: "Daily auto-indexing: submit all URLs to IndexNow + ping Google/Bing (9:30 UTC)", path: "/api/scheduled/autoIndex" },
       { name: "auto-index-evening", cron: "0 30 19 * * *", description: "Evening auto-indexing: submit new content to search engines (19:30 UTC)", path: "/api/scheduled/autoIndex" },
       { name: "batch-image-regen", cron: "0 0 3 * * *", description: "Batch image regeneration: generate images for all content without images (3:00 UTC daily)", path: "/api/scheduled/batchImageRegen" },
-      { name: "research-seed-morning", cron: "0 0 8 * * *", description: "Research study generation - morning (8:00 UTC)", path: "/api/scheduled/batchResearchSeed" },
-      { name: "research-seed-afternoon", cron: "0 0 14 * * *", description: "Research study generation - afternoon (14:00 UTC)", path: "/api/scheduled/batchResearchSeed" },
-      { name: "research-seed-evening", cron: "0 0 20 * * *", description: "Research study generation - evening (20:00 UTC)", path: "/api/scheduled/batchResearchSeed" },
+      // 1 research study per day at 20:00 UTC (reduced from 3x daily to conserve LLM credits)
+      { name: "research-seed-daily", cron: "0 0 20 * * *", description: "Daily research study generation (20:00 UTC) - 1 study/day", path: "/api/scheduled/batchResearchSeed" },
     ];
 
     for (const schedule of schedules) {
