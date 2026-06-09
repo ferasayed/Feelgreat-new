@@ -812,4 +812,10 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 ## SEO Enhancements Phase 2
 - [x] Add HowTo Schema markup for articles with practical steps (Rich Results)
 - [x] Create Glossary page (/glossary) with health terms and DefinedTerm Schema
-- [ ] Integrate Google Search Console API for monitoring Featured Snippets and PAA performance
+- [x] Integrate Google Search Console API for monitoring Featured Snippets and PAA performance
+
+## Social Media Auto-Publishing
+- [x] Implement Twitter/X auto-posting when new article is published
+- [x] Implement LinkedIn auto-posting when new article is published
+- [x] Implement Threads auto-posting when new article is published
+- [x] Connect social posting to article generation pipeline

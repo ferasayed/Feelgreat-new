@@ -4,6 +4,7 @@ import { createBlogArticle, getRecentArticleSlugs, getRecentArticleKeywords, get
 import { invokeLLM } from "../_core/llm";
 import { generateImage } from "../_core/imageGeneration";
 import { notifyOwner } from "../_core/notification";
+import { publishToSocialMedia } from "../social";
 
 // ============================================================
 // ROBUST JSON PARSING & RETRY UTILITIES
@@ -1152,6 +1153,21 @@ export async function generateArticleHandler(req: Request, res: Response) {
       import("../pushNotifications").then(({ notifyNewArticle: pushNotify }) => {
         pushNotify({ titleAr: article.titleAr, titleEn: article.titleEn, slug }).catch((e: any) => console.error("[Push] Notification failed:", e));
       }).catch((e: any) => console.error("[Push] Import failed:", e));
+
+      // Auto-publish to social media (Twitter/X, LinkedIn, Threads)
+      publishToSocialMedia({
+        title: article.titleAr,
+        slug,
+        excerpt: article.metaDescriptionAr || article.titleAr,
+        category: pillar.id,
+        articleUrl: `https://feelgreat.us.com/blog/${slug}`,
+        heroImageUrl: heroImageUrl || undefined,
+        twitterContent: socialContent.facebook ? `${article.titleAr}\n\n${article.metaDescriptionAr}\n\nhttps://feelgreat.us.com/blog/${slug}\n\n#صحة #FeelGreat` : undefined,
+        linkedinContent: socialContent.linkedin || undefined,
+        threadsContent: socialContent.facebook ? `${article.titleAr}\n\n${(article.metaDescriptionAr || "").substring(0, 300)}\n\nhttps://feelgreat.us.com/blog/${slug}` : undefined,
+      }).then((results) => {
+        console.log(`[Social] Published - Twitter: ${results.twitter.success}, LinkedIn: ${results.linkedin.success}, Threads: ${results.threads.success}`);
+      }).catch((e) => console.error("[Social] Auto-publish failed:", e));
     }
 
     return res.json({
