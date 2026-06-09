@@ -85,6 +85,13 @@
       "when": 1780814843429,
       "tag": "0011_oval_puff_adder",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1781012602204,
+      "tag": "0012_previous_dark_beast",
+      "breakpoints": true
     }
   ]
 }

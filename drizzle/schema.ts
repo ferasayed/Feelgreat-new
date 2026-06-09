@@ -319,3 +319,28 @@ export const articleComments = mysqlTable("article_comments", {
 
 export type ArticleComment = typeof articleComments.$inferSelect;
 export type InsertArticleComment = typeof articleComments.$inferInsert;
+
+/**
+ * Health Glossary - terms and definitions for SEO (DefinedTerm Schema)
+ */
+export const glossaryTerms = mysqlTable("glossary_terms", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  termAr: varchar("term_ar", { length: 255 }).notNull(),
+  termEn: varchar("term_en", { length: 255 }).notNull(),
+  definitionAr: text("definition_ar").notNull(),
+  definitionEn: text("definition_en").notNull(),
+  category: varchar("category", { length: 100 }).notNull(), // e.g., "nutrition", "metabolism", "gut-health"
+  relatedTerms: json("related_terms"), // array of slugs
+  relatedArticles: json("related_articles"), // array of article slugs
+  sources: json("sources"), // array of { title, url }
+  isPublished: boolean("is_published").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+}, (table) => ([
+  index("idx_glossary_category").on(table.category),
+  index("idx_glossary_published").on(table.isPublished),
+]));
+
+export type GlossaryTerm = typeof glossaryTerms.$inferSelect;
+export type InsertGlossaryTerm = typeof glossaryTerms.$inferInsert;

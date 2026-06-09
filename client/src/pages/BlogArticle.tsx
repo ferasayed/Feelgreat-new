@@ -199,7 +199,7 @@ export default function BlogArticle() {
       // === FAQ Schema ===
       try {
         const keywords = article.keywords || "";
-        const faqSchemaMatch = keywords.match(/FAQ_SCHEMA:(\{.*\})/);
+        const faqSchemaMatch = keywords.match(/FAQ_SCHEMA:(\{.*?\})(?=\||$)/);
         if (faqSchemaMatch && faqSchemaMatch[1]) {
           const faqSchemaEl = document.createElement("script");
           faqSchemaEl.id = "faq-schema";
@@ -211,6 +211,22 @@ export default function BlogArticle() {
         // ignore FAQ schema parse errors
       }
 
+      // === HowTo Schema ===
+      document.getElementById("howto-schema")?.remove();
+      try {
+        const keywords = article.keywords || "";
+        const howToMatch = keywords.match(/HOWTO_SCHEMA:(\{.*\})$/);
+        if (howToMatch && howToMatch[1]) {
+          const howToSchemaEl = document.createElement("script");
+          howToSchemaEl.id = "howto-schema";
+          howToSchemaEl.type = "application/ld+json";
+          howToSchemaEl.textContent = howToMatch[1];
+          document.head.appendChild(howToSchemaEl);
+        }
+      } catch (e) {
+        // ignore HowTo schema parse errors
+      }
+
       // === Canonical URL ===
       const canonical = document.querySelector('link[rel="canonical"]') || document.createElement('link');
       canonical.setAttribute('rel', 'canonical');
@@ -220,6 +236,7 @@ export default function BlogArticle() {
       return () => {
         document.getElementById("article-schema")?.remove();
         document.getElementById("faq-schema")?.remove();
+        document.getElementById("howto-schema")?.remove();
         document.getElementById("breadcrumb-schema")?.remove();
         document.getElementById("author-schema")?.remove();
         document.querySelector('link[rel="canonical"]')?.remove();

@@ -44,6 +44,9 @@ const FerasKnowledgeHub = lazy(() => import("./pages/FerasKnowledgeHub"));
 const HealthLibraryHub = lazy(() => import("./pages/HealthLibrary").then(m => ({ default: m.HealthLibraryHub })));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Comparison = lazy(() => import("./pages/Comparison"));
+const Glossary = lazy(() => import("./pages/Glossary"));
+const GlossaryDetail = lazy(() => import("./pages/Glossary").then(m => ({ default: m.GlossaryDetail })));
+const GSCDashboard = lazy(() => import("./pages/GSCDashboard"));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -101,6 +104,9 @@ function AppRoutes() {
         <Route path={"/health-library/:slug"} component={HealthLibraryHub} />
         <Route path={"/unsubscribe"} component={Unsubscribe} />
         <Route path={"/comparison"} component={Comparison} />
+        <Route path={"/glossary"} component={Glossary} />
+        <Route path={"/glossary/:slug"} component={GlossaryDetail} />
+        <Route path={"/admin/search-console"} component={GSCDashboard} />
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>

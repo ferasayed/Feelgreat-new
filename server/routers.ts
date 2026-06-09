@@ -4,10 +4,11 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount, getCommentsByArticle, getCommentsCount, createComment, likeComment, deleteComment } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount, getCommentsByArticle, getCommentsCount, createComment, likeComment, deleteComment, getAllGlossaryTerms, getGlossaryTermBySlug, getGlossaryTermsByCategory } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
+import { verifyConnection as gscVerifyConnection, getSearchAnalytics, getSitemapStatus, inspectUrl } from "./seo/googleSearchConsole";
 
 const FEEL_GREAT_SYSTEM_PROMPT = `You are an expert AI sales consultant for the Unicity Feel Great program. You are warm, professional, knowledgeable, and persuasive. Your goal is to convert visitors into registered partners.
 
@@ -924,6 +925,88 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await deleteComment(input.commentId);
         return { success: true };
+      }),
+  }),
+
+  glossary: router({
+    list: publicProcedure
+      .input(z.object({ category: z.string().optional() }).optional())
+      .query(async ({ input }) => {
+        if (input?.category) {
+          return getGlossaryTermsByCategory(input.category);
+        }
+        return getAllGlossaryTerms();
+      }),
+
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const term = await getGlossaryTermBySlug(input.slug);
+        if (!term) throw new TRPCError({ code: "NOT_FOUND", message: "Term not found" });
+        return term;
+      }),
+  }),
+
+  gsc: router({
+    status: adminProcedure.query(async () => {
+      try {
+        const connection = await gscVerifyConnection();
+        const sitemaps = await getSitemapStatus();
+        return { connection, sitemaps: sitemaps.sitemaps || [] };
+      } catch (e: any) {
+        return { connection: { success: false, error: e.message }, sitemaps: [] };
+      }
+    }),
+
+    analytics: adminProcedure
+      .input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+        dimensions: z.array(z.string()).optional(),
+        rowLimit: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        return getSearchAnalytics(input);
+      }),
+
+    topPages: adminProcedure
+      .input(z.object({
+        days: z.number().default(28),
+      }).optional())
+      .query(async ({ input }) => {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - (input?.days || 28));
+        const format = (d: Date) => d.toISOString().split("T")[0];
+        return getSearchAnalytics({
+          startDate: format(startDate),
+          endDate: format(endDate),
+          dimensions: ["page"],
+          rowLimit: 50,
+        });
+      }),
+
+    topQueries: adminProcedure
+      .input(z.object({
+        days: z.number().default(28),
+      }).optional())
+      .query(async ({ input }) => {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - (input?.days || 28));
+        const format = (d: Date) => d.toISOString().split("T")[0];
+        return getSearchAnalytics({
+          startDate: format(startDate),
+          endDate: format(endDate),
+          dimensions: ["query"],
+          rowLimit: 50,
+        });
+      }),
+
+    inspectUrl: adminProcedure
+      .input(z.object({ url: z.string() }))
+      .query(async ({ input }) => {
+        return inspectUrl(input.url);
       }),
   }),
 });

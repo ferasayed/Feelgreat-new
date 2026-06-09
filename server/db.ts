@@ -1,7 +1,7 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber, articleComments, ArticleComment, InsertArticleComment } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber, articleComments, ArticleComment, InsertArticleComment, glossaryTerms, GlossaryTerm, InsertGlossaryTerm } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -828,4 +828,40 @@ export async function deleteComment(commentId: number): Promise<void> {
     .update(articleComments)
     .set({ isApproved: false })
     .where(eq(articleComments.id, commentId));
+}
+
+// ============================================================
+// GLOSSARY TERMS
+// ============================================================
+
+export async function getAllGlossaryTerms(): Promise<GlossaryTerm[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(glossaryTerms).where(eq(glossaryTerms.isPublished, true)).orderBy(glossaryTerms.termEn);
+}
+
+export async function getGlossaryTermBySlug(slug: string): Promise<GlossaryTerm | null> {
+  const db = await getDb();
+  if (!db) return null;
+  const [term] = await db.select().from(glossaryTerms).where(eq(glossaryTerms.slug, slug)).limit(1);
+  return term || null;
+}
+
+export async function getGlossaryTermsByCategory(category: string): Promise<GlossaryTerm[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(glossaryTerms).where(and(eq(glossaryTerms.category, category), eq(glossaryTerms.isPublished, true))).orderBy(glossaryTerms.termEn);
+}
+
+export async function createGlossaryTerm(term: InsertGlossaryTerm): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(glossaryTerms).values(term);
+}
+
+export async function bulkCreateGlossaryTerms(terms: InsertGlossaryTerm[]): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  if (terms.length === 0) return;
+  await db.insert(glossaryTerms).values(terms);
 }

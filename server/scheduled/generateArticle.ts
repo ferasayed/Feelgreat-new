@@ -482,7 +482,8 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
   "faqSchema": [{"question":"Q1","answer":"A1"},{"question":"Q2","answer":"A2"},{"question":"Q3","answer":"A3"},{"question":"Q4","answer":"A4"},{"question":"Q5","answer":"A5"}],
   "internalLinks": [{"slug":"existing-article-slug","title":"Link text"}],
-  "heroImagePrompt": "Detailed prompt for generating a hero image (health/wellness themed, professional, warm colors)"
+  "heroImagePrompt": "Detailed prompt for generating a hero image (health/wellness themed, professional, warm colors)",
+  "howToSteps": [{"nameAr":"الخطوة 1: العنوان","nameEn":"Step 1: Title","textAr":"شرح الخطوة","textEn":"Step explanation"},{"nameAr":"الخطوة 2","nameEn":"Step 2","textAr":"شرح","textEn":"Explanation"}]
 }`,
       },
     ],
@@ -530,8 +531,22 @@ IMPORTANT: Respond ONLY with valid JSON. No markdown code blocks. Keep the JSON 
               },
             },
             heroImagePrompt: { type: "string" },
+            howToSteps: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  nameAr: { type: "string" },
+                  nameEn: { type: "string" },
+                  textAr: { type: "string" },
+                  textEn: { type: "string" },
+                },
+                required: ["nameAr", "nameEn", "textAr", "textEn"],
+                additionalProperties: false,
+              },
+            },
           },
-          required: ["titleAr", "titleEn", "metaTitleAr", "metaTitleEn", "metaDescriptionAr", "metaDescriptionEn", "excerptAr", "excerptEn", "contentAr", "contentEn", "tags", "faqSchema", "internalLinks", "heroImagePrompt"],
+          required: ["titleAr", "titleEn", "metaTitleAr", "metaTitleEn", "metaDescriptionAr", "metaDescriptionEn", "excerptAr", "excerptEn", "contentAr", "contentEn", "tags", "faqSchema", "internalLinks", "heroImagePrompt", "howToSteps"],
           additionalProperties: false,
         },
       },
@@ -957,8 +972,25 @@ export async function generateArticleHandler(req: Request, res: Response) {
       articleSection: pillar.nameEn,
     });
 
+    // Generate HowTo Schema if steps are available
+    let howToSchemaJson = "";
+    if (article.howToSteps && article.howToSteps.length >= 2) {
+      howToSchemaJson = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        name: article.titleEn,
+        description: article.metaDescriptionEn,
+        step: article.howToSteps.map((step: any, idx: number) => ({
+          "@type": "HowToStep",
+          position: idx + 1,
+          name: step.nameEn,
+          text: step.textEn,
+        })),
+      });
+    }
+
     // Pack schemas in keywords field for backward compatibility
-    const keywordsWithSchema = `${keywordData.targetKeyword}|${article.metaDescriptionEn || ""}|FAQ_SCHEMA:${faqSchemaJson}|ARTICLE_SCHEMA:${articleSchemaJson}`;
+    const keywordsWithSchema = `${keywordData.targetKeyword}|${article.metaDescriptionEn || ""}|FAQ_SCHEMA:${faqSchemaJson}|ARTICLE_SCHEMA:${articleSchemaJson}${howToSchemaJson ? `|HOWTO_SCHEMA:${howToSchemaJson}` : ""}`;
 
     // ============================================================
     // QUALITY CONTROL ENGINE - Pre-publish validation
