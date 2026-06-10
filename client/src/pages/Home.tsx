@@ -56,12 +56,12 @@ function Navbar() {
   }, []);
 
   const navLabels: Record<string, Record<string, string>> = {
-    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", compare: "لماذا نحن؟", opportunity: "الشراكة", register: "سجّل الآن" },
-    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", compare: "Why Us?", opportunity: "Partnership", register: "Register" },
-    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", compare: "Pourquoi nous?", opportunity: "Partenariat", register: "S'inscrire" },
-    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", compare: "¿Por qué nosotros?", opportunity: "Asociación", register: "Regístrate" },
-    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", compare: "Warum wir?", opportunity: "Partnerschaft", register: "Registrieren" },
-    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", compare: "Neden biz?", opportunity: "Ortaklık", register: "Kaydol" },
+    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", compare: "لماذا نحن؟", opportunity: "الشراكة", register: "سجّل الآن", quiz: "اختبر صحتك" },
+    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", compare: "Why Us?", opportunity: "Partnership", register: "Register", quiz: "Health Quiz" },
+    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", compare: "Pourquoi nous?", opportunity: "Partenariat", register: "S'inscrire", quiz: "Quiz Santé" },
+    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", compare: "¿Por qué nosotros?", opportunity: "Asociación", register: "Regístrate", quiz: "Quiz de Salud" },
+    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", compare: "Warum wir?", opportunity: "Partnerschaft", register: "Registrieren", quiz: "Gesundheitstest" },
+    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", compare: "Neden biz?", opportunity: "Ortaklık", register: "Kaydol", quiz: "Sağlık Testi" },
   };
   const nav = navLabels[lang] || navLabels.en;
 
@@ -79,6 +79,7 @@ function Navbar() {
           <a href="/feras-alayed" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.knowledgeHub}</a>
           <a href="/comparison" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.compare}</a>
           <a href="#partnership" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.opportunity}</a>
+          <a href="/health-assessment" className="text-sm font-medium text-amber-500 hover:text-amber-400 transition-colors">{nav.quiz}</a>
           <a href="#register" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.register}</a>
         </div>
 
@@ -106,6 +107,7 @@ function Navbar() {
           <a href="/feras-alayed" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.knowledgeHub}</a>
           <a href="/comparison" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.compare}</a>
           <a href="#partnership" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.opportunity}</a>
+          <a href="/health-assessment" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-amber-600">{nav.quiz}</a>
           <a href="#register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.register}</a>
         </div>
       )}
@@ -252,7 +254,7 @@ function HeroSection() {
       cta1: "ابدأ تحولك الآن",
       cta2: "اعمل مع فراس",
       cta3: "احجز مكالمة تعريفية",
-      cta4: "ابدأ هنا",
+      cta4: "اختبر صحتك مجاناً",
       cta5: "المقالات",
       cta6: "الأبحاث العلمية",
     },
@@ -264,7 +266,7 @@ function HeroSection() {
       cta1: "Start Your Transformation",
       cta2: "Work With Feras",
       cta3: "Book a Discovery Call",
-      cta4: "Start Here",
+      cta4: "Free Health Quiz",
       cta5: "Articles",
       cta6: "Research",
     },
@@ -276,7 +278,7 @@ function HeroSection() {
       cta1: "Commencez votre transformation",
       cta2: "Travaillez avec Feras",
       cta3: "Réservez un appel",
-      cta4: "Commencez ici",
+      cta4: "Quiz Santé Gratuit",
       cta5: "Articles",
       cta6: "Recherche",
     },
@@ -288,7 +290,7 @@ function HeroSection() {
       cta1: "Comienza tu transformación",
       cta2: "Trabaja con Feras",
       cta3: "Reserva una llamada",
-      cta4: "Empieza aquí",
+      cta4: "Quiz de Salud Gratis",
       cta5: "Artículos",
       cta6: "Investigación",
     },
@@ -300,7 +302,7 @@ function HeroSection() {
       cta1: "Starte deine Transformation",
       cta2: "Arbeite mit Feras",
       cta3: "Buche ein Gespräch",
-      cta4: "Starte hier",
+      cta4: "Kostenloser Gesundheitstest",
       cta5: "Artikel",
       cta6: "Forschung",
     },
@@ -312,7 +314,7 @@ function HeroSection() {
       cta1: "Dönüşümünüze başlayın",
       cta2: "Feras ile çalışın",
       cta3: "Tanışma görüşmesi ayırtın",
-      cta4: "Buradan başlayın",
+      cta4: "Ücretsiz Sağlık Testi",
       cta5: "Makaleler",
       cta6: "Araştırma",
     },
@@ -389,8 +391,9 @@ function HeroSection() {
                 {c.cta3}
               </Button>
             </a>
-            <a href="/start">
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-white/20 text-white/80 hover:bg-white/10 bg-transparent w-full sm:w-auto">
+            <a href="/health-assessment">
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-amber-400/40 text-amber-300 hover:bg-amber-500/10 bg-transparent w-full sm:w-auto">
+                <Sparkles className="w-5 h-5 me-2" />
                 {c.cta4}
               </Button>
             </a>

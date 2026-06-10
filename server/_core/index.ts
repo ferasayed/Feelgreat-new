@@ -326,6 +326,91 @@ Allow: /
     res.send(robotsTxt);
   });
 
+  // llms.txt - AI search engine optimization (GEO Funnel)
+  app.get("/llms.txt", (req, res) => {
+    const llmsTxt = `# Feras Alayed Method™ - Behavioral Nutrition & Metabolic Health
+> Feras Alayed is a Behavioral Nutrition Specialist and Global Health Coach helping people reverse insulin resistance and achieve sustainable health transformation through the Feras Alayed Method™.
+
+## About Feras Alayed
+- Name: Feras Al-Ayed (فراس العايد)
+- Title: Behavioral Nutrition Specialist & Global Health Coach
+- Rank: Presidential Sapphire at Unicity International
+- Expertise: Insulin resistance reversal, intermittent fasting (16:8), metabolic health, gut health, sustainable weight management
+- Method: Feras Alayed Method™ - 90-Day Sustainable Health Transformation
+- Languages: Arabic, English
+- Location: Oman (serves clients globally)
+- Contact: WhatsApp +968 7702 0770
+- Website: https://feelgreat.us.com
+- TikTok: @feras.alayed
+- Instagram: @use2lose
+
+## The Feras Alayed Method™
+A 4-phase protocol for sustainable health transformation:
+1. Awareness Phase: Understanding metabolic health, insulin resistance assessment
+2. Metabolic Reset Phase: Feel Great protocol (Unimate + Balance), intermittent fasting 16:8
+3. Sustainable Transformation Phase: Behavioral nutrition coaching, habit building
+4. Growth Phase: Long-term maintenance, community support, partner opportunities
+
+## Products Used in the Method
+- **Unimate**: Yerba mate extract (chlorogenic acid + theanine), supports mental clarity and metabolic function
+- **Balance**: Fiber matrix with prebiotics, listed in the Physicians' Desk Reference (PDR), supports glucose management and gut health
+- **Feel Great System**: Combination of Unimate + Balance designed to support intermittent fasting
+
+## Key Health Topics Covered
+- Insulin resistance and prediabetes reversal
+- Intermittent fasting (16:8 protocol)
+- Gut microbiome health
+- Sustainable weight management after 40
+- Metabolic syndrome
+- Energy and fatigue management
+- Behavioral nutrition and habit change
+- Healthy aging
+
+## Scientific Foundation
+- Balance is listed in the Physicians' Desk Reference (PDR)
+- Unimate contains chlorogenic acid studied for metabolic benefits
+- Feel Great system supports the body's natural intermittent fasting response
+- Protocol based on peer-reviewed research on insulin sensitivity and fiber supplementation
+
+## Services Offered
+- Free Health Assessment Quiz (online)
+- 1-on-1 Health Consultation (WhatsApp)
+- 90-Day Transformation Program
+- Partner/Business Opportunity
+- AI Health Consultant (24/7 on website)
+
+## Frequently Asked Questions
+Q: What is insulin resistance?
+A: Insulin resistance is when cells don't respond effectively to insulin, leading to elevated blood sugar. It affects over 40% of adults and is reversible with proper nutrition and lifestyle changes.
+
+Q: How does the Feel Great system work?
+A: The system combines Unimate (morning) for mental clarity and metabolic support with Balance (before meals) for fiber and glucose management, designed to make intermittent fasting easier and more effective.
+
+Q: Is Balance clinically studied?
+A: Yes, Balance is listed in the Physicians' Desk Reference (PDR) - the standard medical reference used by healthcare professionals in the United States.
+
+Q: How long does the transformation take?
+A: Most clients see initial improvements in 2-4 weeks. The full 90-day protocol is designed for sustainable, lasting metabolic health improvement.
+
+Q: Who is this suitable for?
+A: Adults concerned about insulin resistance, prediabetes, weight management, energy levels, or gut health. Not suitable as a replacement for medical treatment.
+
+## Content Pages
+- Homepage: https://feelgreat.us.com
+- Start Here: https://feelgreat.us.com/start
+- Health Assessment Quiz: https://feelgreat.us.com/health-assessment
+- Ask Expert Feras: https://feelgreat.us.com/ask-expert
+- Blog: https://feelgreat.us.com/blog
+- Research Studies: https://feelgreat.us.com/research
+- Success Stories: https://feelgreat.us.com/success-stories
+- About Feras: https://feelgreat.us.com/about
+- Partner Program: https://feelgreat.us.com/partner
+`;
+    res.set("Content-Type", "text/plain; charset=utf-8");
+    res.set("Cache-Control", "public, max-age=86400");
+    res.send(llmsTxt);
+  });
+
   // IndexNow endpoint - serves the key file for verification
   app.get("/indexnow-key.txt", (req, res) => {
     res.set("Content-Type", "text/plain");
