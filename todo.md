@@ -858,3 +858,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add Webhook system to notify Framer on new content publish (cache invalidation) - /webhooks/register, /webhooks, /webhooks/:id + auto-dispatch on article publish
 - [x] Create landing page endpoint (latest 3 articles + 3 research studies) - /landing
 - [x] Test all new endpoints (13/13 tests passing)
+## Success Stories Integration from Partner Site (June 2026)
+- [x] Create success stories data file with 142 stories from partner site (6 categories, images + videos)
+- [x] Create Success Stories page with category filtering (weight-loss, diabetes-insulin, gut-health, thyroid, womens-health, general-wellness)
+- [x] Add image lightbox/modal for Before/After stories
+- [x] Add video player modal for video stories
+- [x] Add success stories route to App.tsx navigation (already existed)
+- [x] Add success stories section/link to homepage (gallery integrated into existing success stories page)
+- [x] Write tests for success stories functionality (9/9 passing)

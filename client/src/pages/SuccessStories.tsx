@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Link, useParams, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TrendingUp, Activity, Heart, Leaf, Zap, Shield, Brain, Moon, Bone, Eye, Pill, Baby, Star, Play, ArrowLeft, ExternalLink, Phone, Calendar, ClipboardCheck, Users, ChevronRight, Quote, CheckCircle2 } from "lucide-react";
+import PartnerStoriesGallery from "@/components/PartnerStoriesGallery";
 
 const DRIVE_BASE = "https://drive.google.com/drive/folders/";
 
@@ -510,6 +511,9 @@ export default function SuccessStories() {
           })}
         </div>
       </section>
+
+      {/* Partner Site Real Transformations Gallery */}
+      <PartnerStoriesGallery />
 
       {/* Categories Grid (Google Drive links) */}
       <section className="container max-w-6xl mx-auto px-4 py-12">
