@@ -50,6 +50,10 @@ const GlossaryDetail = lazy(() => import("./pages/Glossary").then(m => ({ defaul
 const GSCDashboard = lazy(() => import("./pages/GSCDashboard"));
 const KeywordLanding = lazy(() => import("./pages/KeywordLanding"));
 const NotificationPreferences = lazy(() => import("./pages/NotificationPreferences"));
+const StartHere = lazy(() => import("./pages/StartHere"));
+const AskExpert = lazy(() => import("./pages/AskExpert"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -110,6 +114,10 @@ function AppRoutes() {
         <Route path={"/glossary"} component={Glossary} />
         <Route path={"/glossary/:slug"} component={GlossaryDetail} />
         <Route path={"/notifications"} component={NotificationPreferences} />
+        <Route path={"/start"} component={StartHere} />
+        <Route path={"/ask-expert"} component={AskExpert} />
+        <Route path={"/privacy"} component={PrivacyPolicy} />
+        <Route path={"/terms"} component={TermsOfUse} />
         <Route path={"/admin/search-console"} component={GSCDashboard} />
         <Route path={"/reverse-insulin-resistance"} component={KeywordLanding} />
         <Route path={"/prediabetes-symptoms"} component={KeywordLanding} />

@@ -59,14 +59,12 @@ export default function ExitIntentPopup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!whatsapp) return;
 
     try {
       await registerLead.mutateAsync({
         fullName: name,
-        email,
-        phone: whatsapp || '',
-        country: '',
+        phone: whatsapp,
         source: 'exit-intent-guide',
       });
       setSubmitted(true);
@@ -79,21 +77,17 @@ export default function ExitIntentPopup() {
   if (!show) return null;
 
   const signs = isAr ? [
-    'التعب المستمر بعد الوجبات',
-    'صعوبة فقدان الوزن رغم الحمية',
-    'الرغبة الشديدة في السكريات',
-    'بقع داكنة على الجلد',
-    'تراكم الدهون حول البطن',
-    'ضبابية الدماغ وصعوبة التركيز',
-    'اضطرابات النوم والشخير',
+    'الخطوة 1: افهم مقاومة الإنسولين وأعراضها',
+    'الخطوة 2: طبّق نظام الصيام المتقطع 4-4-12',
+    'الخطوة 3: استخدم Unimate لكبح الشهية ورفع الطاقة',
+    'الخطوة 4: استخدم Balance لتقليل امتصاص الكربوهيدرات',
+    'الخطوة 5: تابع نتائجك خلال 90 يوم',
   ] : [
-    'Persistent fatigue after meals',
-    'Difficulty losing weight despite dieting',
-    'Intense sugar and carb cravings',
-    'Dark skin patches (Acanthosis Nigricans)',
-    'Belly fat accumulation',
-    'Brain fog and difficulty concentrating',
-    'Sleep disturbances and snoring',
+    'Step 1: Understand insulin resistance and its symptoms',
+    'Step 2: Apply the 4-4-12 intermittent fasting system',
+    'Step 3: Use Unimate to suppress cravings and boost energy',
+    'Step 4: Use Balance to reduce carb absorption',
+    'Step 5: Track your results over 90 days',
   ];
 
   return (
@@ -129,8 +123,8 @@ export default function ExitIntentPopup() {
           </div>
           <p className="text-white/80 text-sm">
             {isAr
-              ? 'احصل على دليلنا المجاني: "7 علامات خفية لمقاومة الأنسولين" — قد تكون لديك دون أن تعرف.'
-              : 'Get our free guide: "7 Hidden Signs of Insulin Resistance" — you might have it without knowing.'
+              ? 'احصل على دليلنا المجاني: "5 خطوات لكسر مقاومة الإنسولين" — ابدأ اليوم وشوف الفرق خلال 90 يوم.'
+              : 'Get our free guide: "5 Steps to Break Insulin Resistance" — start today and see results in 90 days.'
             }
           </p>
         </div>
@@ -150,7 +144,7 @@ export default function ExitIntentPopup() {
               </p>
             </div>
 
-            {/* Form */}
+            {/* Form - simplified to Name + WhatsApp only */}
             <form onSubmit={handleSubmit} className="space-y-3 pt-2">
               <Input
                 placeholder={isAr ? 'الاسم' : 'Your Name'}
@@ -159,17 +153,11 @@ export default function ExitIntentPopup() {
                 className="bg-slate-700/50 border-slate-600 text-white placeholder:text-white/40"
               />
               <Input
-                type="email"
-                placeholder={isAr ? 'البريد الإلكتروني *' : 'Email Address *'}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-slate-700/50 border-slate-600 text-white placeholder:text-white/40"
-              />
-              <Input
-                placeholder={isAr ? 'رقم واتساب (اختياري)' : 'WhatsApp Number (optional)'}
+                type="tel"
+                placeholder={isAr ? 'رقم الواتساب *' : 'WhatsApp Number *'}
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
+                required
                 className="bg-slate-700/50 border-slate-600 text-white placeholder:text-white/40"
               />
               <Button
@@ -198,8 +186,8 @@ export default function ExitIntentPopup() {
             </h3>
             <p className="text-white/70">
               {isAr
-                ? 'سيصلك الدليل على بريدك الإلكتروني قريباً. في هذه الأثناء، يمكنك إجراء تقييم مقاومة الأنسولين المجاني.'
-                : 'The guide will be sent to your email shortly. In the meantime, you can take our free insulin resistance assessment.'
+                ? 'سيتواصل معك فريقنا عبر الواتساب خلال 24 ساعة مع الدليل المجاني. في هذه الأثناء، يمكنك إجراء تقييم مقاومة الإنسولين المجاني.'
+                : 'Our team will contact you via WhatsApp within 24 hours with the free guide. In the meantime, you can take our free insulin resistance assessment.'
               }
             </p>
             <div className="flex flex-col gap-2 pt-2">

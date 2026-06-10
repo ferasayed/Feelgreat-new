@@ -924,13 +924,13 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Tested: Bots get 10+ HTML elements, regular users get SPA (0 elements)
 
 ## Fix Language Mixing in Meta Tags & Schema (June 2026)
-- [ ] Fix meta description/OG tags to match visitor's selected language (not mix Arabic + English)
-- [ ] Make prerender.ts serve content in the correct language based on URL prefix (/ar/, /fr/, /es/, /de/, /tr/)
-- [ ] Ensure hreflang tags are present on all prerendered pages
-- [ ] Add Product schema markup (Unimate + Balance products)
-- [ ] Enhance FAQ schema with language-aware content
-- [ ] Register site with Google Search Console
-- [ ] Submit updated sitemap to Google Search Console
+- [x] Fix meta description/OG tags to match visitor's selected language (not mix Arabic + English)
+- [x] Make prerender.ts serve content in the correct language based on URL prefix (/ar/, /fr/, /es/, /de/, /tr/)
+- [x] Ensure hreflang tags are present on all prerendered pages
+- [x] Add Product schema markup (Unimate + Balance products)
+- [x] Enhance FAQ schema with language-aware content
+- [x] Register site with Google Search Console (already verified via meta tag + service account)
+- [x] Submit updated sitemap to Google Search Console (admin mutation added: trpc.gsc.submitSitemap)
 
 ## SEO Language & Schema Fixes - June 11, 2026
 - [x] Fix mixed-language meta tags: all meta (title, description, OG, Twitter) now served in visitor's selected language
@@ -943,3 +943,33 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Language-aware canonical URLs (e.g. /ar/blog → https://feelgreat.us.com/ar/blog)
 - [x] Prerender middleware now passes language to all page renderers
 - [x] All 205 vitest tests passing
+
+## Comprehensive CRO, Tracking & Content Improvements - June 11, 2026
+- [x] Update page title from "Feel Great" to "فيل جريت Feel Great | نظام صحي أيضي متكامل - فراس العايد"
+- [x] Rewrite hero headline to focus on result: "استعد طاقتك واكسر مقاومة الإنسولين خلال 90 يوم"
+- [x] Add PDR (Physicians' Desk Reference) mention for Balance in product sections
+- [x] Simplify registration form to Name + WhatsApp only (remove email + country)
+- [x] Add TikTok Pixel tracking code
+- [x] Add Snapchat Pixel tracking code
+- [x] Add Facebook link to footer and Person schema (https://www.facebook.com/share/1Ey17WcWyT/)
+- [x] Update social links with correct URLs from user screenshots
+- [x] Create Privacy Policy page (/privacy)
+- [x] Create Terms of Use page (/terms)
+- [x] Add privacy/terms links to footer
+- [x] Create "Ask Expert Feras" section with influence-based FAQ answers and CTA
+- [x] Integrate FAQ PDF content into chatbot knowledge base (objection handling, closing, follow-up)
+- [x] Update ExitIntentPopup to use "5 خطوات لكسر مقاومة الإنسولين" lead magnet with WhatsApp field
+- [ ] Add alt text in Arabic for product images
+- [ ] Update article dates to show "محدَّث 2026" format
+
+## Brand Repositioning: Feras Alayed Method™ (June 2026)
+- [x] Rebrand homepage hero to authority positioning: "Transform Your Health. Transform Your Life."
+- [x] Position Feras as Behavioral Nutrition Specialist / Global Health Coach (not product seller)
+- [x] Create 4-phase framework section (Awareness → Metabolic Reset → Sustainable Transformation → Growth)
+- [x] Products appear only as tools within the Method, not the main focus
+- [x] Add "Start Your Transformation" + "Work With Feras" CTAs
+- [x] Create "Start Here" page (/start) with 3-step clear path for new visitors
+- [x] Create "Ask Expert Feras" AI chatbot page with FAQ knowledge base and influence/sales psychology
+- [x] Add legal disclaimer: Method is personal coaching, not medical treatment
+- [x] Submit updated sitemap to Google Search Console
+- [ ] Visual identity update: White + Gold + Deep Navy, Luxury/Premium/Minimal/Elegant style (partially done - hero updated)

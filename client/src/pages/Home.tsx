@@ -243,64 +243,76 @@ function AutoPlayAudio({ lang }: { lang: string }) {
 function HeroSection() {
   const { lang } = useLanguage();
 
-  const content: Record<string, { title: string; subtitle: string[]; cta1: string; cta2: string; cta3: string; cta4: string; cta5: string; cta6: string }> = {
+  const content: Record<string, { title: string; subtitle: string; credentials: string; subtitle_pills: string[]; cta1: string; cta2: string; cta3: string; cta4: string; cta5: string; cta6: string }> = {
     ar: {
-      title: "استثمر في صحتك اليوم… وابنِ تأثيرك ودخلك غداً",
-      subtitle: ["الصحة المستدامة", "بناء الدخل", "تطوير الذات", "العمل من أي مكان", "مجتمع عالمي"],
-      cta1: "ابدأ رحلتك الصحية",
-      cta2: "اكتشف فرصة الشراكة",
+      title: "حوّل صحتك.\nحوّل حياتك.",
+      subtitle: "اكتشف المنهج المُثبت الذي ساعد المئات على تحسين طاقتهم وصحتهم الأيضية وعاداتهم اليومية خلال 90 يوم.",
+      credentials: "أخصائي التغذية السلوكية | مستشار الصحة المستدامة",
+      subtitle_pills: ["مدرج في PDR المرجع الطبي الأمريكي", "50+ دراسة علمية", "نتائج خلال 90 يوم", "ضمان استرداد كامل"],
+      cta1: "ابدأ تحولك الآن",
+      cta2: "اعمل مع فراس",
       cta3: "احجز مكالمة تعريفية",
-      cta4: "الأسئلة الشائعة",
+      cta4: "ابدأ هنا",
       cta5: "المقالات",
       cta6: "الأبحاث العلمية",
     },
     en: {
-      title: "Invest in Your Health Today… Build Your Impact & Income Tomorrow",
-      subtitle: ["Sustainable Health", "Income Building", "Self Development", "Work From Anywhere", "Global Community"],
-      cta1: "Start Your Health Journey",
-      cta2: "Discover Partnership",
+      title: "Transform Your Health.\nTransform Your Life.",
+      subtitle: "Discover the proven system that has helped people improve energy, metabolic health, lifestyle habits, and long-term wellbeing.",
+      credentials: "Behavioral Nutrition Specialist | Sustainable Health Coach",
+      subtitle_pills: ["Listed in PDR (Physicians' Desk Reference)", "50+ Clinical Studies", "Results in 90 Days", "Money-Back Guarantee"],
+      cta1: "Start Your Transformation",
+      cta2: "Work With Feras",
       cta3: "Book a Discovery Call",
-      cta4: "FAQ",
+      cta4: "Start Here",
       cta5: "Articles",
       cta6: "Research",
     },
     fr: {
-      title: "Investissez dans votre santé aujourd'hui… Construisez votre impact et vos revenus demain",
-      subtitle: ["Santé Durable", "Revenus", "Développement Personnel", "Travail à Distance", "Communauté Mondiale"],
-      cta1: "Commencez votre parcours santé",
-      cta2: "Découvrez le partenariat",
+      title: "Transformez votre santé.\nTransformez votre vie.",
+      subtitle: "Découvrez le système éprouvé qui a aidé des centaines de personnes à améliorer leur énergie et leur santé métabolique en 90 jours.",
+      credentials: "Spécialiste en Nutrition Comportementale | Coach Santé Durable",
+      subtitle_pills: ["Référencé dans le PDR américain", "50+ études cliniques", "Résultats en 90 jours", "Garantie satisfait ou remboursé"],
+      cta1: "Commencez votre transformation",
+      cta2: "Travaillez avec Feras",
       cta3: "Réservez un appel",
-      cta4: "FAQ",
+      cta4: "Commencez ici",
       cta5: "Articles",
       cta6: "Recherche",
     },
     es: {
-      title: "Invierte en tu salud hoy… Construye tu impacto e ingresos mañana",
-      subtitle: ["Salud Sostenible", "Ingresos", "Desarrollo Personal", "Trabajo Remoto", "Comunidad Global"],
-      cta1: "Comienza tu viaje de salud",
-      cta2: "Descubre la asociación",
+      title: "Transforma tu salud.\nTransforma tu vida.",
+      subtitle: "Descubre el sistema probado que ha ayudado a cientos a mejorar su energía y salud metabólica en 90 días.",
+      credentials: "Especialista en Nutrición Conductual | Coach de Salud Sostenible",
+      subtitle_pills: ["Listado en el PDR (Referencia Médica)", "50+ estudios clínicos", "Resultados en 90 días", "Garantía de devolución"],
+      cta1: "Comienza tu transformación",
+      cta2: "Trabaja con Feras",
       cta3: "Reserva una llamada",
-      cta4: "Preguntas Frecuentes",
+      cta4: "Empieza aquí",
       cta5: "Artículos",
       cta6: "Investigación",
     },
     de: {
-      title: "Investiere heute in deine Gesundheit… Baue morgen deinen Einfluss und dein Einkommen auf",
-      subtitle: ["Nachhaltige Gesundheit", "Einkommen", "Selbstentwicklung", "Remote-Arbeit", "Globale Gemeinschaft"],
-      cta1: "Starte deine Gesundheitsreise",
-      cta2: "Entdecke die Partnerschaft",
+      title: "Transformiere deine Gesundheit.\nTransformiere dein Leben.",
+      subtitle: "Entdecke das bewährte System, das Hunderten geholfen hat, ihre Energie und metabolische Gesundheit in 90 Tagen zu verbessern.",
+      credentials: "Spezialist für Verhaltensernährung | Nachhaltiger Gesundheitscoach",
+      subtitle_pills: ["Im PDR (Ärzte-Referenz) gelistet", "50+ klinische Studien", "Ergebnisse in 90 Tagen", "Geld-zurück-Garantie"],
+      cta1: "Starte deine Transformation",
+      cta2: "Arbeite mit Feras",
       cta3: "Buche ein Gespräch",
-      cta4: "Häufige Fragen",
+      cta4: "Starte hier",
       cta5: "Artikel",
       cta6: "Forschung",
     },
     tr: {
-      title: "Bugün sağlığınıza yatırım yapın… Yarın etkinizi ve gelirinizi inşa edin",
-      subtitle: ["Sürdürülebilir Sağlık", "Gelir Oluşturma", "Kişisel Gelişim", "Her Yerden Çalışma", "Küresel Topluluk"],
-      cta1: "Sağlık yolculuğunuza başlayın",
-      cta2: "Ortaklığı keşfedin",
+      title: "Sağlığınızı dönüştürün.\nHayatınızı dönüştürün.",
+      subtitle: "Yüzlerce kişinin enerjisini ve metabolik sağlığını 90 günde iyileştirmesine yardımcı olan kanıtlanmış sistemi keşfedin.",
+      credentials: "Davranışsal Beslenme Uzmanı | Sürdürülebilir Sağlık Koçu",
+      subtitle_pills: ["PDR'de (Amerikan Tıp Referansı) listelendi", "50+ klinik çalışma", "90 günde sonuç", "Para iade garantisi"],
+      cta1: "Dönüşümünüze başlayın",
+      cta2: "Feras ile çalışın",
       cta3: "Tanışma görüşmesi ayırtın",
-      cta4: "SSS",
+      cta4: "Buradan başlayın",
       cta5: "Makaleler",
       cta6: "Araştırma",
     },
@@ -332,20 +344,26 @@ function HeroSection() {
 
       <div className="container relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 border border-white/20 text-white/90 text-sm mb-8 animate-fade-in-up backdrop-blur-sm">
+                    {/* Authority Badge */}
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 border border-white/20 text-white/90 text-sm mb-4 animate-fade-in-up backdrop-blur-sm">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Unicity International | Presidential Sapphire</span>
+            <span>Feras Alayed Method™</span>
           </div>
-
+          {/* Credentials */}
+          <p className="text-amber-300/90 text-sm md:text-base mb-6 animate-fade-in-up font-medium tracking-wide">
+            {c.credentials}
+          </p>
           {/* Main Headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 animate-fade-in-up stagger-1 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 animate-fade-in-up stagger-1 leading-tight whitespace-pre-line">
             {c.title}
           </h1>
-
-          {/* Subtitle Pills */}
+          {/* Subtitle Description */}
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8 animate-fade-in-up stagger-2 leading-relaxed">
+            {c.subtitle}
+          </p>
+          {/* Trust Pills */}
           <div className="flex flex-wrap justify-center gap-3 mb-10 animate-fade-in-up stagger-2">
-            {c.subtitle.map((item, i) => (
+            {c.subtitle_pills.map((item, i) => (
               <span key={i} className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/90 text-sm backdrop-blur-sm">
                 {item}
               </span>
@@ -354,13 +372,13 @@ function HeroSection() {
 
           {/* CTAs - Main Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up stagger-3">
-            <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer">
+            <a href="/start">
               <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-6 gradient-gold text-foreground font-bold border-0 hover:opacity-90 w-full sm:w-auto">
                 {c.cta1}
                 <ArrowUp className="w-5 h-5 ms-2 rotate-45" />
               </Button>
             </a>
-            <a href="#partnership">
+            <a href="/partner">
               <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-white/30 text-white hover:bg-white/10 bg-transparent w-full sm:w-auto">
                 {c.cta2}
               </Button>
@@ -371,7 +389,7 @@ function HeroSection() {
                 {c.cta3}
               </Button>
             </a>
-            <a href="/faq">
+            <a href="/start">
               <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-6 border-white/20 text-white/80 hover:bg-white/10 bg-transparent w-full sm:w-auto">
                 {c.cta4}
               </Button>
@@ -524,6 +542,10 @@ function ProductsSection() {
                 <div>
                   <h3 className="text-2xl font-bold">{t("products.balance.title")}</h3>
                   <p className="text-sm text-primary font-medium">Fiber | Metabolism | Wellness</p>
+                  <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-semibold">
+                    <Shield className="w-3 h-3" />
+                    {lang === 'ar' ? 'مدرج في PDR المرجع الطبي الأمريكي' : "Listed in PDR (Physicians' Desk Reference)"}
+                  </span>
                 </div>
               </div>
               <p className="text-muted-foreground mb-6 leading-relaxed">{t("products.balance.desc")}</p>
@@ -1013,7 +1035,7 @@ function TestimonialsSection() {
 
 function RegistrationForm() {
   const { t, lang } = useLanguage();
-  const [formData, setFormData] = useState({ fullName: "", email: "", phone: "", country: "", interestPath: "" as "consumer" | "investor" | "" });
+  const [formData, setFormData] = useState({ fullName: "", phone: "", interestPath: "" as "consumer" | "investor" | "" });
   const [submitted, setSubmitted] = useState(false);
 
   const registerMutation = trpc.leads.register.useMutation({
@@ -1037,9 +1059,10 @@ function RegistrationForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.country) return;
+    if (!formData.fullName || !formData.phone) return;
     registerMutation.mutate({
-      ...formData,
+      fullName: formData.fullName,
+      phone: formData.phone,
       source: `landing-${lang}`,
       interestPath: formData.interestPath || "undecided",
       language: lang,
@@ -1157,21 +1180,8 @@ function RegistrationForm() {
                   <Input value={formData.fullName} onChange={e => setFormData(p => ({ ...p, fullName: e.target.value }))} placeholder={t("form.name")} required className="h-12" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">{t("form.email")}</label>
-                  <Input type="email" value={formData.email} onChange={e => setFormData(p => ({ ...p, email: e.target.value }))} placeholder={t("form.email")} required className="h-12" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">{t("form.phone")}</label>
-                  <Input type="tel" value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))} placeholder={t("form.phone")} required className="h-12" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">{t("form.country")}</label>
-                  <Select value={formData.country} onValueChange={v => setFormData(p => ({ ...p, country: v }))}>
-                    <SelectTrigger className="h-12"><SelectValue placeholder={t("form.country")} /></SelectTrigger>
-                    <SelectContent>
-                      {countries.map(c => (<SelectItem key={c} value={c}>{t(`country.${c}`)}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
+                  <label className="block text-sm font-medium mb-2">{lang === 'ar' ? 'رقم الواتساب' : 'WhatsApp Number'}</label>
+                  <Input type="tel" value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))} placeholder={lang === 'ar' ? '+966 5xx xxx xxxx' : '+1 xxx xxx xxxx'} required className="h-12" />
                 </div>
                 <Button type="submit" size="lg" className="w-full h-12 text-lg font-bold gradient-blue border-0" disabled={registerMutation.isPending}>
                   {registerMutation.isPending ? "..." : t("form.submit")}
@@ -1233,6 +1243,9 @@ function Footer() {
               <a href="https://www.tiktok.com/@feras.alayed" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors" aria-label="TikTok">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.88 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .56.04.82.11V9.4a6.33 6.33 0 00-.82-.05A6.34 6.34 0 003.15 15.7 6.34 6.34 0 009.49 22a6.34 6.34 0 006.34-6.34V9.01a8.24 8.24 0 004.76 1.5v-3.4a4.85 4.85 0 01-1-.42z"/></svg>
               </a>
+              <a href="https://www.facebook.com/share/1Ey17WcWyT/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 hover:bg-blue-500/20 flex items-center justify-center transition-colors" aria-label="Facebook">
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
               <a href="https://wa.me/96877020770" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 hover:bg-green-500/20 flex items-center justify-center transition-colors" aria-label="WhatsApp">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               </a>
@@ -1244,7 +1257,14 @@ function Footer() {
 
         <div className="border-t border-white/10 pt-6 text-center">
           <p className="text-sm mb-2">© 2024 Feel Great. {l.rights}</p>
-          <p className="text-xs">{l.disclaimer}</p>
+          <p className="text-xs mb-3">{l.disclaimer}</p>
+          <div className="flex items-center justify-center gap-4 text-xs">
+            <a href="/privacy" className="hover:text-white transition-colors">{lang === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}</a>
+            <span className="text-white/30">|</span>
+            <a href="/terms" className="hover:text-white transition-colors">{lang === "ar" ? "شروط الاستخدام" : "Terms of Use"}</a>
+            <span className="text-white/30">|</span>
+            <a href="/start" className="hover:text-white transition-colors">{lang === "ar" ? "ابدأ هنا" : "Start Here"}</a>
+          </div>
         </div>
       </div>
     </footer>

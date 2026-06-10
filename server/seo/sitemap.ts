@@ -60,6 +60,14 @@ export function generateStaticSitemap(): string {
     { loc: "/faq", changefreq: "weekly", priority: 0.6 },
     { loc: "/health-assessment", changefreq: "monthly", priority: 0.7 },
     { loc: "/today-in-health-science", changefreq: "daily", priority: 0.8 },
+    { loc: "/start", changefreq: "monthly", priority: 0.8 },
+    { loc: "/ask-expert", changefreq: "monthly", priority: 0.7 },
+    { loc: "/success-stories", changefreq: "weekly", priority: 0.7 },
+    { loc: "/glossary", changefreq: "weekly", priority: 0.6 },
+    { loc: "/calculators", changefreq: "monthly", priority: 0.6 },
+    { loc: "/reviews", changefreq: "weekly", priority: 0.7 },
+    { loc: "/privacy", changefreq: "yearly", priority: 0.3 },
+    { loc: "/terms", changefreq: "yearly", priority: 0.3 },
   ];
 
   return buildSitemapXml(staticPages);

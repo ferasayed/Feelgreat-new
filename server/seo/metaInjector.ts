@@ -72,28 +72,28 @@ function buildLangUrl(lang: SupportedLang, cleanPath: string): string {
 const STATIC_META_BY_LANG: Record<string, Record<SupportedLang, { title: string; description: string }>> = {
   "/": {
     ar: {
-      title: "Feel Great - استثمر في صحتك وابنِ مستقبلك | فراس العايد",
-      description: "نظام صحي متكامل مدعوم بالدراسات العلمية. برنامج Feel Great من يونيسيتي يجمع بين Unimate و Balance لصحة مستدامة.",
+      title: "فيل جريت Feel Great | نظام صحي أيضي متكامل - اكسر مقاومة الإنسولين | فراس العايد",
+      description: "استعد طاقتك واكسر مقاومة الإنسولين خلال 90 يوم مع برنامج Feel Great من يونيسيتي. منتج بالانس مدرج في PDR المرجع الطبي الأمريكي. نظام Unimate + Balance مدعوم بأكثر من 50 دراسة علمية.",
     },
     en: {
-      title: "Feel Great - Invest in Your Health, Build Your Future | Feras Alayed",
-      description: "A comprehensive science-backed health system. The Feel Great program by Unicity combines Unimate and Balance for sustainable health.",
+      title: "Feel Great | Break Insulin Resistance in 90 Days - Science-Backed Metabolic Health | Feras Alayed",
+      description: "Restore your energy and break insulin resistance in 90 days with the Feel Great system by Unicity. Balance is listed in the PDR (Physicians' Desk Reference). Backed by 50+ clinical studies.",
     },
     fr: {
-      title: "Feel Great - Investissez dans votre santé | Feras Alayed",
-      description: "Un système de santé complet soutenu par la science. Le programme Feel Great de Unicity combine Unimate et Balance pour une santé durable.",
+      title: "Feel Great | Brisez la résistance à l'insuline en 90 jours - Santé métabolique | Feras Alayed",
+      description: "Retrouvez votre énergie et brisez la résistance à l'insuline en 90 jours avec le système Feel Great de Unicity. Balance est répertorié dans le PDR. Soutenu par plus de 50 études cliniques.",
     },
     es: {
-      title: "Feel Great - Invierte en tu salud | Feras Alayed",
-      description: "Un sistema de salud integral respaldado por la ciencia. El programa Feel Great de Unicity combina Unimate y Balance para una salud sostenible.",
+      title: "Feel Great | Rompe la resistencia a la insulina en 90 días - Salud metabólica | Feras Alayed",
+      description: "Recupera tu energía y rompe la resistencia a la insulina en 90 días con el sistema Feel Great de Unicity. Balance está listado en el PDR. Respaldado por más de 50 estudios clínicos.",
     },
     de: {
-      title: "Feel Great - Investieren Sie in Ihre Gesundheit | Feras Alayed",
-      description: "Ein umfassendes wissenschaftlich fundiertes Gesundheitssystem. Das Feel Great Programm von Unicity kombiniert Unimate und Balance für nachhaltige Gesundheit.",
+      title: "Feel Great | Insulinresistenz in 90 Tagen durchbrechen - Stoffwechselgesundheit | Feras Alayed",
+      description: "Stellen Sie Ihre Energie wieder her und durchbrechen Sie die Insulinresistenz in 90 Tagen mit dem Feel Great System von Unicity. Balance ist im PDR gelistet. Unterstützt durch 50+ klinische Studien.",
     },
     tr: {
-      title: "Feel Great - Sağlığınıza Yatırım Yapın | Feras Alayed",
-      description: "Bilimsel olarak desteklenen kapsamlı bir sağlık sistemi. Unicity'nin Feel Great programı sürdürülebilir sağlık için Unimate ve Balance'ı birleştirir.",
+      title: "Feel Great | 90 Günde İnsülin Direncini Kırın - Metabolik Sağlık | Feras Alayed",
+      description: "Enerjinizi geri kazanın ve 90 günde insülin direncini kırın. Unicity'nin Feel Great sistemi ile. Balance, PDR'de (Amerikan Tıp Referansı) listelenmiştir. 50'den fazla klinik çalışma ile desteklenmektedir.",
     },
   },
   "/blog": {
@@ -406,6 +406,110 @@ const STATIC_META_BY_LANG: Record<string, Record<SupportedLang, { title: string;
     tr: {
       title: "Feras Alayed | Bilgi Merkezi",
       description: "Sürdürülebilir sağlık, davranışsal beslenme, liderlik gelişimi ve insan potansiyeline adanmış küresel düşünür ve eğitmen.",
+    },
+  },
+  "/start": {
+    ar: {
+      title: "ابدأ هنا - منهج فراس العايد للتحول الصحي | Feel Great",
+      description: "مسار واضح من 3 خطوات لبدء رحلتك الصحية مع منهج فراس العايد™ للتحول المستدام خلال 90 يوم.",
+    },
+    en: {
+      title: "Start Here - Feras Alayed Method™ | Feel Great",
+      description: "A clear 3-step path to begin your health transformation with the Feras Alayed Method™ 90-day sustainable program.",
+    },
+    fr: {
+      title: "Commencez Ici - Méthode Feras Alayed™ | Feel Great",
+      description: "Un parcours clair en 3 étapes pour commencer votre transformation santé avec la Méthode Feras Alayed™.",
+    },
+    es: {
+      title: "Empieza Aquí - Método Feras Alayed™ | Feel Great",
+      description: "Un camino claro de 3 pasos para comenzar tu transformación de salud con el Método Feras Alayed™.",
+    },
+    de: {
+      title: "Starten Sie Hier - Feras Alayed Methode™ | Feel Great",
+      description: "Ein klarer 3-Schritte-Weg, um Ihre Gesundheitstransformation mit der Feras Alayed Methode™ zu beginnen.",
+    },
+    tr: {
+      title: "Buradan Başlayın - Feras Alayed Metodu™ | Feel Great",
+      description: "Feras Alayed Metodu™ ile sağlık dönüşümünüze başlamak için net 3 adımlık bir yol.",
+    },
+  },
+  "/ask-expert": {
+    ar: {
+      title: "اسأل الخبير فراس العايد | Feel Great",
+      description: "اسأل فراس العايد مباشرة عن الصحة المستدامة، مقاومة الإنسولين، الصيام المتقطع، ومنتجات Feel Great. إجابات فورية مبنية على العلم.",
+    },
+    en: {
+      title: "Ask Expert Feras Alayed | Feel Great",
+      description: "Ask Feras Alayed directly about sustainable health, insulin resistance, intermittent fasting, and Feel Great products. Instant science-based answers.",
+    },
+    fr: {
+      title: "Demandez à l'Expert Feras Alayed | Feel Great",
+      description: "Posez vos questions à Feras Alayed sur la santé durable, la résistance à l'insuline et les produits Feel Great.",
+    },
+    es: {
+      title: "Pregunta al Experto Feras Alayed | Feel Great",
+      description: "Pregunta a Feras Alayed sobre salud sostenible, resistencia a la insulina y productos Feel Great.",
+    },
+    de: {
+      title: "Fragen Sie Experte Feras Alayed | Feel Great",
+      description: "Fragen Sie Feras Alayed zu nachhaltiger Gesundheit, Insulinresistenz und Feel Great Produkten.",
+    },
+    tr: {
+      title: "Uzman Feras Alayed'e Sorun | Feel Great",
+      description: "Feras Alayed'e sürdürülebilir sağlık, insülin direnci ve Feel Great ürünleri hakkında sorun.",
+    },
+  },
+  "/privacy": {
+    ar: {
+      title: "سياسة الخصوصية | Feel Great",
+      description: "سياسة الخصوصية لموقع Feel Great. كيف نجمع ونستخدم ونحمي بياناتك الشخصية.",
+    },
+    en: {
+      title: "Privacy Policy | Feel Great",
+      description: "Privacy Policy for Feel Great website. How we collect, use, and protect your personal data.",
+    },
+    fr: {
+      title: "Politique de Confidentialité | Feel Great",
+      description: "Politique de confidentialité du site Feel Great. Comment nous collectons et protégeons vos données.",
+    },
+    es: {
+      title: "Política de Privacidad | Feel Great",
+      description: "Política de privacidad del sitio Feel Great. Cómo recopilamos y protegemos sus datos.",
+    },
+    de: {
+      title: "Datenschutzrichtlinie | Feel Great",
+      description: "Datenschutzrichtlinie der Feel Great Website. Wie wir Ihre Daten sammeln und schützen.",
+    },
+    tr: {
+      title: "Gizlilik Politikası | Feel Great",
+      description: "Feel Great web sitesi gizlilik politikası. Verilerinizi nasıl topladığımız ve koruduğumuz.",
+    },
+  },
+  "/terms": {
+    ar: {
+      title: "شروط الاستخدام | Feel Great",
+      description: "شروط وأحكام استخدام موقع Feel Great والخدمات المقدمة.",
+    },
+    en: {
+      title: "Terms of Use | Feel Great",
+      description: "Terms and conditions for using the Feel Great website and services.",
+    },
+    fr: {
+      title: "Conditions d'Utilisation | Feel Great",
+      description: "Conditions d'utilisation du site Feel Great et des services proposés.",
+    },
+    es: {
+      title: "Términos de Uso | Feel Great",
+      description: "Términos y condiciones de uso del sitio Feel Great y servicios ofrecidos.",
+    },
+    de: {
+      title: "Nutzungsbedingungen | Feel Great",
+      description: "Nutzungsbedingungen der Feel Great Website und angebotenen Dienste.",
+    },
+    tr: {
+      title: "Kullanım Koşulları | Feel Great",
+      description: "Feel Great web sitesi ve sunulan hizmetlerin kullanım koşulları.",
     },
   },
 };

@@ -196,7 +196,38 @@ When someone asks about a specific condition, share relevant success details and
 - When ready to join, provide: https://ufeelgreat.com/c/GBP556
 - Emphasize: free membership, no risk (60-day guarantee for customers), opportunity to build a business
 - For health questions, recommend consulting a doctor while highlighting product safety
-- When discussing business: mention it requires work, dedication, and time - but the support system and tools make it achievable`;
+- When discussing business: mention it requires work, dedication, and time - but the support system and tools make it achievable
+=== FERAS ALAYED METHOD™ (Brand Positioning) ===
+- You represent Feras Al-Ayed, a behavioral nutrition specialist and sustainable health coach
+- The Feras Alayed Method™ is a 90-Day Sustainable Health Transformation program
+- It consists of 4 phases: 1) Awareness (health assessment, lifestyle evaluation), 2) Metabolic Reset (nutrition strategy, intermittent fasting, Feel Great integration), 3) Sustainable Transformation (habit building, accountability), 4) Growth & Empowerment (leadership, personal development)
+- The method is NOT a medical treatment - it's a personal coaching program in behavioral nutrition and lifestyle change
+- Products (Feel Great) are supportive TOOLS within the method, not the method itself
+- Balance is listed in PDR (Physicians' Desk Reference) - the American medical reference used by doctors
+- Always position Feras as the expert guide, not just a product seller
+=== INFLUENCE & SALES PSYCHOLOGY (from Feras's training) ===
+- Use the "Feel-Felt-Found" technique: "I understand how you feel. Others have felt the same way. What they found was..."
+- Mirror the prospect's language and concerns before offering solutions
+- Ask questions that lead to self-discovery: "What would change in your life if you had more energy?"
+- Use social proof: "Hundreds of people in the Gulf region have transformed their health with this method"
+- Create urgency without pressure: "Your body is dealing with this every day - the sooner you start, the sooner you'll feel the difference"
+- Handle price objection: "Think of it as an investment in yourself. How much do you spend on coffee/fast food monthly?"
+- The 3-step close: 1) Summarize their problem, 2) Show how the method solves it, 3) Ask "Shall I send you the steps to get started?"
+- For hesitant prospects: Offer the free discovery call with Feras as a low-commitment next step
+- Always end with a clear CTA: WhatsApp message, registration link, or booking a call
+- Key WhatsApp: +968 7702 0770
+=== COMMON OBJECTIONS (Arabic-focused) ===
+- "هذا شبكة/هرمي" (pyramid/network): "يونيسيتي شركة عالمية عمرها 30+ سنة، منتجاتها معتمدة علمياً ومسجلة بالمرجع الطبي PDR. الفرق بين الشبكة المشروعة والهرمية: منتج حقيقي + ضمان استرداد + لا إجبار على الشراء"
+- "غالي" (expensive): "كم تصرف شهرياً على القهوة والمشروبات؟ البرنامج أقل من ذلك والنتيجة صحة أفضل. وفيه ضمان 60 يوم استرداد كامل"
+- "ما عندي وقت" (no time): "البرنامج بسيط: يوني ميت الصباح + بالانس قبل الوجبتين. دقيقتين باليوم فقط"
+- "جربت كل شي" (tried everything): "هذا مختلف لأنه يعالج السبب (مقاومة الإنسولين) مش الأعراض. وفيه ضمان - إذا ما نفع ترجع فلوسك"
+- "أبي أسأل الدكتور" (need to ask doctor): "ممتاز! المنتج مسجل بالمرجع الطبي الأمريكي PDR. أرسل لك المعلومات العلمية تعطيها للدكتور"
+=== EXPERT PERSONA ===
+- You are representing Feras Al-Ayed, a certified behavioral nutrition specialist from Oman
+- Credentials: Presidential Sapphire with Unicity International, 33K+ Instagram followers (@use2lose), TikTok (@feras.alayed)
+- Speaking style: Warm, confident, knowledgeable. Mix Arabic colloquial with formal when speaking Arabic
+- Always sign off with encouragement and a clear next step
+- Website: https://feelgreat.us.com | WhatsApp: +968 7702 0770`;
 
 const FALLBACK_MESSAGES: Record<string, string> = {
   ar: "عذراً، حدث خطأ تقني. يرجى المحاولة مرة أخرى أو التواصل معنا مباشرة عبر الرابط: https://ufeelgreat.com/c/GBP556",
@@ -223,9 +254,9 @@ export const appRouter = router({
     register: publicProcedure
       .input(z.object({
         fullName: z.string().min(2),
-        email: z.string().email(),
+        email: z.string().email().optional(),
         phone: z.string().min(5),
-        country: z.string().min(2),
+        country: z.string().min(2).optional(),
         source: z.string().optional(),
         interestPath: z.enum(["consumer", "investor", "undecided"]).optional(),
         language: z.string().optional(),
@@ -233,9 +264,9 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const lead = await createLead({
           fullName: input.fullName,
-          email: input.email,
+          email: input.email ?? "",
           phone: input.phone,
-          country: input.country,
+          country: input.country ?? "",
           source: input.source ?? "form",
           interestPath: input.interestPath ?? "undecided",
           language: input.language ?? "ar",
@@ -249,15 +280,17 @@ export const appRouter = router({
         }
 
         // Send welcome email (best-effort, don't block the response)
-        import("./welcomeSequence").then(({ sendWelcomeEmail }) => {
-          sendWelcomeEmail({
-            fullName: input.fullName,
-            email: input.email,
-            country: input.country,
-            language: input.language ?? "ar",
-            path: input.interestPath ?? "undecided",
-          }).catch(e => console.error("[WelcomeEmail] Failed:", e));
-        }).catch(e => console.error("[WelcomeEmail] Import failed:", e));
+        if (input.email) {
+          import("./welcomeSequence").then(({ sendWelcomeEmail }) => {
+            sendWelcomeEmail({
+              fullName: input.fullName,
+              email: input.email!,
+              country: input.country ?? "",
+              language: input.language ?? "ar",
+              path: input.interestPath ?? "undecided",
+            }).catch(e => console.error("[WelcomeEmail] Failed:", e));
+          }).catch(e => console.error("[WelcomeEmail] Import failed:", e));
+        }
 
         // Notify owner (best-effort, don't block the response)
         const pathLabel = input.interestPath === "investor" ? "مستثمر/Investor" : input.interestPath === "consumer" ? "مستهلك/Consumer" : "غير محدد/Undecided";
