@@ -37,10 +37,33 @@ describe("SEO Meta Injector", () => {
       expect(meta!.ogType).toBe("profile");
     });
 
-    it("should strip language prefix before resolving", async () => {
+    it("should resolve Arabic meta for /ar/blog", async () => {
       const meta = await resolveMetaForPath("/ar/blog");
       expect(meta).not.toBeNull();
-      expect(meta!.title).toContain("Blog");
+      expect(meta!.title).toContain("مقالات صحية");
+      expect(meta!.lang).toBe("ar");
+      expect(meta!.dir).toBe("rtl");
+      expect(meta!.hreflangPath).toBe("/blog");
+    });
+
+    it("should resolve French meta for /fr/blog", async () => {
+      const meta = await resolveMetaForPath("/fr/blog");
+      expect(meta).not.toBeNull();
+      expect(meta!.title).toContain("Blog Santé");
+      expect(meta!.lang).toBe("fr");
+      expect(meta!.dir).toBe("ltr");
+    });
+
+    it("should include hreflangPath for static pages", async () => {
+      const meta = await resolveMetaForPath("/faq");
+      expect(meta).not.toBeNull();
+      expect(meta!.hreflangPath).toBe("/faq");
+    });
+
+    it("should set canonical URL with language prefix for non-English", async () => {
+      const meta = await resolveMetaForPath("/es/research");
+      expect(meta).not.toBeNull();
+      expect(meta!.canonicalUrl).toBe("https://feelgreat.us.com/es/research");
     });
 
     it("should strip trailing slash before resolving", async () => {
@@ -123,6 +146,37 @@ describe("SEO Meta Injector", () => {
         canonicalUrl: "https://feelgreat.us.com/blog/test",
       });
       expect(result).toContain('rel="canonical" href="https://feelgreat.us.com/blog/test"');
+    });
+
+    it("should inject hreflang tags when hreflangPath is provided", () => {
+      const result = injectMetaIntoHtml(baseHtml, {
+        title: "Test",
+        description: "Desc",
+        hreflangPath: "/blog",
+      });
+      expect(result).toContain('hreflang="ar" href="https://feelgreat.us.com/ar/blog"');
+      expect(result).toContain('hreflang="en" href="https://feelgreat.us.com/blog"');
+      expect(result).toContain('hreflang="fr" href="https://feelgreat.us.com/fr/blog"');
+      expect(result).toContain('hreflang="x-default" href="https://feelgreat.us.com/blog"');
+    });
+
+    it("should update html lang and dir attributes for Arabic", () => {
+      const result = injectMetaIntoHtml(baseHtml, {
+        title: "Test",
+        description: "Desc",
+        lang: "ar",
+        dir: "rtl",
+      });
+      expect(result).toContain('<html lang="ar" dir="rtl">');
+    });
+
+    it("should inject og:locale for the detected language", () => {
+      const result = injectMetaIntoHtml(baseHtml, {
+        title: "Test",
+        description: "Desc",
+        lang: "fr",
+      });
+      expect(result).toContain('og:locale" content="fr_FR"');
     });
 
     it("should inject JSON-LD structured data", () => {

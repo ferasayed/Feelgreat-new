@@ -1,10 +1,12 @@
 /**
- * Server-Side SEO Meta Tags Injector
+ * Server-Side SEO Meta Tags Injector (Language-Aware)
  * 
  * Intercepts HTML responses and injects dynamic meta tags based on the requested URL.
- * This enables search engines to see proper title, description, Open Graph, and JSON-LD
- * without requiring full SSR - the page still hydrates client-side but crawlers get
- * complete meta information from the initial HTML response.
+ * Detects the visitor's language from the URL prefix (ar/en/fr/es/de/tr) and serves
+ * meta tags, OG tags, and JSON-LD in the correct language.
+ * 
+ * Also injects hreflang link tags for all supported languages to help search engines
+ * understand the multilingual structure of the site.
  */
 import { Request, Response, NextFunction } from "express";
 import { getArticleBySlug } from "../db";
@@ -15,6 +17,9 @@ const SITE_NAME = "Feel Great";
 const DEFAULT_IMAGE = "/manus-storage/feel-great-complete_44bb8752.png";
 const AUTHOR_NAME = "Feras Alayed";
 const AUTHOR_NAME_AR = "فراس العايد";
+
+type SupportedLang = "ar" | "en" | "fr" | "es" | "de" | "tr";
+const SUPPORTED_LANGS: SupportedLang[] = ["ar", "en", "fr", "es", "de", "tr"];
 
 interface MetaData {
   title: string;
@@ -35,94 +40,377 @@ interface MetaData {
   jsonLd?: object;
   lang?: string;
   dir?: string;
+  hreflangPath?: string; // The clean path (without lang prefix) used to build hreflang links
 }
 
-// Static page meta data
-const STATIC_META: Record<string, MetaData> = {
+/**
+ * Extract language from URL path prefix.
+ * Returns the detected language and the path without the language prefix.
+ */
+function extractLangFromPath(path: string): { lang: SupportedLang; cleanPath: string } {
+  const match = path.match(/^\/(ar|en|fr|es|de|tr)(\/|$)/);
+  if (match) {
+    const lang = match[1] as SupportedLang;
+    const cleanPath = path.replace(/^\/(ar|en|fr|es|de|tr)(\/|$)/, "/").replace(/\/$/, "") || "/";
+    return { lang, cleanPath };
+  }
+  // No prefix = English (default)
+  const cleanPath = path.replace(/\/$/, "") || "/";
+  return { lang: "en", cleanPath };
+}
+
+/**
+ * Build the full URL for a given language and path.
+ * English uses root path, other languages use prefix.
+ */
+function buildLangUrl(lang: SupportedLang, cleanPath: string): string {
+  if (lang === "en") return `${BASE_URL}${cleanPath}`;
+  return `${BASE_URL}/${lang}${cleanPath === "/" ? "" : cleanPath}`;
+}
+
+// Static page meta data - language-aware
+const STATIC_META_BY_LANG: Record<string, Record<SupportedLang, { title: string; description: string }>> = {
   "/": {
-    title: "Feel Great - استثمر في صحتك وابنِ مستقبلك | Feras Alayed",
-    description: "نظام صحي متكامل مدعوم بالدراسات العلمية. برنامج Feel Great من يونيسيتي يجمع بين Unimate و Balance لصحة مستدامة.",
-    ogType: "website",
+    ar: {
+      title: "Feel Great - استثمر في صحتك وابنِ مستقبلك | فراس العايد",
+      description: "نظام صحي متكامل مدعوم بالدراسات العلمية. برنامج Feel Great من يونيسيتي يجمع بين Unimate و Balance لصحة مستدامة.",
+    },
+    en: {
+      title: "Feel Great - Invest in Your Health, Build Your Future | Feras Alayed",
+      description: "A comprehensive science-backed health system. The Feel Great program by Unicity combines Unimate and Balance for sustainable health.",
+    },
+    fr: {
+      title: "Feel Great - Investissez dans votre santé | Feras Alayed",
+      description: "Un système de santé complet soutenu par la science. Le programme Feel Great de Unicity combine Unimate et Balance pour une santé durable.",
+    },
+    es: {
+      title: "Feel Great - Invierte en tu salud | Feras Alayed",
+      description: "Un sistema de salud integral respaldado por la ciencia. El programa Feel Great de Unicity combina Unimate y Balance para una salud sostenible.",
+    },
+    de: {
+      title: "Feel Great - Investieren Sie in Ihre Gesundheit | Feras Alayed",
+      description: "Ein umfassendes wissenschaftlich fundiertes Gesundheitssystem. Das Feel Great Programm von Unicity kombiniert Unimate und Balance für nachhaltige Gesundheit.",
+    },
+    tr: {
+      title: "Feel Great - Sağlığınıza Yatırım Yapın | Feras Alayed",
+      description: "Bilimsel olarak desteklenen kapsamlı bir sağlık sistemi. Unicity'nin Feel Great programı sürdürülebilir sağlık için Unimate ve Balance'ı birleştirir.",
+    },
   },
   "/blog": {
-    title: "Health Blog - مقالات صحية علمية | Feel Great",
-    description: "مقالات صحية موثوقة مبنية على أحدث الدراسات العلمية. مقاومة الإنسولين، صحة الأمعاء، إدارة الوزن، التغذية السلوكية.",
-    ogType: "website",
+    ar: {
+      title: "مقالات صحية علمية | Feel Great",
+      description: "مقالات صحية موثوقة مبنية على أحدث الدراسات العلمية. مقاومة الإنسولين، صحة الأمعاء، إدارة الوزن، التغذية السلوكية.",
+    },
+    en: {
+      title: "Health Blog - Evidence-Based Articles | Feel Great",
+      description: "Trusted health articles based on the latest scientific studies. Insulin resistance, gut health, weight management, behavioral nutrition.",
+    },
+    fr: {
+      title: "Blog Santé - Articles basés sur la science | Feel Great",
+      description: "Articles de santé fiables basés sur les dernières études scientifiques. Résistance à l'insuline, santé intestinale, gestion du poids.",
+    },
+    es: {
+      title: "Blog de Salud - Artículos científicos | Feel Great",
+      description: "Artículos de salud confiables basados en los últimos estudios científicos. Resistencia a la insulina, salud intestinal, control de peso.",
+    },
+    de: {
+      title: "Gesundheitsblog - Wissenschaftliche Artikel | Feel Great",
+      description: "Vertrauenswürdige Gesundheitsartikel basierend auf neuesten wissenschaftlichen Studien. Insulinresistenz, Darmgesundheit, Gewichtsmanagement.",
+    },
+    tr: {
+      title: "Sağlık Blogu - Bilimsel Makaleler | Feel Great",
+      description: "En son bilimsel çalışmalara dayanan güvenilir sağlık makaleleri. İnsülin direnci, bağırsak sağlığı, kilo yönetimi.",
+    },
   },
   "/research": {
-    title: "Scientific Research Hub - مركز الأبحاث العلمية | Feel Great",
-    description: "أحدث الدراسات العلمية من PubMed و Nature و JAMA ملخصة ومبسطة. اكتشف العلم وراء الصحة المستدامة.",
-    ogType: "website",
-  },
-  "/today-in-health-science": {
-    title: "Today In Health Science - اليوم في علم الصحة | Feel Great",
-    description: "أحدث الاكتشافات العلمية من أفضل الجامعات والمجلات الطبية العالمية، ملخصة ومبسطة يومياً.",
-    ogType: "website",
-  },
-  "/about": {
-    title: "About Feras Alayed - عن فراس العايد | Feel Great",
-    description: "فراس العايد - أخصائي التغذية العلاجية والسلوكية. مدرب عالمي في الصحة المستدامة وريادة الأعمال الصحية.",
-    ogType: "profile",
+    ar: {
+      title: "مركز الأبحاث العلمية | Feel Great",
+      description: "أحدث الدراسات العلمية من PubMed و Nature و JAMA ملخصة ومبسطة. اكتشف العلم وراء الصحة المستدامة.",
+    },
+    en: {
+      title: "Scientific Research Hub | Feel Great",
+      description: "Latest scientific studies from PubMed, Nature, and JAMA summarized and simplified. Discover the science behind sustainable health.",
+    },
+    fr: {
+      title: "Centre de Recherche Scientifique | Feel Great",
+      description: "Les dernières études scientifiques de PubMed, Nature et JAMA résumées et simplifiées.",
+    },
+    es: {
+      title: "Centro de Investigación Científica | Feel Great",
+      description: "Los últimos estudios científicos de PubMed, Nature y JAMA resumidos y simplificados.",
+    },
+    de: {
+      title: "Wissenschaftliches Forschungszentrum | Feel Great",
+      description: "Neueste wissenschaftliche Studien aus PubMed, Nature und JAMA zusammengefasst und vereinfacht.",
+    },
+    tr: {
+      title: "Bilimsel Araştırma Merkezi | Feel Great",
+      description: "PubMed, Nature ve JAMA'dan en son bilimsel çalışmalar özetlenmiş ve basitleştirilmiş.",
+    },
   },
   "/partner": {
-    title: "Partner With Us - انضم كشريك | Feel Great",
-    description: "اكتشف فرصة الشراكة مع Feel Great. ابنِ دخلاً إضافياً وأنت تساعد الآخرين على تحسين صحتهم.",
-    ogType: "website",
+    ar: {
+      title: "انضم كشريك | Feel Great",
+      description: "اكتشف فرصة الشراكة مع Feel Great. ابنِ دخلاً إضافياً وأنت تساعد الآخرين على تحسين صحتهم.",
+    },
+    en: {
+      title: "Partner With Us | Feel Great",
+      description: "Discover the partnership opportunity with Feel Great. Build additional income while helping others improve their health.",
+    },
+    fr: {
+      title: "Devenez Partenaire | Feel Great",
+      description: "Découvrez l'opportunité de partenariat avec Feel Great. Construisez un revenu supplémentaire en aidant les autres.",
+    },
+    es: {
+      title: "Únete como Socio | Feel Great",
+      description: "Descubre la oportunidad de asociación con Feel Great. Genera ingresos adicionales mientras ayudas a otros.",
+    },
+    de: {
+      title: "Partner werden | Feel Great",
+      description: "Entdecken Sie die Partnerschaftsmöglichkeit mit Feel Great. Bauen Sie zusätzliches Einkommen auf.",
+    },
+    tr: {
+      title: "Ortak Olun | Feel Great",
+      description: "Feel Great ile ortaklık fırsatını keşfedin. Başkalarına yardım ederken ek gelir elde edin.",
+    },
   },
   "/faq": {
-    title: "FAQ - الأسئلة الشائعة | Feel Great",
-    description: "إجابات على أكثر الأسئلة شيوعاً حول برنامج Feel Great ومنتجات Unimate و Balance.",
-    ogType: "website",
+    ar: {
+      title: "الأسئلة الشائعة | Feel Great",
+      description: "إجابات على أكثر الأسئلة شيوعاً حول برنامج Feel Great ومنتجات Unimate و Balance.",
+    },
+    en: {
+      title: "FAQ - Frequently Asked Questions | Feel Great",
+      description: "Answers to the most common questions about the Feel Great program and Unimate & Balance products.",
+    },
+    fr: {
+      title: "FAQ - Questions Fréquentes | Feel Great",
+      description: "Réponses aux questions les plus courantes sur le programme Feel Great et les produits Unimate et Balance.",
+    },
+    es: {
+      title: "Preguntas Frecuentes | Feel Great",
+      description: "Respuestas a las preguntas más comunes sobre el programa Feel Great y los productos Unimate y Balance.",
+    },
+    de: {
+      title: "Häufig gestellte Fragen | Feel Great",
+      description: "Antworten auf die häufigsten Fragen zum Feel Great Programm und den Produkten Unimate und Balance.",
+    },
+    tr: {
+      title: "Sıkça Sorulan Sorular | Feel Great",
+      description: "Feel Great programı ve Unimate & Balance ürünleri hakkında en sık sorulan sorulara yanıtlar.",
+    },
   },
-  "/health-assessment": {
-    title: "Health Assessment - تقييم صحتك | Feel Great",
-    description: "اكتشف مستوى صحتك مع تقييمنا المجاني. احصل على توصيات مخصصة بناءً على حالتك الصحية.",
-    ogType: "website",
+  "/about": {
+    ar: {
+      title: "عن فراس العايد | Feel Great",
+      description: "فراس العايد - أخصائي التغذية العلاجية والسلوكية. مدرب عالمي في الصحة المستدامة وريادة الأعمال الصحية.",
+    },
+    en: {
+      title: "About Feras Alayed | Feel Great",
+      description: "Feras Alayed - Therapeutic & Behavioral Nutrition Specialist. Global trainer in sustainable health and health entrepreneurship.",
+    },
+    fr: {
+      title: "À propos de Feras Alayed | Feel Great",
+      description: "Feras Alayed - Spécialiste en nutrition thérapeutique et comportementale. Formateur mondial en santé durable.",
+    },
+    es: {
+      title: "Sobre Feras Alayed | Feel Great",
+      description: "Feras Alayed - Especialista en nutrición terapéutica y conductual. Entrenador global en salud sostenible.",
+    },
+    de: {
+      title: "Über Feras Alayed | Feel Great",
+      description: "Feras Alayed - Spezialist für therapeutische und verhaltensbasierte Ernährung. Globaler Trainer für nachhaltige Gesundheit.",
+    },
+    tr: {
+      title: "Feras Alayed Hakkında | Feel Great",
+      description: "Feras Alayed - Terapötik ve Davranışsal Beslenme Uzmanı. Sürdürülebilir sağlık alanında küresel eğitmen.",
+    },
   },
   "/success-stories": {
-    title: "Success Stories - قصص النجاح | Feel Great",
-    description: "قصص حقيقية لأشخاص غيّروا حياتهم مع برنامج Feel Great. تحولات صحية ملهمة.",
-    ogType: "website",
+    ar: {
+      title: "قصص النجاح | Feel Great",
+      description: "قصص حقيقية لأشخاص غيّروا حياتهم مع برنامج Feel Great. تحولات صحية ملهمة.",
+    },
+    en: {
+      title: "Success Stories | Feel Great",
+      description: "Real stories of people who transformed their lives with the Feel Great program. Inspiring health transformations.",
+    },
+    fr: {
+      title: "Histoires de Réussite | Feel Great",
+      description: "Histoires réelles de personnes qui ont transformé leur vie avec le programme Feel Great.",
+    },
+    es: {
+      title: "Historias de Éxito | Feel Great",
+      description: "Historias reales de personas que transformaron sus vidas con el programa Feel Great.",
+    },
+    de: {
+      title: "Erfolgsgeschichten | Feel Great",
+      description: "Echte Geschichten von Menschen, die ihr Leben mit dem Feel Great Programm verändert haben.",
+    },
+    tr: {
+      title: "Başarı Hikayeleri | Feel Great",
+      description: "Feel Great programı ile hayatlarını değiştiren insanların gerçek hikayeleri.",
+    },
+  },
+  "/health-assessment": {
+    ar: {
+      title: "تقييم صحتك | Feel Great",
+      description: "اكتشف مستوى صحتك مع تقييمنا المجاني. احصل على توصيات مخصصة بناءً على حالتك الصحية.",
+    },
+    en: {
+      title: "Health Assessment | Feel Great",
+      description: "Discover your health level with our free assessment. Get personalized recommendations based on your health status.",
+    },
+    fr: {
+      title: "Évaluation de Santé | Feel Great",
+      description: "Découvrez votre niveau de santé avec notre évaluation gratuite. Obtenez des recommandations personnalisées.",
+    },
+    es: {
+      title: "Evaluación de Salud | Feel Great",
+      description: "Descubre tu nivel de salud con nuestra evaluación gratuita. Obtén recomendaciones personalizadas.",
+    },
+    de: {
+      title: "Gesundheitsbewertung | Feel Great",
+      description: "Entdecken Sie Ihr Gesundheitsniveau mit unserer kostenlosen Bewertung. Erhalten Sie personalisierte Empfehlungen.",
+    },
+    tr: {
+      title: "Sağlık Değerlendirmesi | Feel Great",
+      description: "Ücretsiz değerlendirmemizle sağlık seviyenizi keşfedin. Kişiselleştirilmiş öneriler alın.",
+    },
+  },
+  "/today-in-health-science": {
+    ar: {
+      title: "اليوم في علم الصحة | Feel Great",
+      description: "أحدث الاكتشافات العلمية من أفضل الجامعات والمجلات الطبية العالمية، ملخصة ومبسطة يومياً.",
+    },
+    en: {
+      title: "Today In Health Science | Feel Great",
+      description: "Latest scientific discoveries from top universities and medical journals, summarized and simplified daily.",
+    },
+    fr: {
+      title: "Aujourd'hui en Science de la Santé | Feel Great",
+      description: "Les dernières découvertes scientifiques des meilleures universités et revues médicales, résumées quotidiennement.",
+    },
+    es: {
+      title: "Hoy en Ciencia de la Salud | Feel Great",
+      description: "Los últimos descubrimientos científicos de las mejores universidades y revistas médicas, resumidos diariamente.",
+    },
+    de: {
+      title: "Heute in der Gesundheitswissenschaft | Feel Great",
+      description: "Neueste wissenschaftliche Entdeckungen von Top-Universitäten und medizinischen Fachzeitschriften, täglich zusammengefasst.",
+    },
+    tr: {
+      title: "Bugün Sağlık Biliminde | Feel Great",
+      description: "En iyi üniversitelerden ve tıp dergilerinden en son bilimsel keşifler, günlük olarak özetlenmiş.",
+    },
   },
   "/reviews": {
-    title: "Reviews - تقييمات العملاء | Feel Great",
-    description: "تقييمات وآراء حقيقية من مستخدمي برنامج Feel Great حول تجربتهم مع المنتجات.",
-    ogType: "website",
-  },
-  "/author/feras-alayed": {
-    title: "Feras Alayed - Therapeutic & Behavioral Nutrition Specialist",
-    description: "فراس العايد - أخصائي التغذية العلاجية والسلوكية، Presidential Sapphire في يونيسيتي. خبير في مقاومة الإنسولين والصحة الأيضية.",
-    ogType: "profile",
+    ar: {
+      title: "تقييمات العملاء | Feel Great",
+      description: "تقييمات وآراء حقيقية من مستخدمي برنامج Feel Great حول تجربتهم مع المنتجات.",
+    },
+    en: {
+      title: "Customer Reviews | Feel Great",
+      description: "Real reviews and opinions from Feel Great program users about their experience with the products.",
+    },
+    fr: {
+      title: "Avis Clients | Feel Great",
+      description: "Avis et opinions réels des utilisateurs du programme Feel Great sur leur expérience avec les produits.",
+    },
+    es: {
+      title: "Opiniones de Clientes | Feel Great",
+      description: "Opiniones y reseñas reales de usuarios del programa Feel Great sobre su experiencia con los productos.",
+    },
+    de: {
+      title: "Kundenbewertungen | Feel Great",
+      description: "Echte Bewertungen und Meinungen von Feel Great Programmnutzern über ihre Erfahrung mit den Produkten.",
+    },
+    tr: {
+      title: "Müşteri Yorumları | Feel Great",
+      description: "Feel Great programı kullanıcılarından gerçek yorumlar ve ürün deneyimleri.",
+    },
   },
   "/health-library": {
-    title: "Health Library - Comprehensive Knowledge Hubs | Feel Great",
-    description: "Explore our comprehensive health library: Insulin Resistance, Gut Health, Sustainable Health, Weight Loss, Sleep, Women's Health, and Metabolic Health hubs with 100+ research-backed articles.",
-    ogType: "website",
+    ar: {
+      title: "مكتبة الصحة - مراكز المعرفة الشاملة | Feel Great",
+      description: "استكشف مكتبتنا الصحية الشاملة: مقاومة الإنسولين، صحة الأمعاء، الصحة المستدامة، إنقاص الوزن، والمزيد.",
+    },
+    en: {
+      title: "Health Library - Comprehensive Knowledge Hubs | Feel Great",
+      description: "Explore our comprehensive health library: Insulin Resistance, Gut Health, Sustainable Health, Weight Loss, Sleep, Women's Health, and Metabolic Health hubs.",
+    },
+    fr: {
+      title: "Bibliothèque Santé | Feel Great",
+      description: "Explorez notre bibliothèque santé complète: résistance à l'insuline, santé intestinale, santé durable, perte de poids.",
+    },
+    es: {
+      title: "Biblioteca de Salud | Feel Great",
+      description: "Explore nuestra biblioteca de salud integral: resistencia a la insulina, salud intestinal, salud sostenible, pérdida de peso.",
+    },
+    de: {
+      title: "Gesundheitsbibliothek | Feel Great",
+      description: "Entdecken Sie unsere umfassende Gesundheitsbibliothek: Insulinresistenz, Darmgesundheit, nachhaltige Gesundheit, Gewichtsverlust.",
+    },
+    tr: {
+      title: "Sağlık Kütüphanesi | Feel Great",
+      description: "Kapsamlı sağlık kütüphanemizi keşfedin: insülin direnci, bağırsak sağlığı, sürdürülebilir sağlık, kilo kaybı.",
+    },
+  },
+  "/author/feras-alayed": {
+    ar: {
+      title: "فراس العايد - أخصائي التغذية العلاجية والسلوكية | Feel Great",
+      description: "فراس العايد - مفكر ومدرب ومُثقف عالمي في الصحة المستدامة، التغذية السلوكية، القيادة، والتمكين الإنساني.",
+    },
+    en: {
+      title: "Feras Alayed - Therapeutic & Behavioral Nutrition Specialist | Feel Great",
+      description: "Global thinker, educator, and mentor in sustainable health, behavioral nutrition, leadership, and human empowerment.",
+    },
+    fr: {
+      title: "Feras Alayed - Spécialiste en Nutrition | Feel Great",
+      description: "Penseur mondial, éducateur et mentor en santé durable, nutrition comportementale, leadership et autonomisation humaine.",
+    },
+    es: {
+      title: "Feras Alayed - Especialista en Nutrición | Feel Great",
+      description: "Pensador global, educador y mentor en salud sostenible, nutrición conductual, liderazgo y empoderamiento humano.",
+    },
+    de: {
+      title: "Feras Alayed - Ernährungsspezialist | Feel Great",
+      description: "Globaler Denker, Pädagoge und Mentor für nachhaltige Gesundheit, Verhaltensernährung, Führung und menschliche Ermächtigung.",
+    },
+    tr: {
+      title: "Feras Alayed - Beslenme Uzmanı | Feel Great",
+      description: "Sürdürülebilir sağlık, davranışsal beslenme, liderlik ve insan güçlendirme alanında küresel düşünür ve eğitmen.",
+    },
   },
   "/feras-alayed": {
-    title: "Feras Alayed | Knowledge Hub - Global Thinker, Educator & Mentor in Health, Growth & Human Empowerment",
-    description: "فراس العايد - مفكر ومدرب ومُثقف عالمي في الصحة المستدامة، التغذية السلوكية، القيادة، الإمكانات البشرية، ريادة الأعمال، والتمكين الإنساني. مركز المعرفة الشامل.",
-    ogType: "profile",
-    ogImage: "/manus-storage/feras-professional_115956a2.png",
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "@id": "https://feelgreat.us.com/#feras-alayed",
-      "name": "Feras Alayed",
-      "alternateName": ["فراس العايد", "Feras Al-Ayed"],
-      "jobTitle": "Global Thinker, Educator & Mentor in Sustainable Health, Behavioral Nutrition, Leadership & Human Potential",
-      "description": "Global thinker, educator, and mentor dedicated to sustainable health, behavioral nutrition, leadership development, human potential, entrepreneurship, and financial empowerment. Helping people create meaningful transformation across all dimensions of life.",
-      "url": "https://feelgreat.us.com/feras-alayed",
-      "image": "https://feelgreat.us.com/manus-storage/feras-professional_115956a2.png",
-      "sameAs": ["https://www.instagram.com/use2lose", "https://www.tiktok.com/@feras.alayed"],
-      "knowsAbout": ["Sustainable Health", "Behavioral Nutrition", "Therapeutic Nutrition", "Metabolic Health", "Leadership Development", "Human Potential", "Personal Growth", "Team Building", "Entrepreneurship", "Financial Empowerment", "Human Performance", "Burnout Prevention", "Success Mindset", "Life Transformation", "Insulin Resistance", "Gut Health", "Behavioral Science"],
-      "worksFor": { "@type": "Organization", "name": "Feras Alayed - Knowledge Hub", "url": "https://feelgreat.us.com" },
-      "nationality": { "@type": "Country", "name": "Saudi Arabia" }
+    ar: {
+      title: "فراس العايد | مركز المعرفة - مفكر ومدرب عالمي",
+      description: "فراس العايد - مفكر ومدرب ومُثقف عالمي في الصحة المستدامة، التغذية السلوكية، القيادة، الإمكانات البشرية، ريادة الأعمال، والتمكين الإنساني.",
+    },
+    en: {
+      title: "Feras Alayed | Knowledge Hub - Global Thinker, Educator & Mentor",
+      description: "Global thinker, educator, and mentor dedicated to sustainable health, behavioral nutrition, leadership development, human potential, entrepreneurship, and financial empowerment.",
+    },
+    fr: {
+      title: "Feras Alayed | Centre de Connaissances",
+      description: "Penseur mondial, éducateur et mentor dédié à la santé durable, la nutrition comportementale, le leadership et le potentiel humain.",
+    },
+    es: {
+      title: "Feras Alayed | Centro de Conocimiento",
+      description: "Pensador global, educador y mentor dedicado a la salud sostenible, nutrición conductual, liderazgo y potencial humano.",
+    },
+    de: {
+      title: "Feras Alayed | Wissenszentrum",
+      description: "Globaler Denker, Pädagoge und Mentor für nachhaltige Gesundheit, Verhaltensernährung, Führungsentwicklung und menschliches Potenzial.",
+    },
+    tr: {
+      title: "Feras Alayed | Bilgi Merkezi",
+      description: "Sürdürülebilir sağlık, davranışsal beslenme, liderlik gelişimi ve insan potansiyeline adanmış küresel düşünür ve eğitmen.",
     },
   },
 };
 
-// Pillar pages meta data
+// Pillar pages meta data (keep as English/Arabic mixed since they're primarily Arabic content pages)
 const PILLAR_META: Record<string, MetaData> = {
   "sustainable-health": {
     title: "Sustainable Health Guide - دليل الصحة المستدامة | Feel Great",
@@ -199,20 +487,77 @@ const HEALTH_META: Record<string, MetaData> = {
 };
 
 /**
- * Get meta data for a blog article from database
+ * Get the title/description for an article in the specified language.
+ * Falls back to English, then Arabic.
  */
-async function getArticleMeta(slug: string): Promise<MetaData | null> {
+function getArticleTitle(article: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return article.metaTitleAr || article.titleAr || article.titleEn;
+    case "en": return article.metaTitleEn || article.titleEn || article.titleAr;
+    case "fr": return article.titleFr || article.metaTitleEn || article.titleEn;
+    case "es": return article.titleEs || article.metaTitleEn || article.titleEn;
+    case "de": return article.titleDe || article.metaTitleEn || article.titleEn;
+    case "tr": return article.titleTr || article.metaTitleEn || article.titleEn;
+    default: return article.metaTitleEn || article.titleEn;
+  }
+}
+
+function getArticleDescription(article: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return article.metaDescriptionAr || article.excerptAr || article.excerptEn;
+    case "en": return article.metaDescriptionEn || article.excerptEn || article.excerptAr;
+    case "fr": return article.excerptFr || article.metaDescriptionEn || article.excerptEn;
+    case "es": return article.excerptEs || article.metaDescriptionEn || article.excerptEn;
+    case "de": return article.excerptDe || article.metaDescriptionEn || article.excerptEn;
+    case "tr": return article.excerptTr || article.metaDescriptionEn || article.excerptEn;
+    default: return article.metaDescriptionEn || article.excerptEn;
+  }
+}
+
+/**
+ * Get the title/description for a research study in the specified language.
+ */
+function getResearchTitle(study: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return study.metaTitleAr || study.titleAr || study.titleEn;
+    case "en": return study.metaTitleEn || study.titleEn || study.originalTitle;
+    case "fr": return study.titleFr || study.metaTitleEn || study.titleEn;
+    case "es": return study.titleEs || study.metaTitleEn || study.titleEn;
+    case "de": return study.titleDe || study.metaTitleEn || study.titleEn;
+    case "tr": return study.titleTr || study.metaTitleEn || study.titleEn;
+    default: return study.metaTitleEn || study.titleEn;
+  }
+}
+
+function getResearchDescription(study: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return study.metaDescriptionAr || study.summary30sAr || study.summary30sEn;
+    case "en": return study.metaDescriptionEn || study.summary30sEn || study.summary30sAr;
+    case "fr": return study.summary30sFr || study.metaDescriptionEn || study.summary30sEn;
+    case "es": return study.summary30sEs || study.metaDescriptionEn || study.summary30sEn;
+    case "de": return study.summary30sDe || study.metaDescriptionEn || study.summary30sEn;
+    case "tr": return study.summary30sTr || study.metaDescriptionEn || study.summary30sEn;
+    default: return study.metaDescriptionEn || study.summary30sEn;
+  }
+}
+
+/**
+ * Get meta data for a blog article from database (language-aware)
+ */
+async function getArticleMeta(slug: string, lang: SupportedLang): Promise<MetaData | null> {
   try {
     const article = await getArticleBySlug(slug);
     if (!article) return null;
 
-    const title = article.metaTitleEn || article.titleEn || article.titleAr;
-    const description = article.metaDescriptionEn || article.excerptEn || article.excerptAr;
+    const title = getArticleTitle(article, lang);
+    const description = getArticleDescription(article, lang);
     const image = article.heroImageUrl || article.ogImageUrl || DEFAULT_IMAGE;
     const publishedAt = article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined;
     const updatedAt = article.updatedAt ? new Date(article.updatedAt).toISOString() : undefined;
+    const canonicalUrl = buildLangUrl(lang, `/blog/${slug}`);
+    const inLanguage = lang === "ar" ? "ar" : lang;
 
-    // Build Article + NewsArticle JSON-LD (dual type for Google News eligibility)
+    // Build Article JSON-LD
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": ["Article", "NewsArticle"],
@@ -222,7 +567,7 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
       "author": {
         "@type": "Person",
         "@id": `${BASE_URL}/#feras-alayed`,
-        "name": AUTHOR_NAME,
+        "name": lang === "ar" ? AUTHOR_NAME_AR : AUTHOR_NAME,
         "url": `${BASE_URL}/feras-alayed`,
       },
       "publisher": {
@@ -234,7 +579,7 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
       },
       "datePublished": publishedAt,
       "dateModified": updatedAt || publishedAt,
-      "mainEntityOfPage": { "@type": "WebPage", "@id": `${BASE_URL}/blog/${slug}` },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": canonicalUrl },
       "wordCount": article.wordCount || undefined,
       "articleSection": article.category,
       "isAccessibleForFree": true,
@@ -242,7 +587,7 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
         "@type": "SpeakableSpecification",
         "cssSelector": [".article-headline", ".article-summary", ".key-takeaways"]
       },
-      "inLanguage": "en",
+      "inLanguage": inLanguage,
     };
 
     return {
@@ -252,16 +597,19 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
       ogDescription: description?.substring(0, 200) || "",
       ogImage: image.startsWith("/") ? `${BASE_URL}${image}` : image,
       ogType: "article",
-      ogUrl: `${BASE_URL}/blog/${slug}`,
+      ogUrl: canonicalUrl,
       twitterTitle: title,
       twitterDescription: description?.substring(0, 200) || "",
       twitterImage: image.startsWith("/") ? `${BASE_URL}${image}` : image,
-      canonicalUrl: `${BASE_URL}/blog/${slug}`,
+      canonicalUrl,
       articlePublishedTime: publishedAt,
       articleModifiedTime: updatedAt || publishedAt,
-      articleAuthor: AUTHOR_NAME,
+      articleAuthor: lang === "ar" ? AUTHOR_NAME_AR : AUTHOR_NAME,
       articleSection: article.category,
       jsonLd,
+      lang,
+      dir: lang === "ar" ? "rtl" : "ltr",
+      hreflangPath: `/blog/${slug}`,
     };
   } catch (error) {
     console.error("[MetaInjector] Error fetching article meta:", error);
@@ -270,16 +618,17 @@ async function getArticleMeta(slug: string): Promise<MetaData | null> {
 }
 
 /**
- * Get meta data for a research study from database
+ * Get meta data for a research study from database (language-aware)
  */
-async function getResearchMeta(slug: string): Promise<MetaData | null> {
+async function getResearchMeta(slug: string, lang: SupportedLang): Promise<MetaData | null> {
   try {
     const study = await getResearchBySlug(slug);
     if (!study) return null;
 
-    const title = study.metaTitleEn || study.titleEn || study.originalTitle;
-    const description = study.metaDescriptionEn || study.summary30sEn || study.summary30sAr;
+    const title = getResearchTitle(study, lang);
+    const description = getResearchDescription(study, lang);
     const image = study.heroImageUrl || DEFAULT_IMAGE;
+    const canonicalUrl = buildLangUrl(lang, `/research/${slug}`);
 
     // Build ScholarlyArticle JSON-LD
     const jsonLd = {
@@ -298,7 +647,8 @@ async function getResearchMeta(slug: string): Promise<MetaData | null> {
       },
       "datePublished": study.publishDate,
       "about": study.topics,
-      "mainEntityOfPage": { "@type": "WebPage", "@id": `${BASE_URL}/research/${slug}` },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": canonicalUrl },
+      "inLanguage": lang,
     };
 
     return {
@@ -308,11 +658,14 @@ async function getResearchMeta(slug: string): Promise<MetaData | null> {
       ogDescription: description?.substring(0, 200) || "",
       ogImage: image.startsWith("/") ? `${BASE_URL}${image}` : image,
       ogType: "article",
-      ogUrl: `${BASE_URL}/research/${slug}`,
+      ogUrl: canonicalUrl,
       twitterTitle: title,
       twitterDescription: description?.substring(0, 200) || "",
-      canonicalUrl: `${BASE_URL}/research/${slug}`,
+      canonicalUrl,
       jsonLd,
+      lang,
+      dir: lang === "ar" ? "rtl" : "ltr",
+      hreflangPath: `/research/${slug}`,
     };
   } catch (error) {
     console.error("[MetaInjector] Error fetching research meta:", error);
@@ -321,43 +674,68 @@ async function getResearchMeta(slug: string): Promise<MetaData | null> {
 }
 
 /**
- * Resolve meta data for any given URL path
+ * Resolve meta data for any given URL path (language-aware)
  */
 async function resolveMetaForPath(path: string): Promise<MetaData | null> {
-  // Strip language prefix
-  const cleanPath = path.replace(/^\/(ar|en|fr|es|de|tr)(\/|$)/, "/").replace(/\/$/, "") || "/";
+  const { lang, cleanPath } = extractLangFromPath(path);
 
-  // Check static pages
-  if (STATIC_META[cleanPath]) {
-    const staticMeta = STATIC_META[cleanPath];
+  // Check static pages with language-specific content
+  if (STATIC_META_BY_LANG[cleanPath]) {
+    const langMeta = STATIC_META_BY_LANG[cleanPath][lang] || STATIC_META_BY_LANG[cleanPath]["en"];
+    const canonicalUrl = buildLangUrl(lang, cleanPath);
     return {
-      ...staticMeta,
-      ogTitle: staticMeta.ogTitle || staticMeta.title,
-      ogDescription: staticMeta.ogDescription || staticMeta.description,
-      twitterTitle: staticMeta.twitterTitle || staticMeta.title,
-      twitterDescription: staticMeta.twitterDescription || staticMeta.description,
-      canonicalUrl: `${BASE_URL}${cleanPath}`,
-      ogUrl: `${BASE_URL}${cleanPath}`,
+      title: langMeta.title,
+      description: langMeta.description,
+      ogTitle: langMeta.title,
+      ogDescription: langMeta.description,
+      twitterTitle: langMeta.title,
+      twitterDescription: langMeta.description,
+      canonicalUrl,
+      ogUrl: canonicalUrl,
+      ogType: cleanPath === "/author/feras-alayed" || cleanPath === "/feras-alayed" || cleanPath === "/about" ? "profile" : "website",
+      lang,
+      dir: lang === "ar" ? "rtl" : "ltr",
+      hreflangPath: cleanPath,
+      // Add Person JSON-LD for author/feras-alayed pages
+      ...(cleanPath === "/feras-alayed" ? {
+        ogImage: "/manus-storage/feras-professional_115956a2.png",
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "@id": "https://feelgreat.us.com/#feras-alayed",
+          "name": "Feras Alayed",
+          "alternateName": ["فراس العايد", "Feras Al-Ayed"],
+          "jobTitle": "Global Thinker, Educator & Mentor in Sustainable Health, Behavioral Nutrition, Leadership & Human Potential",
+          "description": "Global thinker, educator, and mentor dedicated to sustainable health, behavioral nutrition, leadership development, human potential, entrepreneurship, and financial empowerment.",
+          "url": "https://feelgreat.us.com/feras-alayed",
+          "image": "https://feelgreat.us.com/manus-storage/feras-professional_115956a2.png",
+          "sameAs": ["https://www.instagram.com/use2lose", "https://www.tiktok.com/@feras.alayed"],
+          "knowsAbout": ["Sustainable Health", "Behavioral Nutrition", "Therapeutic Nutrition", "Metabolic Health", "Leadership Development", "Human Potential"],
+          "worksFor": { "@type": "Organization", "name": "Feras Alayed - Knowledge Hub", "url": "https://feelgreat.us.com" },
+          "nationality": { "@type": "Country", "name": "Saudi Arabia" },
+        },
+      } : {}),
     };
   }
 
   // Blog article: /blog/:slug
   const blogMatch = cleanPath.match(/^\/blog\/([^/]+)$/);
   if (blogMatch) {
-    return getArticleMeta(blogMatch[1]);
+    return getArticleMeta(blogMatch[1], lang);
   }
 
   // Research study: /research/:slug
   const researchMatch = cleanPath.match(/^\/research\/([^/]+)$/);
   if (researchMatch) {
-    return getResearchMeta(researchMatch[1]);
+    return getResearchMeta(researchMatch[1], lang);
   }
 
   // Pillar pages: /topics/:slug
   const topicMatch = cleanPath.match(/^\/topics\/([^/]+)$/);
   if (topicMatch && PILLAR_META[topicMatch[1]]) {
     const meta = PILLAR_META[topicMatch[1]];
-    return { ...meta, canonicalUrl: `${BASE_URL}${cleanPath}`, ogUrl: `${BASE_URL}${cleanPath}`, ogType: "article" };
+    const canonicalUrl = buildLangUrl(lang, cleanPath);
+    return { ...meta, canonicalUrl, ogUrl: canonicalUrl, ogType: "article", lang, dir: lang === "ar" ? "rtl" : "ltr", hreflangPath: cleanPath };
   }
 
   // Health Library hub pages: /health-library/:slug
@@ -374,12 +752,16 @@ async function resolveMetaForPath(path: string): Promise<MetaData | null> {
       "metabolic-health": "Metabolic Health Hub",
     };
     const hubName = hubNames[hubSlug] || `${hubSlug} Hub`;
+    const canonicalUrl = buildLangUrl(lang, cleanPath);
     return {
       title: `${hubName} | Health Library | ${SITE_NAME}`,
       description: `Explore our ${hubName} with research-backed articles on ${hubSlug.replace(/-/g, ' ')}. Evidence-based health information from Feel Great.`,
-      canonicalUrl: `${BASE_URL}${cleanPath}`,
-      ogUrl: `${BASE_URL}${cleanPath}`,
+      canonicalUrl,
+      ogUrl: canonicalUrl,
       ogType: "website",
+      lang,
+      dir: lang === "ar" ? "rtl" : "ltr",
+      hreflangPath: cleanPath,
     };
   }
 
@@ -387,17 +769,35 @@ async function resolveMetaForPath(path: string): Promise<MetaData | null> {
   const healthMatch = cleanPath.match(/^\/health\/([^/]+)$/);
   if (healthMatch && HEALTH_META[healthMatch[1]]) {
     const meta = HEALTH_META[healthMatch[1]];
-    return { ...meta, canonicalUrl: `${BASE_URL}${cleanPath}`, ogUrl: `${BASE_URL}${cleanPath}`, ogType: "article" };
+    const canonicalUrl = buildLangUrl(lang, cleanPath);
+    return { ...meta, canonicalUrl, ogUrl: canonicalUrl, ogType: "article", lang, dir: lang === "ar" ? "rtl" : "ltr", hreflangPath: cleanPath };
   }
 
   return null;
 }
 
 /**
+ * Generate hreflang link tags for all supported languages
+ */
+function generateHreflangTags(cleanPath: string): string {
+  const tags: string[] = [];
+  for (const supportedLang of SUPPORTED_LANGS) {
+    const href = buildLangUrl(supportedLang, cleanPath);
+    tags.push(`<link rel="alternate" hreflang="${supportedLang}" href="${href}" />`);
+  }
+  // x-default points to English version
+  tags.push(`<link rel="alternate" hreflang="x-default" href="${BASE_URL}${cleanPath}" />`);
+  return tags.join("\n    ");
+}
+
+/**
  * Inject meta tags into the HTML template
  */
 function injectMetaIntoHtml(html: string, meta: MetaData): string {
-  const metaTags: string[] = [];
+  // Update <html lang> and dir attributes
+  if (meta.lang) {
+    html = html.replace(/<html[^>]*>/, `<html lang="${meta.lang}" dir="${meta.dir || (meta.lang === 'ar' ? 'rtl' : 'ltr')}">`);
+  }
 
   // Title - handle both regular titles and {{project_title}} placeholder
   if (meta.title) {
@@ -407,7 +807,6 @@ function injectMetaIntoHtml(html: string, meta: MetaData): string {
 
   // Description
   if (meta.description) {
-    // Replace existing description meta
     html = html.replace(
       /<meta name="description" content="[^"]*"\s*\/?>/,
       `<meta name="description" content="${escapeAttr(meta.description)}" />`
@@ -465,6 +864,14 @@ function injectMetaIntoHtml(html: string, meta: MetaData): string {
   // OG site name
   additionalMeta.push(`<meta property="og:site_name" content="${SITE_NAME}" />`);
 
+  // OG locale
+  if (meta.lang) {
+    const localeMap: Record<string, string> = {
+      ar: "ar_SA", en: "en_US", fr: "fr_FR", es: "es_ES", de: "de_DE", tr: "tr_TR",
+    };
+    additionalMeta.push(`<meta property="og:locale" content="${localeMap[meta.lang] || "en_US"}" />`);
+  }
+
   // Article-specific meta
   if (meta.articlePublishedTime) {
     additionalMeta.push(`<meta property="article:published_time" content="${meta.articlePublishedTime}" />`);
@@ -482,6 +889,11 @@ function injectMetaIntoHtml(html: string, meta: MetaData): string {
   // Canonical URL
   if (meta.canonicalUrl) {
     additionalMeta.push(`<link rel="canonical" href="${escapeAttr(meta.canonicalUrl)}" />`);
+  }
+
+  // Hreflang tags - critical for multilingual SEO
+  if (meta.hreflangPath) {
+    additionalMeta.push(generateHreflangTags(meta.hreflangPath));
   }
 
   // JSON-LD structured data
@@ -533,4 +945,4 @@ export function getResolvedMeta(req: Request): MetaData | null {
   return (req as any).__seoMeta || null;
 }
 
-export { MetaData, resolveMetaForPath, injectMetaIntoHtml };
+export { MetaData, resolveMetaForPath, injectMetaIntoHtml, extractLangFromPath, buildLangUrl, generateHreflangTags };

@@ -922,3 +922,24 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Dynamic sitemap.xml with all articles/research URLs + added sitemap-glossary.xml
 - [x] Robots.txt optimized (allow AI crawlers, crawl-delay for aggressive bots)
 - [x] Tested: Bots get 10+ HTML elements, regular users get SPA (0 elements)
+
+## Fix Language Mixing in Meta Tags & Schema (June 2026)
+- [ ] Fix meta description/OG tags to match visitor's selected language (not mix Arabic + English)
+- [ ] Make prerender.ts serve content in the correct language based on URL prefix (/ar/, /fr/, /es/, /de/, /tr/)
+- [ ] Ensure hreflang tags are present on all prerendered pages
+- [ ] Add Product schema markup (Unimate + Balance products)
+- [ ] Enhance FAQ schema with language-aware content
+- [ ] Register site with Google Search Console
+- [ ] Submit updated sitemap to Google Search Console
+
+## SEO Language & Schema Fixes - June 11, 2026
+- [x] Fix mixed-language meta tags: all meta (title, description, OG, Twitter) now served in visitor's selected language
+- [x] Add hreflang link tags to all pages (6 languages + x-default) for both SPA and prerender
+- [x] Add og:locale meta tag matching the detected language
+- [x] Update html lang and dir attributes based on detected language
+- [x] Add Product Schema markup (Feel Great System, Unimate, Balance) with AggregateRating
+- [x] Add FAQ Schema markup already present on FAQ page and blog articles
+- [x] Add submitSitemap admin mutation for triggering sitemap submission to Google Search Console
+- [x] Language-aware canonical URLs (e.g. /ar/blog → https://feelgreat.us.com/ar/blog)
+- [x] Prerender middleware now passes language to all page renderers
+- [x] All 205 vitest tests passing

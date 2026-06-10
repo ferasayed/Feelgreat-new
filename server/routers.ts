@@ -1030,6 +1030,13 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return inspectUrl(input.url);
       }),
+    submitSitemap: adminProcedure
+      .input(z.object({ sitemapUrl: z.string().optional() }))
+      .mutation(async ({ input }) => {
+        const { submitSitemap } = await import("./seo/googleSearchConsole");
+        const url = input.sitemapUrl || "https://feelgreat.us.com/sitemap.xml";
+        return submitSitemap(url);
+      }),
   }),
 
   // Smart AI Health Assessment

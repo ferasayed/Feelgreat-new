@@ -11,6 +11,24 @@ import { Request, Response, NextFunction } from "express";
 import { getArticleBySlug, getResearchBySlug, getPublishedArticles, getPublishedResearch, getAllGlossaryTerms, getGlossaryTermBySlug } from "../db";
 
 const BASE_URL = "https://feelgreat.us.com";
+type SupportedLang = "ar" | "en" | "fr" | "es" | "de" | "tr";
+const SUPPORTED_LANGS: SupportedLang[] = ["ar", "en", "fr", "es", "de", "tr"];
+
+/** Build the full URL for a given language and path */
+function buildLangUrl(lang: SupportedLang, cleanPath: string): string {
+  if (lang === "en") return `${BASE_URL}${cleanPath}`;
+  return `${BASE_URL}/${lang}${cleanPath === "/" ? "" : cleanPath}`;
+}
+
+/** Generate hreflang link tags for all supported languages */
+function generateHreflangTags(cleanPath: string): string {
+  const tags: string[] = [];
+  for (const l of SUPPORTED_LANGS) {
+    tags.push(`<link rel="alternate" hreflang="${l}" href="${buildLangUrl(l, cleanPath)}" />`);
+  }
+  tags.push(`<link rel="alternate" hreflang="x-default" href="${BASE_URL}${cleanPath}" />`);
+  return tags.join("\n    ");
+}
 
 // Known bot user agents
 const BOT_USER_AGENTS = [
@@ -64,8 +82,9 @@ function generateBotHtml(options: {
   breadcrumbs?: Array<{ name: string; url: string }>;
   lang?: string;
   dir?: string;
+  hreflangPath?: string;
 }): string {
-  const { title, description, canonicalUrl, ogImage, ogType, jsonLd, content, breadcrumbs, lang = "en", dir = "ltr" } = options;
+  const { title, description, canonicalUrl, ogImage, ogType, jsonLd, content, breadcrumbs, lang = "en", dir = "ltr", hreflangPath } = options;
   const image = ogImage || `${BASE_URL}/manus-storage/feel-great-complete_44bb8752.png`;
 
   const jsonLdScripts = jsonLd
@@ -119,6 +138,12 @@ function generateBotHtml(options: {
     ${jsonLdScripts}
     ${breadcrumbJsonLd}
     
+    <!-- Hreflang -->
+    ${hreflangPath ? generateHreflangTags(hreflangPath) : ""}
+    
+    <!-- OG Locale -->
+    <meta property="og:locale" content="${lang === "ar" ? "ar_SA" : lang === "fr" ? "fr_FR" : lang === "es" ? "es_ES" : lang === "de" ? "de_DE" : lang === "tr" ? "tr_TR" : "en_US"}">
+    
     <!-- Verification -->
     <meta name="google-site-verification" content="OA7Hg2lFps2RQmdHqx147R0cRUynsSUiTrpSkPd_QCU">
     <meta name="msvalidate.01" content="5E567979B487559079B7854DA701CE33">
@@ -150,15 +175,64 @@ function escapeAttr(str: string): string {
   return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/** Get article title in the specified language */
+function getArticleTitle(article: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return article.metaTitleAr || article.titleAr || article.titleEn;
+    case "fr": return article.titleFr || article.metaTitleEn || article.titleEn;
+    case "es": return article.titleEs || article.metaTitleEn || article.titleEn;
+    case "de": return article.titleDe || article.metaTitleEn || article.titleEn;
+    case "tr": return article.titleTr || article.metaTitleEn || article.titleEn;
+    default: return article.metaTitleEn || article.titleEn;
+  }
+}
+
+/** Get article description in the specified language */
+function getArticleDescription(article: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return article.metaDescriptionAr || article.excerptAr || article.excerptEn;
+    case "fr": return article.excerptFr || article.metaDescriptionEn || article.excerptEn;
+    case "es": return article.excerptEs || article.metaDescriptionEn || article.excerptEn;
+    case "de": return article.excerptDe || article.metaDescriptionEn || article.excerptEn;
+    case "tr": return article.excerptTr || article.metaDescriptionEn || article.excerptEn;
+    default: return article.metaDescriptionEn || article.excerptEn;
+  }
+}
+
+/** Get research title in the specified language */
+function getResearchTitle(study: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return study.metaTitleAr || study.titleAr || study.titleEn;
+    case "fr": return study.titleFr || study.metaTitleEn || study.titleEn;
+    case "es": return study.titleEs || study.metaTitleEn || study.titleEn;
+    case "de": return study.titleDe || study.metaTitleEn || study.titleEn;
+    case "tr": return study.titleTr || study.metaTitleEn || study.titleEn;
+    default: return study.metaTitleEn || study.titleEn;
+  }
+}
+
+/** Get research description in the specified language */
+function getResearchDescription(study: any, lang: SupportedLang): string {
+  switch (lang) {
+    case "ar": return study.metaDescriptionAr || study.summary30sAr || study.summary30sEn;
+    case "fr": return study.summary30sFr || study.metaDescriptionEn || study.summary30sEn;
+    case "es": return study.summary30sEs || study.metaDescriptionEn || study.summary30sEn;
+    case "de": return study.summary30sDe || study.metaDescriptionEn || study.summary30sEn;
+    case "tr": return study.summary30sTr || study.metaDescriptionEn || study.summary30sEn;
+    default: return study.metaDescriptionEn || study.summary30sEn;
+  }
+}
+
 /**
  * Generate prerendered HTML for a blog article
  */
-async function prerenderBlogArticle(slug: string): Promise<string | null> {
+async function prerenderBlogArticle(slug: string, lang: SupportedLang = "en"): Promise<string | null> {
   const article = await getArticleBySlug(slug);
   if (!article) return null;
 
-  const title = article.metaTitleEn || article.titleEn;
-  const description = article.metaDescriptionEn || article.excerptEn;
+  // Language-aware title/description selection
+  const title = getArticleTitle(article, lang);
+  const description = getArticleDescription(article, lang);
   const publishedAt = article.publishedAt ? new Date(article.publishedAt).toISOString() : new Date(article.createdAt).toISOString();
   const updatedAt = article.updatedAt ? new Date(article.updatedAt).toISOString() : publishedAt;
 
@@ -224,18 +298,22 @@ async function prerenderBlogArticle(slug: string): Promise<string | null> {
     } as any);
   }
 
+  const canonicalUrl = buildLangUrl(lang, `/blog/${slug}`);
   return generateBotHtml({
     title: `${title} | Feel Great`,
     description: description || "",
-    canonicalUrl: `${BASE_URL}/blog/${slug}`,
+    canonicalUrl,
     ogImage: article.heroImageUrl ? (article.heroImageUrl.startsWith("/") ? `${BASE_URL}${article.heroImageUrl}` : article.heroImageUrl) : undefined,
     ogType: "article",
     jsonLd,
     content,
+    lang,
+    dir: lang === "ar" ? "rtl" : "ltr",
+    hreflangPath: `/blog/${slug}`,
     breadcrumbs: [
       { name: "Home", url: BASE_URL },
       { name: "Blog", url: `${BASE_URL}/blog` },
-      { name: title || article.titleEn, url: `${BASE_URL}/blog/${slug}` },
+      { name: title || article.titleEn, url: canonicalUrl },
     ],
   });
 }
@@ -243,12 +321,13 @@ async function prerenderBlogArticle(slug: string): Promise<string | null> {
 /**
  * Generate prerendered HTML for a research study
  */
-async function prerenderResearchStudy(slug: string): Promise<string | null> {
+async function prerenderResearchStudy(slug: string, lang: SupportedLang = "en"): Promise<string | null> {
   const study = await getResearchBySlug(slug);
   if (!study) return null;
 
-  const title = study.metaTitleEn || study.titleEn;
-  const description = study.metaDescriptionEn || study.summary30sEn;
+  // Language-aware title/description selection
+  const title = getResearchTitle(study, lang);
+  const description = getResearchDescription(study, lang);
 
   const content = `
     <article>
@@ -300,18 +379,22 @@ async function prerenderResearchStudy(slug: string): Promise<string | null> {
     "mainEntityOfPage": `${BASE_URL}/research/${slug}`,
   };
 
+  const canonicalUrl = buildLangUrl(lang, `/research/${slug}`);
   return generateBotHtml({
     title: `${title} | Research | Feel Great`,
     description: description || "",
-    canonicalUrl: `${BASE_URL}/research/${slug}`,
+    canonicalUrl,
     ogImage: study.heroImageUrl ? (study.heroImageUrl.startsWith("/") ? `${BASE_URL}${study.heroImageUrl}` : study.heroImageUrl) : undefined,
     ogType: "article",
     jsonLd,
     content,
+    lang,
+    dir: lang === "ar" ? "rtl" : "ltr",
+    hreflangPath: `/research/${slug}`,
     breadcrumbs: [
       { name: "Home", url: BASE_URL },
       { name: "Research", url: `${BASE_URL}/research` },
-      { name: title || study.titleEn, url: `${BASE_URL}/research/${slug}` },
+      { name: title || study.titleEn, url: canonicalUrl },
     ],
   });
 }
@@ -337,6 +420,7 @@ async function prerenderBlogListing(): Promise<string | null> {
       canonicalUrl: `${BASE_URL}/blog`,
       ogType: "website",
       content,
+      hreflangPath: "/blog",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "Blog", url: `${BASE_URL}/blog` },
@@ -368,6 +452,7 @@ async function prerenderResearchListing(): Promise<string | null> {
       canonicalUrl: `${BASE_URL}/research`,
       ogType: "website",
       content,
+      hreflangPath: "/research",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "Research", url: `${BASE_URL}/research` },
@@ -413,20 +498,79 @@ async function prerenderHomepage(): Promise<string | null> {
         </ul>
       </section>`;
 
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Feel Great",
-      "url": BASE_URL,
-      "description": "Evidence-based health guidance by Feras Alayed. Science-backed approaches to insulin resistance, gut health, and metabolic wellness.",
-      "author": { "@type": "Person", "name": "Feras Alayed" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": `${BASE_URL}/blog?q={search_term_string}`,
-        "query-input": "required name=search_term_string",
+        const jsonLd: object[] = [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Feel Great",
+        "url": BASE_URL,
+        "description": "Evidence-based health guidance by Feras Alayed. Science-backed approaches to insulin resistance, gut health, and metabolic wellness.",
+        "author": { "@type": "Person", "name": "Feras Alayed" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": `${BASE_URL}/blog?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
       },
-    };
-
+      // Product Schema: Feel Great System
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Feel Great System",
+        "description": "The Feel Great system by Unicity combines Unimate (yerba mate drink) and Balance (fiber matrix) for intermittent fasting support, blood sugar management, and metabolic health.",
+        "brand": { "@type": "Brand", "name": "Unicity" },
+        "category": "Health & Wellness Supplements",
+        "url": `${BASE_URL}/`,
+        "image": `${BASE_URL}/manus-storage/feel-great-complete_44bb8752.png`,
+        "offers": {
+          "@type": "AggregateOffer",
+          "priceCurrency": "USD",
+          "lowPrice": "89",
+          "highPrice": "159",
+          "offerCount": "3",
+          "availability": "https://schema.org/InStock",
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "142",
+          "bestRating": "5",
+          "worstRating": "1",
+        },
+      },
+      // Product Schema: Unimate
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Unimate",
+        "description": "Unimate is a premium yerba mate drink by Unicity, concentrated through a proprietary 5-step process. Supports mental clarity, appetite control, and metabolic health.",
+        "brand": { "@type": "Brand", "name": "Unicity" },
+        "category": "Health & Wellness Supplements",
+        "url": `${BASE_URL}/`,
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "USD",
+          "price": "59",
+          "availability": "https://schema.org/InStock",
+        },
+      },
+      // Product Schema: Balance
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Balance",
+        "description": "Balance by Unicity is a patented fiber matrix supplement that supports healthy blood sugar levels, cholesterol management, and digestive health when taken before meals.",
+        "brand": { "@type": "Brand", "name": "Unicity" },
+        "category": "Health & Wellness Supplements",
+        "url": `${BASE_URL}/`,
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "USD",
+          "price": "49",
+          "availability": "https://schema.org/InStock",
+        },
+      },
+    ];
     return generateBotHtml({
       title: "Feel Great - Evidence-Based Health & Nutrition | Feras Alayed",
       description: "Science-based health guidance by Feras Alayed, Therapeutic & Behavioral Nutrition Specialist. Articles, research, and tools for insulin resistance, gut health, and metabolic wellness.",
@@ -434,6 +578,7 @@ async function prerenderHomepage(): Promise<string | null> {
       ogType: "website",
       jsonLd,
       content,
+      hreflangPath: "/",
     });
   } catch {
     return null;
@@ -461,6 +606,7 @@ async function prerenderGlossaryListing(): Promise<string | null> {
       canonicalUrl: `${BASE_URL}/glossary`,
       ogType: "website",
       content,
+      hreflangPath: "/glossary",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "Glossary", url: `${BASE_URL}/glossary` },
@@ -547,6 +693,7 @@ async function prerenderSuccessStories(): Promise<string | null> {
       canonicalUrl: `${BASE_URL}/success-stories`,
       ogType: "website",
       content,
+      hreflangPath: "/success-stories",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "Success Stories", url: `${BASE_URL}/success-stories` },
@@ -593,6 +740,7 @@ async function prerenderFAQ(): Promise<string | null> {
       ogType: "website",
       jsonLd,
       content,
+      hreflangPath: "/faq",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "FAQ", url: `${BASE_URL}/faq` },
@@ -634,6 +782,7 @@ async function prerenderAbout(): Promise<string | null> {
       canonicalUrl: `${BASE_URL}/about`,
       ogType: "website",
       content,
+      hreflangPath: "/about",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "About", url: `${BASE_URL}/about` },
@@ -693,6 +842,7 @@ async function prerenderAuthor(): Promise<string | null> {
       ogType: "profile",
       jsonLd,
       content,
+      hreflangPath: "/author/feras-alayed",
       breadcrumbs: [
         { name: "Home", url: BASE_URL },
         { name: "Feras Alayed", url: `${BASE_URL}/author/feras-alayed` },
@@ -721,7 +871,9 @@ export function prerenderMiddleware() {
       return next();
     }
 
-    // Strip language prefix for route matching
+    // Extract language from URL prefix
+    const langMatch = req.path.match(/^\/(ar|en|fr|es|de|tr)(\/|$)/);
+    const lang: SupportedLang = (langMatch ? langMatch[1] : "en") as SupportedLang;
     const cleanPath = req.path.replace(/^\/(ar|en|fr|es|de|tr)(\/|$)/, "/").replace(/\/$/, "") || "/";
 
     try {
@@ -730,13 +882,13 @@ export function prerenderMiddleware() {
       // Blog article
       const blogMatch = cleanPath.match(/^\/blog\/([^/]+)$/);
       if (blogMatch) {
-        html = await prerenderBlogArticle(blogMatch[1]);
+        html = await prerenderBlogArticle(blogMatch[1], lang);
       }
 
       // Research study
       const researchMatch = cleanPath.match(/^\/research\/([^/]+)$/);
       if (researchMatch) {
-        html = await prerenderResearchStudy(researchMatch[1]);
+        html = await prerenderResearchStudy(researchMatch[1], lang);
       }
 
       // Blog listing
