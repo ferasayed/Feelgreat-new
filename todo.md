@@ -869,3 +869,12 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 
 ## Bug Fix: System Health Report Log Fetching (June 2026)
 - [x] Fix HTTP 404 error when fetching logs for all scheduled tasks (article-gen-morning, article-gen-afternoon, article-gen-evening, research-discovery, auto-index-daily, auto-index-evening)
+
+## Share/Copy Link Buttons (June 2026)
+- [x] Create reusable ShareButtons component (copy link, WhatsApp, Telegram, X/Twitter, Facebook)
+- [x] Add ShareButtons to article detail page (BlogArticle.tsx)
+- [x] Add ShareButtons to research detail page (ResearchStudyDetail.tsx)
+- [x] Show toast notification on successful link copy
+- [x] Support multilingual labels (Arabic, English, French, Spanish, German, Turkish)
+- [x] Horizontal inline variant for article/research pages
+- [x] Floating bottom bar variant available for future use

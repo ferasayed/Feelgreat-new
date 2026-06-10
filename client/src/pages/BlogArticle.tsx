@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useRef, useState, useMemo } from "react";
 import ArticleComments from "@/components/ArticleComments";
+import ShareButtons from "@/components/ShareButtons";
 
 // Helper to get multilingual article field
 function getField(article: any, field: string, lang: string): string {
@@ -462,27 +463,12 @@ export default function BlogArticle() {
       <div className="container max-w-3xl pb-12">
         <div className="border-t pt-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground">
-                {lang === 'ar' ? "شارك المقال:" : lang === 'fr' ? "Partager :" : lang === 'es' ? "Compartir:" : lang === 'de' ? "Teilen:" : lang === 'tr' ? "Paylaş:" : "Share:"}
-              </span>
-              <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(`https://feelgreat.us.com/blog/${article.slug}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
-              >
-                𝕏
-              </a>
-              <a
-                href={`https://wa.me/?text=${encodeURIComponent(`${title} https://feelgreat.us.com/blog/${article.slug}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center hover:bg-green-500/20 transition-colors text-xs font-bold"
-              >
-                W
-              </a>
-            </div>
+            <ShareButtons
+              url={`/blog/${article.slug}`}
+              title={title}
+              description={excerpt}
+              lang={lang}
+            />
             <a
               href="https://wa.me/96877020770?text=قرأت مقالك وأريد استشارة صحية"
               target="_blank"

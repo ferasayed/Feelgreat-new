@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ShareButtons from "@/components/ShareButtons";
 
 const EVIDENCE_COLORS: Record<string, string> = {
   high: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
@@ -319,6 +320,16 @@ export default function ResearchStudyDetail() {
             </div>
           </div>
         )}
+
+        {/* Share Buttons */}
+        <section className="mb-8 py-6 border-y border-border/50">
+          <ShareButtons
+            url={`/research/${study.slug}`}
+            title={title}
+            description={isAr ? study.summary30sAr : study.summary30sEn}
+            lang={lang}
+          />
+        </section>
 
         {/* Original Study Link */}
         <section className="mb-8 text-center">
