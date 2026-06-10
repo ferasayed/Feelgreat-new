@@ -897,3 +897,8 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add notification preferences UI for users (PushNotificationButton with language support)
 - [x] Generate PWA icons (72, 96, 128, 144, 152, 192, 384, 512)
 - [x] Test PWA configuration (23/23 tests passing)
+
+## PWA Enhancements - June 2026
+- [x] Generate professional branded PWA icon with Feel Great logo (FG monogram, navy + gold)
+- [x] Create splash screen for PWA app launch (apple-touch-startup-image)
+- [x] Wire auto push notifications to article publishing system (already wired for articles, added for research too)

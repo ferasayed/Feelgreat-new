@@ -12,49 +12,49 @@
   "categories": ["health", "fitness", "lifestyle", "education"],
   "icons": [
     {
-      "src": "/manus-storage/icon-72x72_e44851ff.png",
+      "src": "/manus-storage/pwa-icon-branded-72_652e7416.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/manus-storage/icon-96x96_c7c192d8.png",
+      "src": "/manus-storage/pwa-icon-branded-96_6a0e2c3a.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/manus-storage/icon-128x128_3b7a1621.png",
+      "src": "/manus-storage/pwa-icon-branded-128_b695927d.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/manus-storage/icon-144x144_3f701da6.png",
+      "src": "/manus-storage/pwa-icon-branded-144_6dfb9d2d.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/manus-storage/icon-152x152_01b613e8.png",
+      "src": "/manus-storage/pwa-icon-branded-152_449ca7ea.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/manus-storage/icon-192x192_71b75f5f.png",
+      "src": "/manus-storage/pwa-icon-branded-192_50d9d672.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/manus-storage/icon-384x384_4ca52597.png",
+      "src": "/manus-storage/pwa-icon-branded-384_a016ae52.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/manus-storage/icon-512x512_1af8096d.png",
+      "src": "/manus-storage/pwa-icon-branded-512_fd57347a.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -66,25 +66,25 @@
       "name": "Health Blog",
       "short_name": "Blog",
       "url": "/blog",
-      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+      "icons": [{"src": "/manus-storage/pwa-icon-branded-96_6a0e2c3a.png", "sizes": "96x96"}]
     },
     {
       "name": "Research Library",
       "short_name": "Research",
       "url": "/research",
-      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+      "icons": [{"src": "/manus-storage/pwa-icon-branded-96_6a0e2c3a.png", "sizes": "96x96"}]
     },
     {
       "name": "Health Assessment",
       "short_name": "Assessment",
       "url": "/assessments",
-      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+      "icons": [{"src": "/manus-storage/pwa-icon-branded-96_6a0e2c3a.png", "sizes": "96x96"}]
     },
     {
       "name": "Success Stories",
       "short_name": "Stories",
       "url": "/success-stories",
-      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+      "icons": [{"src": "/manus-storage/pwa-icon-branded-96_6a0e2c3a.png", "sizes": "96x96"}]
     }
   ]
 }
