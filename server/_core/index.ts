@@ -22,6 +22,7 @@ import { batchImageRegenHandler } from "../scheduled/batchImageRegen";
 import { createHeartbeatJob, listHeartbeatJobs, updateHeartbeatJob } from "./heartbeat";
 import { performanceMiddleware } from "../seo/performance";
 import { prerenderMiddleware } from "../seo/prerender";
+import { createFramerApiRouter } from "../framerApi";
 
 // XML escape utility for RSS feeds
 function escapeXml(str: string): string {
@@ -83,6 +84,9 @@ async function startServer() {
   app.post("/api/manual-index", manualIndexHandler);
   // Resend webhook for email analytics (opens, clicks, bounces)
   app.post("/api/webhooks/resend", resendWebhookHandler);
+
+  // Framer Public API - serves content to external Framer sites
+  app.use("/api/framer/v1", createFramerApiRouter());
 
   // Seed article endpoint - bypasses cron auth for initial blog population
   app.post("/api/seed-article", async (req, res) => {

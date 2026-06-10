@@ -846,3 +846,9 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Implement internal linking between research studies and related blog articles (contentCluster.ts updated)
 - [x] Add research study citations/links within generated articles (auto-fix adds research links)
 - [x] Add cross-site linking between feelgreat.us.com and feelgreatap-h8jahypk.manus.space (partner links in contentCluster + auto-fix)
+
+## Framer Integration (June 2026)
+- [x] Create public REST API endpoints for Framer (articles list, article detail, research list, research detail)
+- [x] Add CORS support for Framer domains
+- [x] Add API key authentication for Framer
+- [x] Test endpoints and document API usage (7/7 tests passing)
