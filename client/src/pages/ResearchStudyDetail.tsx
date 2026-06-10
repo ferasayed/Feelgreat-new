@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ShareButtons from "@/components/ShareButtons";
+import FloatingShareBar from "@/components/FloatingShareBar";
 
 const EVIDENCE_COLORS: Record<string, string> = {
   high: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
@@ -328,6 +329,8 @@ export default function ResearchStudyDetail() {
             title={title}
             description={isAr ? study.summary30sAr : study.summary30sEn}
             lang={lang}
+            contentType="research"
+            contentSlug={study.slug}
           />
         </section>
 
@@ -345,6 +348,17 @@ export default function ResearchStudyDetail() {
             {isAr ? "اقرأ الدراسة الأصلية كاملة" : "Read Full Original Study"}
           </a>
         </section>
+
+        {/* Floating Share Bar */}
+        <FloatingShareBar
+          url={`/research/${study.slug}`}
+          title={title}
+          description={isAr ? study.summary30sAr : study.summary30sEn}
+          lang={lang}
+          showAfter={400}
+          contentType="research"
+          contentSlug={study.slug}
+        />
 
         {/* Disclaimer */}
         <footer className="border-t pt-6 text-center">

@@ -344,3 +344,20 @@ export const glossaryTerms = mysqlTable("glossary_terms", {
 
 export type GlossaryTerm = typeof glossaryTerms.$inferSelect;
 export type InsertGlossaryTerm = typeof glossaryTerms.$inferInsert;
+
+/**
+ * Share counts table - tracks how many times content has been shared
+ */
+export const shareCounts = mysqlTable("share_counts", {
+  id: int("id").autoincrement().primaryKey(),
+  contentType: mysqlEnum("content_type", ["article", "research"]).notNull(),
+  contentSlug: varchar("content_slug", { length: 255 }).notNull(),
+  platform: mysqlEnum("platform", ["copy", "whatsapp", "telegram", "twitter", "facebook"]).notNull(),
+  count: int("count").default(0).notNull(),
+  lastSharedAt: timestamp("last_shared_at").defaultNow().notNull(),
+}, (table) => ([
+  uniqueIndex("idx_share_unique").on(table.contentType, table.contentSlug, table.platform),
+  index("idx_share_slug").on(table.contentSlug),
+]));
+export type ShareCount = typeof shareCounts.$inferSelect;
+export type InsertShareCount = typeof shareCounts.$inferInsert;

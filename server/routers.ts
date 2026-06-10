@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount, getCommentsByArticle, getCommentsCount, createComment, likeComment, deleteComment, getAllGlossaryTerms, getGlossaryTermBySlug, getGlossaryTermsByCategory } from "./db";
+import { createLead, getAllLeads, getLeadsCount, createOrUpdateConversation, getConversation, getAllConversations, getConversationStats, markConversationNotified, updateLeadStatus, getPublishedArticles, getArticleBySlug, getArticlesByCategory, getArticlesCount, getAllArticles, getArticleById, updateArticle, getArticleStats, getArticlesByCluster, createReview, getPublishedReviews, getPublishedReviewsByCategory, getAllReviews, approveReview, getReviewStats, recordArticleView, getTopPerformingPillars, getTopPerformingArticles, getArticleViewsByPillar, getPublishedResearch, getResearchByTopic, getResearchBySlug, getResearchCount, getMostReadResearch, getMostImpactfulResearch, getRecentResearchByPeriod, recordResearchView, getResearchByEvidenceLevel, getResearchTopics, subscribeToNewsletter, unsubscribeFromNewsletter, getNewsletterSubscriberCount, getCommentsByArticle, getCommentsCount, createComment, likeComment, deleteComment, getAllGlossaryTerms, getGlossaryTermBySlug, getGlossaryTermsByCategory, incrementShareCount, getShareCounts, getTotalShareCount, getTopSharedContent } from "./db";
 import { createHeartbeatJob, listHeartbeatJobs } from "./_core/heartbeat";
 import { invokeLLM } from "./_core/llm";
 import { notifyOwner } from "./_core/notification";
@@ -1099,6 +1099,37 @@ Respond in this exact JSON format:
             },
           };
         }
+      }),
+  }),
+
+  // ============ Share Tracking ============
+  share: router({
+    increment: publicProcedure
+      .input(z.object({
+        contentType: z.enum(["article", "research"]),
+        contentSlug: z.string().min(1),
+        platform: z.enum(["copy", "whatsapp", "telegram", "twitter", "facebook"]),
+      }))
+      .mutation(async ({ input }) => {
+        await incrementShareCount(input.contentType, input.contentSlug, input.platform);
+        return { success: true };
+      }),
+
+    getCount: publicProcedure
+      .input(z.object({
+        contentType: z.enum(["article", "research"]),
+        contentSlug: z.string().min(1),
+      }))
+      .query(async ({ input }) => {
+        const total = await getTotalShareCount(input.contentType, input.contentSlug);
+        const byPlatform = await getShareCounts(input.contentType, input.contentSlug);
+        return { total, byPlatform };
+      }),
+
+    topShared: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).default(10) }).optional())
+      .query(async ({ input }) => {
+        return getTopSharedContent(input?.limit || 10);
       }),
   }),
 });

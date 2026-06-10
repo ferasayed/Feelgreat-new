@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useRef, useState, useMemo } from "react";
 import ArticleComments from "@/components/ArticleComments";
 import ShareButtons from "@/components/ShareButtons";
+import FloatingShareBar from "@/components/FloatingShareBar";
 
 // Helper to get multilingual article field
 function getField(article: any, field: string, lang: string): string {
@@ -468,6 +469,8 @@ export default function BlogArticle() {
               title={title}
               description={excerpt}
               lang={lang}
+              contentType="article"
+              contentSlug={article.slug}
             />
             <a
               href="https://wa.me/96877020770?text=قرأت مقالك وأريد استشارة صحية"
@@ -491,6 +494,17 @@ export default function BlogArticle() {
 
       {/* Related Articles */}
       <RelatedArticles category={article.category} currentSlug={article.slug} isAr={isAr} lang={lang} />
+
+      {/* Floating Share Bar - appears on scroll */}
+      <FloatingShareBar
+        url={`/blog/${article.slug}`}
+        title={title}
+        description={excerpt}
+        lang={lang}
+        showAfter={500}
+        contentType="article"
+        contentSlug={article.slug}
+      />
 
       {/* Medical Disclaimer Footer */}
       <div className="bg-muted/30 border-t py-6">

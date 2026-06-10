@@ -1,7 +1,7 @@
 import { eq, desc, count, and, or, isNull, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { sql } from "drizzle-orm";
-import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber, articleComments, ArticleComment, InsertArticleComment, glossaryTerms, GlossaryTerm, InsertGlossaryTerm } from "../drizzle/schema";
+import { InsertUser, users, leads, InsertLead, Lead, chatConversations, InsertChatConversation, ChatConversation, blogArticles, BlogArticle, InsertBlogArticle, reviews, Review, InsertReview, articleViews, InsertArticleView, pillarPerformance, PillarPerformance, newsletterSubscribers, InsertNewsletterSubscriber, NewsletterSubscriber, articleComments, ArticleComment, InsertArticleComment, glossaryTerms, GlossaryTerm, InsertGlossaryTerm, shareCounts, ShareCount } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -864,4 +864,76 @@ export async function bulkCreateGlossaryTerms(terms: InsertGlossaryTerm[]): Prom
   if (!db) return;
   if (terms.length === 0) return;
   await db.insert(glossaryTerms).values(terms);
+}
+
+// ============ Share Counts ============
+
+export async function incrementShareCount(
+  contentType: "article" | "research",
+  contentSlug: string,
+  platform: "copy" | "whatsapp" | "telegram" | "twitter" | "facebook"
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.execute(sql`
+    INSERT INTO share_counts (content_type, content_slug, platform, count, last_shared_at)
+    VALUES (${contentType}, ${contentSlug}, ${platform}, 1, NOW())
+    ON DUPLICATE KEY UPDATE count = count + 1, last_shared_at = NOW()
+  `);
+}
+
+export async function getShareCounts(
+  contentType: "article" | "research",
+  contentSlug: string
+): Promise<{ platform: string; count: number }[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const results = await db
+    .select({ platform: shareCounts.platform, count: shareCounts.count })
+    .from(shareCounts)
+    .where(and(
+      eq(shareCounts.contentType, contentType),
+      eq(shareCounts.contentSlug, contentSlug)
+    ));
+  
+  return results;
+}
+
+export async function getTotalShareCount(
+  contentType: "article" | "research",
+  contentSlug: string
+): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  
+  const result = await db
+    .select({ total: sql<number>`COALESCE(SUM(${shareCounts.count}), 0)` })
+    .from(shareCounts)
+    .where(and(
+      eq(shareCounts.contentType, contentType),
+      eq(shareCounts.contentSlug, contentSlug)
+    ));
+  
+  return Number(result[0]?.total) || 0;
+}
+
+export async function getTopSharedContent(limit: number = 10): Promise<{
+  contentType: string;
+  contentSlug: string;
+  totalShares: number;
+}[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const results = await db.execute(sql`
+    SELECT content_type as contentType, content_slug as contentSlug, SUM(count) as totalShares
+    FROM share_counts
+    GROUP BY content_type, content_slug
+    ORDER BY totalShares DESC
+    LIMIT ${limit}
+  `);
+  
+  return (results as any)[0] || [];
 }
