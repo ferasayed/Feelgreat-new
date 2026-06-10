@@ -959,8 +959,8 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Create "Ask Expert Feras" section with influence-based FAQ answers and CTA
 - [x] Integrate FAQ PDF content into chatbot knowledge base (objection handling, closing, follow-up)
 - [x] Update ExitIntentPopup to use "5 خطوات لكسر مقاومة الإنسولين" lead magnet with WhatsApp field
-- [ ] Add alt text in Arabic for product images
-- [ ] Update article dates to show "محدَّث 2026" format
+- [x] Add alt text in Arabic for product images
+- [x] Update article dates to show "محدَّث 2026" format
 
 ## Brand Repositioning: Feras Alayed Method™ (June 2026)
 - [x] Rebrand homepage hero to authority positioning: "Transform Your Health. Transform Your Life."
@@ -973,3 +973,4 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add legal disclaimer: Method is personal coaching, not medical treatment
 - [x] Submit updated sitemap to Google Search Console
 - [ ] Visual identity update: White + Gold + Deep Navy, Luxury/Premium/Minimal/Elegant style (partially done - hero updated)
+- [x] Ensure all new pages (StartHere, AskExpert, PrivacyPolicy, TermsOfUse) support 6 languages (AR, EN, FR, ES, DE, TR)

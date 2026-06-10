@@ -326,7 +326,7 @@ function HeroSection() {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
           src="/manus-storage/feras-hero-bg_f4e10bc1.jpg"
-          alt="Feras Alayed - Sustainable Health Expert"
+          alt={lang === 'ar' ? 'فراس العايد - خبير الصحة المستدامة والتغذية السلوكية' : 'Feras Alayed - Sustainable Health & Behavioral Nutrition Expert'}
           className="w-full h-full object-cover opacity-[0.12] scale-110"
           style={{ filter: 'grayscale(30%) blur(1px)' }}
           loading="eager"
@@ -502,7 +502,7 @@ function ProductsSection() {
         <div className="flex justify-center mb-12">
           <img loading="lazy"
             src="/manus-storage/feel-great-system_b22dc6e2.png"
-            alt="Feel Great Pack - Unimate + Balance"
+            alt={lang === 'ar' ? 'باقة فيل جريت - يوني ميت + بالانس' : 'Feel Great Pack - Unimate + Balance'}
             className="w-64 md:w-80 rounded-2xl shadow-2xl hover:scale-105 transition-transform duration-500"
 
             decoding="async"
@@ -514,7 +514,7 @@ function ProductsSection() {
             <div className="h-3 bg-gradient-to-r from-green-500 to-emerald-600"></div>
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
-                <img loading="lazy" src="/manus-storage/unimate-product_c205b611.png" alt="Unimate" className="w-24 h-24 object-contain rounded-xl" decoding="async" />
+                <img loading="lazy" src="/manus-storage/unimate-product_c205b611.png" alt={lang === 'ar' ? 'منتج يوني ميت - مشروب الطاقة والتركيز' : 'Unimate - Energy and Focus Drink'} className="w-24 h-24 object-contain rounded-xl" decoding="async" />
                 <div>
                   <h3 className="text-2xl font-bold">{t("products.unimate.title")}</h3>
                   <p className="text-sm text-green-600 font-medium">Energy | Performance | Attitude</p>
@@ -538,7 +538,7 @@ function ProductsSection() {
             <div className="h-3 gradient-blue"></div>
             <CardContent className="p-8">
               <div className="flex items-center gap-4 mb-6">
-                <img loading="lazy" src="/manus-storage/balance-product_c1f1843f.png" alt="Balance" className="w-24 h-24 object-contain rounded-xl" decoding="async" />
+                <img loading="lazy" src="/manus-storage/balance-product_c1f1843f.png" alt={lang === 'ar' ? 'منتج بالانس - مسجل بالمرجع الطبي PDR' : 'Balance - Listed in PDR Medical Reference'} className="w-24 h-24 object-contain rounded-xl" decoding="async" />
                 <div>
                   <h3 className="text-2xl font-bold">{t("products.balance.title")}</h3>
                   <p className="text-sm text-primary font-medium">Fiber | Metabolism | Wellness</p>
