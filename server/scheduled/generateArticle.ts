@@ -1223,6 +1223,19 @@ export async function generateArticleHandler(req: Request, res: Response) {
       }).then((results) => {
         console.log(`[Social] Published - Twitter: ${results.twitter.success}, LinkedIn: ${results.linkedin.success}, Threads: ${results.threads.success}`);
       }).catch((e) => console.error("[Social] Auto-publish failed:", e));
+
+      // Dispatch webhook to Framer and other registered services
+      import("../framerApi").then(({ dispatchWebhook }) => {
+        dispatchWebhook("article.published", {
+          slug,
+          title: { en: article.titleEn, ar: article.titleAr },
+          category: pillar.id,
+          url: `https://feelgreat.us.com/blog/${slug}`,
+          heroImage: heroImageUrl || null,
+          wordCount,
+          publishedAt: new Date().toISOString(),
+        });
+      }).catch((e) => console.error("[Webhook] Dispatch failed:", e));
     }
 
     return res.json({

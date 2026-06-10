@@ -852,3 +852,9 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add CORS support for Framer domains
 - [x] Add API key authentication for Framer
 - [x] Test endpoints and document API usage (7/7 tests passing)
+
+## Framer Integration Enhancement (June 2026)
+- [x] Create Framer CMS Collection-compatible endpoints with proper schema metadata (/cms/schema, /cms/articles, /cms/research)
+- [x] Add Webhook system to notify Framer on new content publish (cache invalidation) - /webhooks/register, /webhooks, /webhooks/:id + auto-dispatch on article publish
+- [x] Create landing page endpoint (latest 3 articles + 3 research studies) - /landing
+- [x] Test all new endpoints (13/13 tests passing)
