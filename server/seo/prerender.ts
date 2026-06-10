@@ -8,7 +8,7 @@
  * For human visitors, the page loads normally as a SPA with client-side hydration.
  */
 import { Request, Response, NextFunction } from "express";
-import { getArticleBySlug, getResearchBySlug, getPublishedArticles, getPublishedResearch } from "../db";
+import { getArticleBySlug, getResearchBySlug, getPublishedArticles, getPublishedResearch, getAllGlossaryTerms, getGlossaryTermBySlug } from "../db";
 
 const BASE_URL = "https://feelgreat.us.com";
 
@@ -379,6 +379,331 @@ async function prerenderResearchListing(): Promise<string | null> {
 }
 
 /**
+ * Generate prerendered homepage
+ */
+async function prerenderHomepage(): Promise<string | null> {
+  try {
+    const articles = await getPublishedArticles(5, 0);
+    const studies = await getPublishedResearch(5, 0);
+    const content = `
+      <h1>Feel Great - Your Science-Based Health Partner</h1>
+      <p>Evidence-based health guidance by Feras Alayed, Therapeutic & Behavioral Nutrition Specialist. Discover scientifically-proven approaches to insulin resistance, gut health, weight management, and metabolic wellness.</p>
+      <section>
+        <h2>Latest Articles</h2>
+        <ul>
+          ${articles.map(a => `<li><a href="${BASE_URL}/blog/${a.slug}">${escapeHtml(a.titleEn)}</a> - ${escapeHtml(a.excerptEn?.substring(0, 100) || "")}</li>`).join("\n          ")}
+        </ul>
+        <a href="${BASE_URL}/blog">View All Articles</a>
+      </section>
+      <section>
+        <h2>Latest Research</h2>
+        <ul>
+          ${studies.map(s => `<li><a href="${BASE_URL}/research/${s.slug}">${escapeHtml(s.titleEn)}</a> - ${s.journal}</li>`).join("\n          ")}
+        </ul>
+        <a href="${BASE_URL}/research">View All Research</a>
+      </section>
+      <section>
+        <h2>Key Topics</h2>
+        <ul>
+          <li><a href="${BASE_URL}/health/insulin-resistance">Insulin Resistance</a></li>
+          <li><a href="${BASE_URL}/health/gut-health">Gut Health</a></li>
+          <li><a href="${BASE_URL}/health/weight-management">Weight Management</a></li>
+          <li><a href="${BASE_URL}/health/metabolic-health">Metabolic Health</a></li>
+          <li><a href="${BASE_URL}/health/thyroid-health">Thyroid Health</a></li>
+        </ul>
+      </section>`;
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Feel Great",
+      "url": BASE_URL,
+      "description": "Evidence-based health guidance by Feras Alayed. Science-backed approaches to insulin resistance, gut health, and metabolic wellness.",
+      "author": { "@type": "Person", "name": "Feras Alayed" },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${BASE_URL}/blog?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    };
+
+    return generateBotHtml({
+      title: "Feel Great - Evidence-Based Health & Nutrition | Feras Alayed",
+      description: "Science-based health guidance by Feras Alayed, Therapeutic & Behavioral Nutrition Specialist. Articles, research, and tools for insulin resistance, gut health, and metabolic wellness.",
+      canonicalUrl: BASE_URL,
+      ogType: "website",
+      jsonLd,
+      content,
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generate prerendered glossary listing page
+ */
+async function prerenderGlossaryListing(): Promise<string | null> {
+  try {
+    const terms = await getAllGlossaryTerms();
+    if (!terms.length) return null;
+
+    const content = `
+      <h1>Health & Nutrition Glossary - قاموس الصحة والتغذية</h1>
+      <p>Comprehensive glossary of health, nutrition, and medical terms explained in simple language.</p>
+      <ul>
+        ${terms.map(t => `<li><a href="${BASE_URL}/glossary/${t.slug}">${escapeHtml(t.termEn)}</a> - ${escapeHtml((t.definitionEn || "").substring(0, 100))}</li>`).join("\n        ")}
+      </ul>`;
+
+    return generateBotHtml({
+      title: "Health & Nutrition Glossary | Feel Great",
+      description: "Comprehensive glossary of health, nutrition, and medical terms. Understand complex health concepts in simple language.",
+      canonicalUrl: `${BASE_URL}/glossary`,
+      ogType: "website",
+      content,
+      breadcrumbs: [
+        { name: "Home", url: BASE_URL },
+        { name: "Glossary", url: `${BASE_URL}/glossary` },
+      ],
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generate prerendered glossary term detail page
+ */
+async function prerenderGlossaryTerm(slug: string): Promise<string | null> {
+  try {
+    const term = await getGlossaryTermBySlug(slug);
+    if (!term) return null;
+
+    const content = `
+      <article>
+        <h1>${escapeHtml(term.termEn)}</h1>
+        <h2 dir="rtl" lang="ar">${escapeHtml(term.termAr || "")}</h2>
+        <p><strong>Category:</strong> ${escapeHtml(term.category || "")}</p>
+        <section>
+          <h2>Definition</h2>
+          <p>${escapeHtml(term.definitionEn || "")}</p>
+        </section>
+        <section dir="rtl" lang="ar">
+          <h2>التعريف</h2>
+          <p>${escapeHtml(term.definitionAr || "")}</p>
+        </section>
+      </article>`;
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "DefinedTerm",
+      "name": term.termEn,
+      "description": term.definitionEn,
+      "inDefinedTermSet": `${BASE_URL}/glossary`,
+    };
+
+    return generateBotHtml({
+      title: `${term.termEn} - Health Glossary | Feel Great`,
+      description: (term.definitionEn || "").substring(0, 160),
+      canonicalUrl: `${BASE_URL}/glossary/${slug}`,
+      ogType: "article",
+      jsonLd,
+      content,
+      breadcrumbs: [
+        { name: "Home", url: BASE_URL },
+        { name: "Glossary", url: `${BASE_URL}/glossary` },
+        { name: term.termEn, url: `${BASE_URL}/glossary/${slug}` },
+      ],
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generate prerendered success stories page
+ */
+async function prerenderSuccessStories(): Promise<string | null> {
+  try {
+    const content = `
+      <h1>Success Stories - قصص النجاح</h1>
+      <p>Real transformations from real people. 142+ documented before and after results from Feel Great members across 6 health categories.</p>
+      <section>
+        <h2>Categories</h2>
+        <ul>
+          <li><strong>Weight Loss</strong> - Sustainable weight management results</li>
+          <li><strong>Diabetes & Insulin</strong> - Blood sugar control improvements</li>
+          <li><strong>Gut Health</strong> - Digestive wellness transformations</li>
+          <li><strong>General Wellness</strong> - Overall health improvements</li>
+          <li><strong>Women's Health</strong> - Hormonal balance and vitality</li>
+          <li><strong>Thyroid</strong> - Thyroid function optimization</li>
+        </ul>
+      </section>
+      <p>Join thousands who have transformed their health with evidence-based nutrition guidance.</p>`;
+
+    return generateBotHtml({
+      title: "Success Stories - Real Health Transformations | Feel Great",
+      description: "142+ documented before and after results. Real transformations in weight loss, diabetes management, gut health, and more.",
+      canonicalUrl: `${BASE_URL}/success-stories`,
+      ogType: "website",
+      content,
+      breadcrumbs: [
+        { name: "Home", url: BASE_URL },
+        { name: "Success Stories", url: `${BASE_URL}/success-stories` },
+      ],
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generate prerendered FAQ page
+ */
+async function prerenderFAQ(): Promise<string | null> {
+  try {
+    const content = `
+      <h1>Frequently Asked Questions - الأسئلة الشائعة</h1>
+      <section>
+        <h2>About Feel Great</h2>
+        <details><summary>What is Feel Great?</summary><p>Feel Great is an evidence-based health platform by Feras Alayed, providing scientific nutrition guidance, research summaries, and personalized health tools.</p></details>
+        <details><summary>Who is Feras Alayed?</summary><p>Feras Alayed is a Therapeutic & Behavioral Nutrition Specialist dedicated to making scientific health information accessible to everyone.</p></details>
+        <details><summary>Is the content scientifically backed?</summary><p>Yes, all articles and recommendations are based on peer-reviewed research from journals like PubMed, Nature, JAMA, The Lancet, and BMJ.</p></details>
+      </section>
+      <section>
+        <h2>About the Program</h2>
+        <details><summary>How does the 90-day journey work?</summary><p>The 90-day journey is a structured program that builds sustainable health habits through compound daily improvements, guided by scientific principles.</p></details>
+        <details><summary>Can I get personalized guidance?</summary><p>Yes, you can book a free consultation to discuss your specific health goals and get a personalized plan.</p></details>
+      </section>`;
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What is Feel Great?", "acceptedAnswer": { "@type": "Answer", "text": "Feel Great is an evidence-based health platform by Feras Alayed, providing scientific nutrition guidance, research summaries, and personalized health tools." } },
+        { "@type": "Question", "name": "Who is Feras Alayed?", "acceptedAnswer": { "@type": "Answer", "text": "Feras Alayed is a Therapeutic & Behavioral Nutrition Specialist dedicated to making scientific health information accessible to everyone." } },
+        { "@type": "Question", "name": "Is the content scientifically backed?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, all articles and recommendations are based on peer-reviewed research from journals like PubMed, Nature, JAMA, The Lancet, and BMJ." } },
+      ],
+    };
+
+    return generateBotHtml({
+      title: "FAQ - Frequently Asked Questions | Feel Great",
+      description: "Answers to common questions about Feel Great, our evidence-based health approach, programs, and how to get personalized guidance.",
+      canonicalUrl: `${BASE_URL}/faq`,
+      ogType: "website",
+      jsonLd,
+      content,
+      breadcrumbs: [
+        { name: "Home", url: BASE_URL },
+        { name: "FAQ", url: `${BASE_URL}/faq` },
+      ],
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generate prerendered about page
+ */
+async function prerenderAbout(): Promise<string | null> {
+  try {
+    const content = `
+      <h1>About Feel Great</h1>
+      <section>
+        <h2>Our Mission</h2>
+        <p>Feel Great is dedicated to making evidence-based health information accessible to everyone. We bridge the gap between complex scientific research and practical daily health decisions.</p>
+      </section>
+      <section>
+        <h2>What We Offer</h2>
+        <ul>
+          <li><strong>Scientific Articles</strong> - In-depth health articles based on peer-reviewed research</li>
+          <li><strong>Research Summaries</strong> - Complex studies simplified in 30 seconds, 1 minute, and 3 minutes</li>
+          <li><strong>Health Tools</strong> - Calculators, assessments, and trackers for your health journey</li>
+          <li><strong>Personalized Guidance</strong> - One-on-one consultations with Feras Alayed</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Our Approach</h2>
+        <p>We focus on sustainable, science-backed health improvements rather than quick fixes. Our content covers insulin resistance, gut health, metabolic wellness, behavioral nutrition, and more.</p>
+      </section>`;
+
+    return generateBotHtml({
+      title: "About Feel Great - Evidence-Based Health Platform",
+      description: "Feel Great bridges the gap between complex scientific research and practical health decisions. Founded by Feras Alayed, Therapeutic & Behavioral Nutrition Specialist.",
+      canonicalUrl: `${BASE_URL}/about`,
+      ogType: "website",
+      content,
+      breadcrumbs: [
+        { name: "Home", url: BASE_URL },
+        { name: "About", url: `${BASE_URL}/about` },
+      ],
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Generate prerendered author page
+ */
+async function prerenderAuthor(): Promise<string | null> {
+  try {
+    const content = `
+      <h1>Feras Alayed - Therapeutic & Behavioral Nutrition Specialist</h1>
+      <section>
+        <h2>About Feras</h2>
+        <p>Feras Alayed is a Therapeutic & Behavioral Nutrition Specialist with expertise in insulin resistance, metabolic health, gut microbiome, and behavioral nutrition. He founded Feel Great to make scientific health information accessible to Arabic and English-speaking audiences worldwide.</p>
+      </section>
+      <section>
+        <h2>Expertise</h2>
+        <ul>
+          <li>Therapeutic Nutrition</li>
+          <li>Behavioral Nutrition & Food Psychology</li>
+          <li>Insulin Resistance & Metabolic Health</li>
+          <li>Gut Microbiome & Digestive Wellness</li>
+          <li>Weight Management & Body Composition</li>
+          <li>Women's Hormonal Health</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Content</h2>
+        <p>Feras has authored numerous evidence-based articles and simplified complex research studies from top medical journals including PubMed, Nature, JAMA, The Lancet, and BMJ.</p>
+        <ul>
+          <li><a href="${BASE_URL}/blog">Health Articles</a></li>
+          <li><a href="${BASE_URL}/research">Research Summaries</a></li>
+        </ul>
+      </section>`;
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": `${BASE_URL}/#feras-alayed`,
+      "name": "Feras Alayed",
+      "jobTitle": "Therapeutic & Behavioral Nutrition Specialist",
+      "url": `${BASE_URL}/author/feras-alayed`,
+      "sameAs": [],
+      "knowsAbout": ["Therapeutic Nutrition", "Behavioral Nutrition", "Insulin Resistance", "Metabolic Health", "Gut Microbiome"],
+    };
+
+    return generateBotHtml({
+      title: "Feras Alayed - Therapeutic & Behavioral Nutrition Specialist | Feel Great",
+      description: "Feras Alayed is a Therapeutic & Behavioral Nutrition Specialist. Expert in insulin resistance, metabolic health, gut microbiome, and behavioral nutrition.",
+      canonicalUrl: `${BASE_URL}/author/feras-alayed`,
+      ogType: "profile",
+      jsonLd,
+      content,
+      breadcrumbs: [
+        { name: "Home", url: BASE_URL },
+        { name: "Feras Alayed", url: `${BASE_URL}/author/feras-alayed` },
+      ],
+    });
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Main prerender middleware
  * Intercepts requests from bots and serves pre-rendered HTML
  */
@@ -422,6 +747,42 @@ export function prerenderMiddleware() {
       // Research listing
       if (cleanPath === "/research") {
         html = await prerenderResearchListing();
+      }
+
+      // Homepage
+      if (cleanPath === "/" || cleanPath === "") {
+        html = await prerenderHomepage();
+      }
+
+      // Glossary listing
+      if (cleanPath === "/glossary") {
+        html = await prerenderGlossaryListing();
+      }
+
+      // Glossary term detail
+      const glossaryMatch = cleanPath.match(/^\/glossary\/([^/]+)$/);
+      if (glossaryMatch) {
+        html = await prerenderGlossaryTerm(glossaryMatch[1]);
+      }
+
+      // Success stories
+      if (cleanPath === "/success-stories") {
+        html = await prerenderSuccessStories();
+      }
+
+      // FAQ page
+      if (cleanPath === "/faq") {
+        html = await prerenderFAQ();
+      }
+
+      // About page
+      if (cleanPath === "/about") {
+        html = await prerenderAbout();
+      }
+
+      // Author page
+      if (cleanPath === "/author/feras-alayed" || cleanPath === "/founder") {
+        html = await prerenderAuthor();
       }
 
       if (html) {

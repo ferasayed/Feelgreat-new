@@ -910,3 +910,15 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Update push notification sending logic to filter by user preferences (contentType)
 - [x] Add /notifications route to App.tsx
 - [x] Vitest tests (14/14 passing)
+
+## Dynamic Rendering for SEO (June 2026)
+- [x] Detect search engine bots (Googlebot, Bingbot, etc.) via User-Agent (already existed in prerender.ts)
+- [x] Serve full HTML content for article pages to bots (13.7KB per article)
+- [x] Serve full HTML content for research pages to bots
+- [x] Serve full HTML content for blog listing page to bots (8.3KB)
+- [x] Serve full HTML content for research listing page to bots (6.7KB)
+- [x] Expanded prerendering to cover: homepage, glossary, success stories, FAQ, about, author pages
+- [x] JSON-LD structured data (Article, ScholarlyArticle, FAQPage, Person, WebSite, DefinedTerm, ItemList)
+- [x] Dynamic sitemap.xml with all articles/research URLs + added sitemap-glossary.xml
+- [x] Robots.txt optimized (allow AI crawlers, crawl-delay for aggressive bots)
+- [x] Tested: Bots get 10+ HTML elements, regular users get SPA (0 elements)

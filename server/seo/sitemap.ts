@@ -8,7 +8,7 @@
  * - Pillar/topic pages
  * - Health condition pages
  */
-import { getPublishedArticles, getPublishedResearch } from "../db";
+import { getPublishedArticles, getPublishedResearch, getAllGlossaryTerms } from "../db";
 import type { BlogArticle, ResearchStudy } from "../../drizzle/schema";
 
 const BASE_URL = "https://feelgreat.us.com";
@@ -29,6 +29,7 @@ export function generateSitemapIndex(): string {
     `${BASE_URL}/sitemap-blog.xml`,
     `${BASE_URL}/sitemap-research.xml`,
     `${BASE_URL}/sitemap-topics.xml`,
+    `${BASE_URL}/sitemap-glossary.xml`,
   ];
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -128,6 +129,25 @@ export function generateTopicsSitemap(): string {
   ];
 
   return buildSitemapXml(topics);
+}
+
+/**
+ * Generate sitemap for glossary terms
+ */
+export async function generateGlossarySitemap(): Promise<string> {
+  try {
+    const terms = await getAllGlossaryTerms();
+    const entries: SitemapEntry[] = terms.map(term => ({
+      loc: `/glossary/${term.slug}`,
+      changefreq: "monthly" as const,
+      priority: 0.6,
+    }));
+
+    return buildSitemapXml(entries);
+  } catch (error) {
+    console.error("[Sitemap] Error generating glossary sitemap:", error);
+    return buildSitemapXml([]);
+  }
 }
 
 /**
