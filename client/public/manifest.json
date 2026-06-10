@@ -1,0 +1,90 @@
+{
+  "name": "Feel Great - Sustainable Health & Wellness",
+  "short_name": "Feel Great",
+  "description": "Science-backed sustainable health system by Feras Alayed. Transform your health and build your future.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#1a365d",
+  "dir": "auto",
+  "lang": "en",
+  "categories": ["health", "fitness", "lifestyle", "education"],
+  "icons": [
+    {
+      "src": "/manus-storage/icon-72x72_e44851ff.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/manus-storage/icon-96x96_c7c192d8.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/manus-storage/icon-128x128_3b7a1621.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/manus-storage/icon-144x144_3f701da6.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/manus-storage/icon-152x152_01b613e8.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/manus-storage/icon-192x192_71b75f5f.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/manus-storage/icon-384x384_4ca52597.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/manus-storage/icon-512x512_1af8096d.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Health Blog",
+      "short_name": "Blog",
+      "url": "/blog",
+      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Research Library",
+      "short_name": "Research",
+      "url": "/research",
+      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Health Assessment",
+      "short_name": "Assessment",
+      "url": "/assessments",
+      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Success Stories",
+      "short_name": "Stories",
+      "url": "/success-stories",
+      "icons": [{"src": "/manus-storage/icon-96x96_c7c192d8.png", "sizes": "96x96"}]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
 import Home from "./pages/Home";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 
 // Lazy-loaded routes for code splitting
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -143,6 +144,7 @@ function App() {
             <HreflangTags />
             <LanguageRouter />
             <Suspense fallback={null}><ExitIntentPopup /></Suspense>
+            <PWAInstallPrompt />
           </TooltipProvider>
         </LanguageProvider>
       </ThemeProvider>

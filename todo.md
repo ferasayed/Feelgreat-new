@@ -885,3 +885,15 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Share count tracking: database table (share_counts), increment API (trpc.share.increment), display count badge on share buttons
 - [x] Top shared content API endpoint (trpc.share.topShared) for analytics
 - [x] Vitest tests for share count validation (13/13 passing)
+
+## PWA (Progressive Web App) - June 2026
+- [x] Create web app manifest (manifest.json) with app name, icons, theme colors
+- [x] Create service worker with offline caching strategy (cache-first for static, network-first for API)
+- [x] Register service worker in main.tsx
+- [x] Add install prompt UI (banner/button for "Add to Home Screen")
+- [x] Add Push notification subscription (already existed - PushNotificationButton component)
+- [x] Create push_subscriptions database table (already existed)
+- [x] Add server-side Push notification sending API (already existed - sendPushNotificationToAll, notifyNewArticle)
+- [x] Add notification preferences UI for users (PushNotificationButton with language support)
+- [x] Generate PWA icons (72, 96, 128, 144, 152, 192, 384, 512)
+- [x] Test PWA configuration (23/23 tests passing)
