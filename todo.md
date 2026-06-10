@@ -866,3 +866,6 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add success stories route to App.tsx navigation (already existed)
 - [x] Add success stories section/link to homepage (gallery integrated into existing success stories page)
 - [x] Write tests for success stories functionality (9/9 passing)
+
+## Bug Fix: System Health Report Log Fetching (June 2026)
+- [x] Fix HTTP 404 error when fetching logs for all scheduled tasks (article-gen-morning, article-gen-afternoon, article-gen-evening, research-discovery, auto-index-daily, auto-index-evening)

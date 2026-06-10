@@ -39,14 +39,20 @@ interface MonitorReport {
 // Check task execution logs
 async function checkTaskHealth(taskUid: string, taskName: string): Promise<TaskHealth> {
   try {
-    const response = await fetch(
-      `${process.env.BUILT_IN_FORGE_API_URL}/api/heartbeat/logs?task_uid=${taskUid}&limit=10`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.BUILT_IN_FORGE_API_KEY}`,
-        },
-      }
-    );
+    const baseUrl = process.env.BUILT_IN_FORGE_API_URL || "";
+    const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+    const endpoint = new URL("webdevtoken.v1.WebDevService/ListHeartbeatJobRuns", normalizedBase).toString();
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "accept": "application/json",
+        "authorization": `Bearer ${process.env.BUILT_IN_FORGE_API_KEY}`,
+        "content-type": "application/json",
+        "connect-protocol-version": "1",
+      },
+      body: JSON.stringify({ taskUid, pageSize: 10 }),
+    });
 
     if (!response.ok) {
       return {
@@ -69,23 +75,24 @@ async function checkTaskHealth(taskUid: string, taskName: string): Promise<TaskH
     let lastRun: string | null = null;
 
     for (const run of runs) {
-      if (!lastRun) lastRun = run.executed_at || run.created_at;
-      if (run.status === "failed" || run.http_status >= 500) {
+      if (!lastRun) lastRun = run.scheduledAt || run.startedAt || run.finishedAt;
+      const status = run.status || "";
+      if (status.includes("FAILED") || status.includes("TIMEOUT") || (run.httpStatus && run.httpStatus >= 500)) {
         failures++;
-      } else if (run.status === "success" || (run.http_status >= 200 && run.http_status < 300)) {
+      } else if (status.includes("SUCCESS") || (run.httpStatus && run.httpStatus >= 200 && run.httpStatus < 300)) {
         successes++;
       }
     }
 
-    let status: TaskHealth["status"] = "healthy";
-    if (failures >= 5) status = "critical";
-    else if (failures >= 3) status = "warning";
-    else if (runs.length === 0) status = "unknown";
+    let taskStatus: TaskHealth["status"] = "healthy";
+    if (failures >= 5) taskStatus = "critical";
+    else if (failures >= 3) taskStatus = "warning";
+    else if (runs.length === 0) taskStatus = "unknown";
 
     return {
       name: taskName,
       taskUid,
-      status,
+      status: taskStatus,
       lastRun,
       nextRun: null,
       recentFailures: failures,
@@ -195,39 +202,31 @@ async function attemptAutoFixes(tasks: TaskHealth[]): Promise<string[]> {
       // If a task has been failing consistently, try to pause and resume it
       // This can sometimes clear stuck states
       try {
-        const pauseRes = await fetch(
-          `${process.env.BUILT_IN_FORGE_API_URL}/api/heartbeat/update`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${process.env.BUILT_IN_FORGE_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              task_uid: task.taskUid,
-              enable: false,
-            }),
-          }
-        );
+        const baseUrl = process.env.BUILT_IN_FORGE_API_URL || "";
+        const normalizedBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+        const updateEndpoint = new URL("webdevtoken.v1.WebDevService/UpdateHeartbeatJob", normalizedBase).toString();
+        const rpcHeaders = {
+          "accept": "application/json",
+          "authorization": `Bearer ${process.env.BUILT_IN_FORGE_API_KEY}`,
+          "content-type": "application/json",
+          "connect-protocol-version": "1",
+        };
+
+        const pauseRes = await fetch(updateEndpoint, {
+          method: "POST",
+          headers: rpcHeaders,
+          body: JSON.stringify({ taskUid: task.taskUid, enable: false }),
+        });
 
         if (pauseRes.ok) {
           // Wait 2 seconds then re-enable
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
-          const resumeRes = await fetch(
-            `${process.env.BUILT_IN_FORGE_API_URL}/api/heartbeat/update`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${process.env.BUILT_IN_FORGE_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                task_uid: task.taskUid,
-                enable: true,
-              }),
-            }
-          );
+          const resumeRes = await fetch(updateEndpoint, {
+            method: "POST",
+            headers: rpcHeaders,
+            body: JSON.stringify({ taskUid: task.taskUid, enable: true }),
+          });
 
           if (resumeRes.ok) {
             fixes.push(`Recycled task "${task.name}" (pause/resume) to clear stuck state`);
