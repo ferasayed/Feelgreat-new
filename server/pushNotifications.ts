@@ -17,6 +17,8 @@ export interface PushSubscription {
   p256dh: string;
   auth: string;
   language: string;
+  notifyArticles: boolean;
+  notifyResearch: boolean;
   createdAt: Date;
 }
 
@@ -76,11 +78,69 @@ export async function getAllPushSubscriptions(): Promise<PushSubscription[]> {
       p256dh: row.p256dh,
       auth: row.auth,
       language: row.language || "ar",
+      notifyArticles: row.notify_articles !== 0 && row.notify_articles !== false,
+      notifyResearch: row.notify_research !== 0 && row.notify_research !== false,
       createdAt: row.created_at,
     }));
   } catch (error: any) {
     console.error("[Push] Get subscriptions error:", error.message);
     return [];
+  }
+}
+
+/**
+ * Get notification preferences for a specific subscription by endpoint
+ */
+export async function getNotificationPreferences(endpoint: string): Promise<{
+  notifyArticles: boolean;
+  notifyResearch: boolean;
+} | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  try {
+    const result = await db.execute(
+      sql`SELECT notify_articles, notify_research FROM push_subscriptions WHERE endpoint = ${endpoint}`
+    );
+    const rows = (result as unknown as any[])[0] as any[];
+    if (rows.length === 0) return null;
+    return {
+      notifyArticles: rows[0].notify_articles !== 0 && rows[0].notify_articles !== false,
+      notifyResearch: rows[0].notify_research !== 0 && rows[0].notify_research !== false,
+    };
+  } catch (error: any) {
+    console.error("[Push] Get preferences error:", error.message);
+    return null;
+  }
+}
+
+/**
+ * Update notification preferences for a subscription
+ */
+export async function updateNotificationPreferences(
+  endpoint: string,
+  preferences: { notifyArticles?: boolean; notifyResearch?: boolean }
+): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+
+  try {
+    const updates: string[] = [];
+    if (preferences.notifyArticles !== undefined) {
+      updates.push(`notify_articles = ${preferences.notifyArticles ? 1 : 0}`);
+    }
+    if (preferences.notifyResearch !== undefined) {
+      updates.push(`notify_research = ${preferences.notifyResearch ? 1 : 0}`);
+    }
+    if (updates.length === 0) return true;
+
+    await db.execute(
+      sql.raw(`UPDATE push_subscriptions SET ${updates.join(", ")} WHERE endpoint = '${endpoint.replace(/'/g, "''")}'`)
+    );
+    return true;
+  } catch (error: any) {
+    console.error("[Push] Update preferences error:", error.message);
+    return false;
   }
 }
 
@@ -100,7 +160,7 @@ export async function getPushSubscriptionCount(): Promise<number> {
 }
 
 /**
- * Send push notification to all subscribers
+ * Send push notification to all subscribers (respects content type preferences)
  */
 export async function sendPushNotificationToAll(payload: {
   title: string;
@@ -108,13 +168,22 @@ export async function sendPushNotificationToAll(payload: {
   url?: string;
   icon?: string;
   tag?: string;
+  contentType?: "article" | "research" | "general";
 }): Promise<{ sent: number; failed: number; removed: number }> {
   if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
     console.warn("[Push] VAPID keys not configured, skipping push notifications");
     return { sent: 0, failed: 0, removed: 0 };
   }
 
-  const subscriptions = await getAllPushSubscriptions();
+  const allSubscriptions = await getAllPushSubscriptions();
+  
+  // Filter by content type preference
+  const subscriptions = allSubscriptions.filter((sub) => {
+    if (payload.contentType === "article") return sub.notifyArticles;
+    if (payload.contentType === "research") return sub.notifyResearch;
+    return true; // "general" or undefined sends to all
+  });
+
   let sent = 0;
   let failed = 0;
   let removed = 0;
@@ -150,19 +219,21 @@ export async function sendPushNotificationToAll(payload: {
     }
   }
 
-  console.log(`[Push] Notifications sent: ${sent}, failed: ${failed}, removed expired: ${removed}`);
+  console.log(`[Push] Notifications sent: ${sent}, failed: ${failed}, removed expired: ${removed} (type: ${payload.contentType || "general"})`);
   return { sent, failed, removed };
 }
 
 /**
- * Send push notification for a new article
+ * Send push notification for a new article (respects article preference)
  */
 export async function notifyNewArticle(article: {
   titleAr: string;
   titleEn: string;
   slug: string;
 }): Promise<void> {
-  const subscriptions = await getAllPushSubscriptions();
+  const allSubscriptions = await getAllPushSubscriptions();
+  // Only send to subscribers who opted in for articles
+  const subscriptions = allSubscriptions.filter((sub) => sub.notifyArticles);
   if (subscriptions.length === 0) return;
 
   // Group by language and send appropriate notification
@@ -196,6 +267,68 @@ export async function notifyNewArticle(article: {
       url,
       icon: "/favicon.ico",
       tag: `article-${article.slug}`,
+      timestamp: Date.now(),
+    });
+
+    for (const sub of subs) {
+      try {
+        await webPush.sendNotification(
+          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          payload
+        );
+      } catch (error: any) {
+        if (error.statusCode === 410 || error.statusCode === 404) {
+          await removePushSubscription(sub.endpoint);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Send push notification for a new research study (respects research preference)
+ */
+export async function notifyNewResearch(research: {
+  titleAr: string;
+  titleEn: string;
+  slug: string;
+}): Promise<void> {
+  const allSubscriptions = await getAllPushSubscriptions();
+  // Only send to subscribers who opted in for research
+  const subscriptions = allSubscriptions.filter((sub) => sub.notifyResearch);
+  if (subscriptions.length === 0) return;
+
+  // Group by language
+  const byLang: Record<string, PushSubscription[]> = {};
+  for (const sub of subscriptions) {
+    const lang = sub.language || "ar";
+    if (!byLang[lang]) byLang[lang] = [];
+    byLang[lang].push(sub);
+  }
+
+  const PUSH_LABELS: Record<string, { newResearch: string }> = {
+    ar: { newResearch: "بحث علمي جديد" },
+    en: { newResearch: "New Research" },
+    fr: { newResearch: "Nouvelle Recherche" },
+    es: { newResearch: "Nueva Investigación" },
+    de: { newResearch: "Neue Forschung" },
+    tr: { newResearch: "Yeni Araştırma" },
+  };
+
+  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) return;
+
+  for (const [lang, subs] of Object.entries(byLang)) {
+    const labels = PUSH_LABELS[lang] || PUSH_LABELS.en;
+    const title = lang === "ar" ? research.titleAr : research.titleEn;
+    const langPrefix = lang === "en" ? "" : `/${lang}`;
+    const url = `https://feelgreat.us.com${langPrefix}/research/${research.slug}`;
+
+    const payload = JSON.stringify({
+      title: labels.newResearch,
+      body: title || research.titleEn || research.titleAr,
+      url,
+      icon: "/favicon.ico",
+      tag: `research-${research.slug}`,
       timestamp: Date.now(),
     });
 

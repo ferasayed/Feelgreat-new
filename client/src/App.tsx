@@ -49,6 +49,7 @@ const Glossary = lazy(() => import("./pages/Glossary"));
 const GlossaryDetail = lazy(() => import("./pages/Glossary").then(m => ({ default: m.GlossaryDetail })));
 const GSCDashboard = lazy(() => import("./pages/GSCDashboard"));
 const KeywordLanding = lazy(() => import("./pages/KeywordLanding"));
+const NotificationPreferences = lazy(() => import("./pages/NotificationPreferences"));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -108,6 +109,7 @@ function AppRoutes() {
         <Route path={"/comparison"} component={Comparison} />
         <Route path={"/glossary"} component={Glossary} />
         <Route path={"/glossary/:slug"} component={GlossaryDetail} />
+        <Route path={"/notifications"} component={NotificationPreferences} />
         <Route path={"/admin/search-console"} component={GSCDashboard} />
         <Route path={"/reverse-insulin-resistance"} component={KeywordLanding} />
         <Route path={"/prediabetes-symptoms"} component={KeywordLanding} />

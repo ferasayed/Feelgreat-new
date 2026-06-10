@@ -485,13 +485,14 @@ export async function discoverResearchHandler(req: Request, res: Response) {
     // Ping IndexNow for the new research article
     pingIndexNowResearch(slug).catch(e => console.error("[IndexNow] Research ping error:", e));
 
-    // Send push notifications to subscribers about new research
+    // Send push notifications to subscribers about new research (respects preferences)
     import("../pushNotifications").then(({ sendPushNotificationToAll }) => {
       sendPushNotificationToAll({
         title: summary.titleAr || "بحث علمي جديد",
         body: summary.titleEn || summary.titleAr,
         url: `https://feelgreat.us.com/research/${slug}`,
         tag: `research-${slug}`,
+        contentType: "research",
       }).catch((e: any) => console.error("[Push] Research notification failed:", e));
     }).catch((e: any) => console.error("[Push] Import failed:", e));
     

@@ -902,3 +902,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Generate professional branded PWA icon with Feel Great logo (FG monogram, navy + gold)
 - [x] Create splash screen for PWA app launch (apple-touch-startup-image)
 - [x] Wire auto push notifications to article publishing system (already wired for articles, added for research too)
+
+## Notification Preferences Page - June 2026
+- [x] Add notification preferences columns to push_subscriptions table (notify_articles, notify_research)
+- [x] Create tRPC procedures for getting/updating notification preferences
+- [x] Build Notification Preferences page UI with content type toggles (Arabic + English)
+- [x] Update push notification sending logic to filter by user preferences (contentType)
+- [x] Add /notifications route to App.tsx
+- [x] Vitest tests (14/14 passing)

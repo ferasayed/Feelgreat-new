@@ -877,6 +877,28 @@ export const appRouter = router({
         await removePushSubscription(input.endpoint);
         return { success: true };
       }),
+    getPreferences: publicProcedure
+      .input(z.object({ endpoint: z.string().url() }))
+      .query(async ({ input }) => {
+        const { getNotificationPreferences } = await import("./pushNotifications");
+        const prefs = await getNotificationPreferences(input.endpoint);
+        return prefs || { notifyArticles: true, notifyResearch: true };
+      }),
+    updatePreferences: publicProcedure
+      .input(z.object({
+        endpoint: z.string().url(),
+        notifyArticles: z.boolean().optional(),
+        notifyResearch: z.boolean().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { updateNotificationPreferences } = await import("./pushNotifications");
+        const result = await updateNotificationPreferences(input.endpoint, {
+          notifyArticles: input.notifyArticles,
+          notifyResearch: input.notifyResearch,
+        });
+        if (!result) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update preferences" });
+        return { success: true };
+      }),
     stats: adminProcedure.query(async () => {
       const { getPushSubscriptionCount } = await import("./pushNotifications");
       const count = await getPushSubscriptionCount();
