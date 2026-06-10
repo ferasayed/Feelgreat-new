@@ -972,5 +972,5 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Create "Ask Expert Feras" AI chatbot page with FAQ knowledge base and influence/sales psychology
 - [x] Add legal disclaimer: Method is personal coaching, not medical treatment
 - [x] Submit updated sitemap to Google Search Console
-- [ ] Visual identity update: White + Gold + Deep Navy, Luxury/Premium/Minimal/Elegant style (partially done - hero updated)
+- [x] Visual identity update: White + Gold + Deep Navy, Luxury/Premium/Minimal/Elegant style (all pages use deep navy bg + gold accents + white text)
 - [x] Ensure all new pages (StartHere, AskExpert, PrivacyPolicy, TermsOfUse) support 6 languages (AR, EN, FR, ES, DE, TR)
