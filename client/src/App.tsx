@@ -6,8 +6,10 @@ import { Route, Switch, Router as WouterRouter } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
-import Home from "./pages/Home";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+
+// Home is lazy-loaded for better initial bundle size
+const Home = lazy(() => import("./pages/Home"));
 
 // Lazy-loaded routes for code splitting
 const Dashboard = lazy(() => import("./pages/Dashboard"));

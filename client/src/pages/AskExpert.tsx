@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Send, MessageCircle, Phone, Sparkles, User } from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { Streamdown } from "streamdown";
+import Markdown from "react-markdown";
 
 const pageContent: Record<string, {
   title: string;
@@ -213,7 +213,7 @@ export default function AskExpert() {
                   <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${msg.role === "user" ? "bg-blue-600/30 text-white" : "bg-white/10 text-white/90"}`}>
                     {msg.role === "assistant" ? (
                       <div className="prose prose-invert prose-sm max-w-none">
-                        <Streamdown>{msg.content}</Streamdown>
+                        <Markdown>{msg.content}</Markdown>
                       </div>
                     ) : (
                       <p className="text-sm">{msg.content}</p>

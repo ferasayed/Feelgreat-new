@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, X, Send } from "lucide-react";
-import { Streamdown } from "streamdown";
+import Markdown from "react-markdown";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -114,7 +114,7 @@ export default function ChatWidget() {
                     : "bg-muted text-foreground rounded-es-sm"
                 }`}>
                   {msg.role === "assistant" ? (
-                    <Streamdown>{msg.content}</Streamdown>
+                    <Markdown>{msg.content}</Markdown>
                   ) : (
                     msg.content
                   )}

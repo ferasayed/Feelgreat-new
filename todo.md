@@ -974,3 +974,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Submit updated sitemap to Google Search Console
 - [x] Visual identity update: White + Gold + Deep Navy, Luxury/Premium/Minimal/Elegant style (all pages use deep navy bg + gold accents + white text)
 - [x] Ensure all new pages (StartHere, AskExpert, PrivacyPolicy, TermsOfUse) support 6 languages (AR, EN, FR, ES, DE, TR)
+
+## Performance Optimization - June 11, 2026
+- [x] Replace Streamdown (mermaid+shiki+cytoscape = 1.5MB) with react-markdown (~30KB) in ChatWidget, AskExpert, AIChatBox
+- [x] Remove streamdown package entirely from dependencies
+- [x] Lazy-load Home.tsx (was directly imported, pulling 204KB into initial bundle)
+- [x] Main bundle reduced from 1,710KB to 599KB (65% reduction)
+- [x] Home page now loads as separate chunk (204KB) only when needed
+- [x] All 205 tests passing
