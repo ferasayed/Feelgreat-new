@@ -993,3 +993,11 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add GEO optimization for AI search engines (llms.txt endpoint with structured Q&A, citation-ready content)
 - [x] Add quiz CTA to homepage hero and navigation (cta4 = "اختبر صحتك مجاناً" linking to /health-assessment)
 - [x] Wire quiz results to existing lead management system
+
+## Fasting Schedule Calculator (حاسبة مواعيد الصيام)
+- [x] Extract simple fasting nutrition rules from the uploaded program PDFs and summarize them for product use
+  (Saved to references/fasting-calculator-guidelines.md)
+- [x] Build 16:8 fasting calculator page with dinner-time input and personalized daily schedule in 6 languages
+- [x] Add shareable fasting results and WhatsApp consultation CTA to the fasting calculator
+- [x] Add fasting calculator route, SEO metadata, sitemap entry, and homepage/navigation CTA
+- [x] Run tests and save checkpoint for the fasting calculator release

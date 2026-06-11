@@ -56,6 +56,7 @@ const StartHere = lazy(() => import("./pages/StartHere"));
 const AskExpert = lazy(() => import("./pages/AskExpert"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
+const FastingCalculator = lazy(() => import("./pages/FastingCalculator"));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -120,6 +121,7 @@ function AppRoutes() {
         <Route path={"/ask-expert"} component={AskExpert} />
         <Route path={"/privacy"} component={PrivacyPolicy} />
         <Route path={"/terms"} component={TermsOfUse} />
+        <Route path={"/fasting-calculator"} component={FastingCalculator} />
         <Route path={"/admin/search-console"} component={GSCDashboard} />
         <Route path={"/reverse-insulin-resistance"} component={KeywordLanding} />
         <Route path={"/prediabetes-symptoms"} component={KeywordLanding} />

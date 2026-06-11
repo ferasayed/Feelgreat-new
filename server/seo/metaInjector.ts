@@ -512,6 +512,32 @@ const STATIC_META_BY_LANG: Record<string, Record<SupportedLang, { title: string;
       description: "Feel Great web sitesi ve sunulan hizmetlerin kullanım koşulları.",
     },
   },
+  "/fasting-calculator": {
+    ar: {
+      title: "حاسبة مواعيد الصيام المتقطع 16:8 | Feras Alayed Method™",
+      description: "أدخل وقت عشائك واحصل على جدول صيام 16:8 مخصص مع نصائح غذائية من برنامج الصحة المستدامة. أداة مجانية من فراس الآيد.",
+    },
+    en: {
+      title: "16:8 Intermittent Fasting Schedule Calculator | Feras Alayed Method™",
+      description: "Enter your dinner time and get a personalized 16:8 fasting schedule with nutrition guidelines from the Sustainable Health Program. Free tool by Feras Alayed.",
+    },
+    fr: {
+      title: "Calculateur de Jeûne Intermittent 16:8 | Feras Alayed Method™",
+      description: "Entrez l'heure de votre dîner et obtenez un programme de jeûne 16:8 personnalisé avec des conseils nutritionnels du Programme de Santé Durable.",
+    },
+    es: {
+      title: "Calculadora de Ayuno Intermitente 16:8 | Feras Alayed Method™",
+      description: "Ingresa la hora de tu cena y obtén un horario de ayuno 16:8 personalizado con pautas nutricionales del Programa de Salud Sostenible.",
+    },
+    de: {
+      title: "16:8 Intervallfasten Zeitplan-Rechner | Feras Alayed Method™",
+      description: "Geben Sie Ihre Abendessenszeit ein und erhalten Sie einen personalisierten 16:8 Fastenplan mit Ernährungsrichtlinien aus dem Nachhaltigen Gesundheitsprogramm.",
+    },
+    tr: {
+      title: "16:8 Aralıklı Oruç Programı Hesaplayıcı | Feras Alayed Method™",
+      description: "Akşam yemeği saatinizi girin ve Sürdürülebilir Sağlık Programı'ndan beslenme rehberiyle kişiselleştirilmiş 16:8 oruç programınızı alın.",
+    },
+  },
 };
 
 // Pillar pages meta data (keep as English/Arabic mixed since they're primarily Arabic content pages)

@@ -56,12 +56,12 @@ function Navbar() {
   }, []);
 
   const navLabels: Record<string, Record<string, string>> = {
-    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", compare: "لماذا نحن؟", opportunity: "الشراكة", register: "سجّل الآن", quiz: "اختبر صحتك" },
-    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", compare: "Why Us?", opportunity: "Partnership", register: "Register", quiz: "Health Quiz" },
-    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", compare: "Pourquoi nous?", opportunity: "Partenariat", register: "S'inscrire", quiz: "Quiz Santé" },
-    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", compare: "¿Por qué nosotros?", opportunity: "Asociación", register: "Regístrate", quiz: "Quiz de Salud" },
-    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", compare: "Warum wir?", opportunity: "Partnerschaft", register: "Registrieren", quiz: "Gesundheitstest" },
-    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", compare: "Neden biz?", opportunity: "Ortaklık", register: "Kaydol", quiz: "Sağlık Testi" },
+    ar: { blog: "المدونة", research: "الأبحاث", library: "المكتبة الصحية", knowledgeHub: "مركز المعرفة", compare: "لماذا نحن؟", opportunity: "الشراكة", register: "سجّل الآن", quiz: "اختبر صحتك", fasting: "حاسبة الصيام" },
+    en: { blog: "Blog", research: "Research", library: "Health Library", knowledgeHub: "Knowledge Hub", compare: "Why Us?", opportunity: "Partnership", register: "Register", quiz: "Health Quiz", fasting: "Fasting Calculator" },
+    fr: { blog: "Blog", research: "Recherche", library: "Bibliothèque Santé", knowledgeHub: "Centre de Savoir", compare: "Pourquoi nous?", opportunity: "Partenariat", register: "S'inscrire", quiz: "Quiz Santé", fasting: "Calculateur Jeûne" },
+    es: { blog: "Blog", research: "Investigación", library: "Biblioteca de Salud", knowledgeHub: "Centro de Conocimiento", compare: "¿Por qué nosotros?", opportunity: "Asociación", register: "Regístrate", quiz: "Quiz de Salud", fasting: "Calculadora Ayuno" },
+    de: { blog: "Blog", research: "Forschung", library: "Gesundheitsbibliothek", knowledgeHub: "Wissenszentrum", compare: "Warum wir?", opportunity: "Partnerschaft", register: "Registrieren", quiz: "Gesundheitstest", fasting: "Fasten-Rechner" },
+    tr: { blog: "Blog", research: "Araştırma", library: "Sağlık Kütüphanesi", knowledgeHub: "Bilgi Merkezi", compare: "Neden biz?", opportunity: "Ortaklık", register: "Kaydol", quiz: "Sağlık Testi", fasting: "Oruç Hesaplayıcı" },
   };
   const nav = navLabels[lang] || navLabels.en;
 
@@ -80,6 +80,7 @@ function Navbar() {
           <a href="/comparison" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.compare}</a>
           <a href="#partnership" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.opportunity}</a>
           <a href="/health-assessment" className="text-sm font-medium text-amber-500 hover:text-amber-400 transition-colors">{nav.quiz}</a>
+          <a href="/fasting-calculator" className="text-sm font-medium text-emerald-500 hover:text-emerald-400 transition-colors">{nav.fasting}</a>
           <a href="#register" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.register}</a>
         </div>
 
@@ -108,6 +109,7 @@ function Navbar() {
           <a href="/comparison" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.compare}</a>
           <a href="#partnership" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.opportunity}</a>
           <a href="/health-assessment" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-amber-600">{nav.quiz}</a>
+          <a href="/fasting-calculator" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-emerald-600">{nav.fasting}</a>
           <a href="#register" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.register}</a>
         </div>
       )}

@@ -65,6 +65,7 @@ export function generateStaticSitemap(): string {
     { loc: "/success-stories", changefreq: "weekly", priority: 0.7 },
     { loc: "/glossary", changefreq: "weekly", priority: 0.6 },
     { loc: "/calculators", changefreq: "monthly", priority: 0.6 },
+    { loc: "/fasting-calculator", changefreq: "monthly", priority: 0.7 },
     { loc: "/reviews", changefreq: "weekly", priority: 0.7 },
     { loc: "/privacy", changefreq: "yearly", priority: 0.3 },
     { loc: "/terms", changefreq: "yearly", priority: 0.3 },
