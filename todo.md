@@ -1011,3 +1011,8 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add live countdown timer showing time remaining until next fasting event (break fast / start fast)
 - [x] Implement push notification reminders for fasting schedule times (using Web Push API + VAPID keys)
 - [x] Add "Enable Reminders" button that requests notification permission and schedules daily reminders
+
+## Fasting Calculator - Custom Ratios
+- [x] Add fasting ratio selector (14:10, 16:8, 18:6) with visual toggle/tabs in the calculator input section
+- [x] Update schedule calculation logic to use selected ratio (fasting hours / eating hours)
+- [x] Add i18n labels for ratio options in all 6 languages

@@ -93,6 +93,16 @@ describe("Fasting Calculator - formatTime12", () => {
 });
 
 describe("Fasting Calculator - Full Schedule Generation", () => {
+  // Helper to generate schedule for any ratio
+  function generateSchedule(dinnerTime: string, fastHours: number, eatHours: number) {
+    const fastingStart = dinnerTime;
+    const eatingStart = addHours(fastingStart, fastHours);
+    const eatingEnd = addHours(eatingStart, eatHours);
+    const unimateTime = addHours(fastingStart, Math.round(fastHours * 0.7));
+    const snackTime = addHours(eatingStart, Math.round(eatHours / 2));
+    return { fastingStart, eatingStart, eatingEnd, unimateTime, snackTime };
+  }
+
   it("should generate a complete 16:8 schedule for dinner at 20:00", () => {
     const dinnerTime = "20:00";
     const fastingStart = dinnerTime;
@@ -136,5 +146,48 @@ describe("Fasting Calculator - Full Schedule Generation", () => {
     expect(unimateTime).toBe("09:00");
     expect(snackTime).toBe("18:00");
     expect(eatingEnd).toBe("22:00");
+  });
+
+  // ===== 14:10 Ratio Tests =====
+  it("should generate a complete 14:10 schedule for dinner at 20:00", () => {
+    const s = generateSchedule("20:00", 14, 10);
+    expect(s.fastingStart).toBe("20:00");
+    expect(s.eatingStart).toBe("10:00"); // 20 + 14 = 10:00 next day
+    expect(s.eatingEnd).toBe("20:00");   // 10 + 10 = 20:00
+    expect(s.unimateTime).toBe("06:00"); // 20 + round(14*0.7=9.8=10) = 06:00
+    expect(s.snackTime).toBe("15:00");   // 10 + round(10/2=5) = 15:00
+  });
+
+  it("should generate a complete 14:10 schedule for dinner at 19:00", () => {
+    const s = generateSchedule("19:00", 14, 10);
+    expect(s.fastingStart).toBe("19:00");
+    expect(s.eatingStart).toBe("09:00");
+    expect(s.eatingEnd).toBe("19:00");
+  });
+
+  // ===== 18:6 Ratio Tests =====
+  it("should generate a complete 18:6 schedule for dinner at 20:00", () => {
+    const s = generateSchedule("20:00", 18, 6);
+    expect(s.fastingStart).toBe("20:00");
+    expect(s.eatingStart).toBe("14:00"); // 20 + 18 = 14:00 next day
+    expect(s.eatingEnd).toBe("20:00");   // 14 + 6 = 20:00
+    expect(s.unimateTime).toBe("09:00"); // 20 + round(18*0.7=12.6=13) = 09:00
+    expect(s.snackTime).toBe("17:00");   // 14 + round(6/2=3) = 17:00
+  });
+
+  it("should generate a complete 18:6 schedule for dinner at 21:00", () => {
+    const s = generateSchedule("21:00", 18, 6);
+    expect(s.fastingStart).toBe("21:00");
+    expect(s.eatingStart).toBe("15:00"); // 21 + 18 = 15:00
+    expect(s.eatingEnd).toBe("21:00");   // 15 + 6 = 21:00
+  });
+
+  it("should ensure eating window ends at dinner time for all ratios", () => {
+    // Key property: fastHours + eatHours = 24, so eatingEnd always = fastingStart
+    const ratios = [{ fast: 14, eat: 10 }, { fast: 16, eat: 8 }, { fast: 18, eat: 6 }];
+    for (const r of ratios) {
+      const s = generateSchedule("20:00", r.fast, r.eat);
+      expect(s.eatingEnd).toBe(s.fastingStart);
+    }
   });
 });

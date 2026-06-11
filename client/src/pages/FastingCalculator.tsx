@@ -41,10 +41,12 @@ const i18n: Record<string, {
   successStories: { title: string; subtitle: string; viewAll: string };
   countdown: { title: string; fasting: string; eating: string; until: string; hours: string; minutes: string; seconds: string; currentlyFasting: string; currentlyEating: string };
   reminders: { enable: string; enabled: string; denied: string; unsupported: string; description: string; reminderSet: string; disableBtn: string };
+  ratioLabel: string;
+  ratioOptions: { label: string; value: string; fastHours: number; eatHours: number; desc: string }[];
 }> = {
   ar: {
-    pageTitle: "حاسبة مواعيد الصيام المتقطع 16:8",
-    pageSubtitle: "أدخل وقت عشائك واحصل على جدول صيام مخصص لك مع نصائح غذائية مبنية على برنامج الصحة المستدامة",
+    pageTitle: "حاسبة مواعيد الصيام المتقطع",
+    pageSubtitle: "أدخل وقت عشائك واختر نسبة الصيام واحصل على جدول مخصص لك مع نصائح غذائية",
     inputLabel: "ما هو وقت عشائك المعتاد؟",
     inputPlaceholder: "اختر الوقت",
     calculateBtn: "احسب جدولي",
@@ -131,10 +133,16 @@ const i18n: Record<string, {
     },
     countdown: { title: "العداد التنازلي", fasting: "صيام", eating: "أكل", until: "المتبقي حتى", hours: "ساعة", minutes: "دقيقة", seconds: "ثانية", currentlyFasting: "أنت في فترة الصيام الآن", currentlyEating: "أنت في فترة الأكل الآن" },
     reminders: { enable: "تفعيل تذكير الصيام", enabled: "التذكيرات مفعّلة", denied: "الإشعارات محظورة", unsupported: "غير مدعوم", description: "احصل على تذكير يومي بمواعيد الصيام والأكل", reminderSet: "سيتم تذكيرك يومياً بمواعيد صيامك", disableBtn: "إيقاف التذكيرات" },
+    ratioLabel: "اختر نسبة الصيام",
+    ratioOptions: [
+      { label: "14:10", value: "14:10", fastHours: 14, eatHours: 10, desc: "مبتدئ - سهل ومرن" },
+      { label: "16:8", value: "16:8", fastHours: 16, eatHours: 8, desc: "موصى به - الأكثر شيوعاً" },
+      { label: "18:6", value: "18:6", fastHours: 18, eatHours: 6, desc: "متقدم - نتائج أسرع" },
+    ],
   },
   en: {
-    pageTitle: "16:8 Intermittent Fasting Schedule Calculator",
-    pageSubtitle: "Enter your dinner time and get a personalized fasting schedule with nutrition guidelines from the Sustainable Health Program",
+    pageTitle: "Intermittent Fasting Schedule Calculator",
+    pageSubtitle: "Enter your dinner time, choose your fasting ratio, and get a personalized schedule with nutrition guidelines",
     inputLabel: "What time do you usually have dinner?",
     inputPlaceholder: "Select time",
     calculateBtn: "Calculate My Schedule",
@@ -221,9 +229,15 @@ const i18n: Record<string, {
     },
     countdown: { title: "Live Countdown", fasting: "Fasting", eating: "Eating", until: "Time remaining until", hours: "hours", minutes: "min", seconds: "sec", currentlyFasting: "You are currently fasting", currentlyEating: "You are in your eating window" },
     reminders: { enable: "Enable Fasting Reminders", enabled: "Reminders Enabled", denied: "Notifications Blocked", unsupported: "Not Supported", description: "Get daily reminders for your fasting and eating times", reminderSet: "You'll be reminded daily of your fasting schedule", disableBtn: "Disable Reminders" },
+    ratioLabel: "Choose your fasting ratio",
+    ratioOptions: [
+      { label: "14:10", value: "14:10", fastHours: 14, eatHours: 10, desc: "Beginner - Easy & Flexible" },
+      { label: "16:8", value: "16:8", fastHours: 16, eatHours: 8, desc: "Recommended - Most Popular" },
+      { label: "18:6", value: "18:6", fastHours: 18, eatHours: 6, desc: "Advanced - Faster Results" },
+    ],
   },
   fr: {
-    pageTitle: "Calculateur de Jeûne Intermittent 16:8",
+    pageTitle: "Calculateur de Jeûne Intermittent",
     pageSubtitle: "Entrez l'heure de votre dîner et obtenez un programme de jeûne personnalisé avec des conseils nutritionnels du Programme de Santé Durable",
     inputLabel: "À quelle heure dînez-vous habituellement ?",
     inputPlaceholder: "Sélectionner l'heure",
@@ -261,10 +275,16 @@ const i18n: Record<string, {
     successStories: { title: "Résultats réels avec le jeûne intermittent", subtitle: "Histoires de réussite des membres du Programme de Santé Durable", viewAll: "Voir toutes les histoires" },
     countdown: { title: "Compte à rebours", fasting: "Jeûne", eating: "Repas", until: "Temps restant jusqu'à", hours: "heures", minutes: "min", seconds: "sec", currentlyFasting: "Vous êtes en période de jeûne", currentlyEating: "Vous êtes en période de repas" },
     reminders: { enable: "Activer les rappels", enabled: "Rappels activés", denied: "Notifications bloquées", unsupported: "Non supporté", description: "Recevez des rappels quotidiens pour vos heures de jeûne", reminderSet: "Vous serez rappelé quotidiennement", disableBtn: "Désactiver" },
+    ratioLabel: "Choisissez votre ratio de jeûne",
+    ratioOptions: [
+      { label: "14:10", value: "14:10", fastHours: 14, eatHours: 10, desc: "Débutant - Facile et flexible" },
+      { label: "16:8", value: "16:8", fastHours: 16, eatHours: 8, desc: "Recommandé - Le plus populaire" },
+      { label: "18:6", value: "18:6", fastHours: 18, eatHours: 6, desc: "Avancé - Résultats plus rapides" },
+    ],
   },
   es: {
-    pageTitle: "Calculadora de Ayuno Intermitente 16:8",
-    pageSubtitle: "Ingresa la hora de tu cena y obtén un horario de ayuno personalizado con pautas nutricionales del Programa de Salud Sostenible",
+    pageTitle: "Calculadora de Ayuno Intermitente",
+    pageSubtitle: "Ingresa la hora de tu cena, elige tu ratio de ayuno y obtén un horario personalizado con pautas nutricionales",
     inputLabel: "¿A qué hora cenas habitualmente?",
     inputPlaceholder: "Seleccionar hora",
     calculateBtn: "Calcular mi horario",
@@ -301,10 +321,16 @@ const i18n: Record<string, {
     successStories: { title: "Resultados reales con el ayuno intermitente", subtitle: "Historias de éxito de miembros del Programa de Salud Sostenible", viewAll: "Ver todas las historias" },
     countdown: { title: "Cuenta regresiva", fasting: "Ayuno", eating: "Comida", until: "Tiempo restante hasta", hours: "horas", minutes: "min", seconds: "seg", currentlyFasting: "Estás en período de ayuno", currentlyEating: "Estás en tu ventana de comida" },
     reminders: { enable: "Activar recordatorios", enabled: "Recordatorios activados", denied: "Notificaciones bloqueadas", unsupported: "No soportado", description: "Recibe recordatorios diarios de tus horarios de ayuno", reminderSet: "Se te recordará diariamente", disableBtn: "Desactivar" },
+    ratioLabel: "Elige tu ratio de ayuno",
+    ratioOptions: [
+      { label: "14:10", value: "14:10", fastHours: 14, eatHours: 10, desc: "Principiante - Fácil y flexible" },
+      { label: "16:8", value: "16:8", fastHours: 16, eatHours: 8, desc: "Recomendado - El más popular" },
+      { label: "18:6", value: "18:6", fastHours: 18, eatHours: 6, desc: "Avanzado - Resultados más rápidos" },
+    ],
   },
   de: {
-    pageTitle: "16:8 Intervallfasten Zeitplan-Rechner",
-    pageSubtitle: "Geben Sie Ihre Abendessenszeit ein und erhalten Sie einen personalisierten Fastenplan mit Ernährungsrichtlinien aus dem Nachhaltigen Gesundheitsprogramm",
+    pageTitle: "Intervallfasten Zeitplan-Rechner",
+    pageSubtitle: "Geben Sie Ihre Abendessenszeit ein, wählen Sie Ihr Fastenverhältnis und erhalten Sie einen personalisierten Plan",
     inputLabel: "Wann essen Sie normalerweise zu Abend?",
     inputPlaceholder: "Zeit auswählen",
     calculateBtn: "Meinen Zeitplan berechnen",
@@ -341,10 +367,16 @@ const i18n: Record<string, {
     successStories: { title: "Echte Ergebnisse mit Intervallfasten", subtitle: "Erfolgsgeschichten von Mitgliedern des Nachhaltigen Gesundheitsprogramms", viewAll: "Alle Geschichten ansehen" },
     countdown: { title: "Countdown", fasting: "Fasten", eating: "Essen", until: "Verbleibende Zeit bis", hours: "Std", minutes: "Min", seconds: "Sek", currentlyFasting: "Sie fasten gerade", currentlyEating: "Sie sind in Ihrer Essensphase" },
     reminders: { enable: "Erinnerungen aktivieren", enabled: "Erinnerungen aktiv", denied: "Benachrichtigungen blockiert", unsupported: "Nicht unterstützt", description: "Tägliche Erinnerungen an Ihre Fastenzeiten", reminderSet: "Sie werden täglich erinnert", disableBtn: "Deaktivieren" },
+    ratioLabel: "Wählen Sie Ihr Fastenverhältnis",
+    ratioOptions: [
+      { label: "14:10", value: "14:10", fastHours: 14, eatHours: 10, desc: "Anfänger - Einfach & flexibel" },
+      { label: "16:8", value: "16:8", fastHours: 16, eatHours: 8, desc: "Empfohlen - Am beliebtesten" },
+      { label: "18:6", value: "18:6", fastHours: 18, eatHours: 6, desc: "Fortgeschritten - Schnellere Ergebnisse" },
+    ],
   },
   tr: {
-    pageTitle: "16:8 Aralıklı Oruç Programı Hesaplayıcı",
-    pageSubtitle: "Akşam yemeği saatinizi girin ve Sürdürülebilir Sağlık Programı'ndan beslenme rehberiyle kişiselleştirilmiş oruç programınızı alın",
+    pageTitle: "Aralıklı Oruç Programı Hesaplayıcı",
+    pageSubtitle: "Akşam yemeği saatinizi girin, oruç oranınızı seçin ve kişiselleştirilmiş programınızı alın",
     inputLabel: "Genellikle saat kaçta akşam yemeği yersiniz?",
     inputPlaceholder: "Saat seçin",
     calculateBtn: "Programımı Hesapla",
@@ -381,6 +413,12 @@ const i18n: Record<string, {
     successStories: { title: "Aralıklı Oruç ile Gerçek Sonuçlar", subtitle: "Sürdürülebilir Sağlık Programı üyelerinden başarı hikayeleri", viewAll: "Tüm hikayeleri gör" },
     countdown: { title: "Geri Sayım", fasting: "Oruç", eating: "Yemek", until: "Kalan süre", hours: "saat", minutes: "dk", seconds: "sn", currentlyFasting: "Şu anda oruç tutuyorsunuz", currentlyEating: "Yemek pencerenizdesiniz" },
     reminders: { enable: "Hatırlatıcıları Etkinleştir", enabled: "Hatırlatıcılar Etkin", denied: "Bildirimler Engellendi", unsupported: "Desteklenmiyor", description: "Oruç saatleriniz için günlük hatırlatmalar alın", reminderSet: "Günlük olarak hatırlatılacaksınız", disableBtn: "Devre Dışı Bırak" },
+    ratioLabel: "Oruç oranınızı seçin",
+    ratioOptions: [
+      { label: "14:10", value: "14:10", fastHours: 14, eatHours: 10, desc: "Başlangıç - Kolay ve esnek" },
+      { label: "16:8", value: "16:8", fastHours: 16, eatHours: 8, desc: "Önerilen - En popüler" },
+      { label: "18:6", value: "18:6", fastHours: 18, eatHours: 6, desc: "İleri - Daha hızlı sonuçlar" },
+    ],
   },
 };
 
@@ -439,6 +477,7 @@ export default function FastingCalculator() {
   const isRtl = lang === "ar";
 
   const [dinnerTime, setDinnerTime] = useState("");
+  const [fastingRatio, setFastingRatio] = useState("16:8");
   const [showResults, setShowResults] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
@@ -452,14 +491,20 @@ export default function FastingCalculator() {
   const registerLead = trpc.leads.register.useMutation();
   const subscribeMutation = trpc.push.subscribe.useMutation();
 
-  // Calculate schedule based on dinner time
+  // Calculate schedule based on dinner time and selected ratio
+  const selectedRatio = t.ratioOptions.find(r => r.value === fastingRatio) || t.ratioOptions[1];
+  const fastHours = selectedRatio.fastHours;
+  const eatHours = selectedRatio.eatHours;
+
   const schedule = useMemo(() => {
     if (!dinnerTime) return null;
     const fastingStart = dinnerTime;
-    const eatingStart = addHours(fastingStart, 16);
-    const eatingEnd = addHours(eatingStart, 8);
-    const unimateTime = addHours(fastingStart, 11);
-    const snackTime = addHours(eatingStart, 4);
+    const eatingStart = addHours(fastingStart, fastHours);
+    const eatingEnd = addHours(eatingStart, eatHours);
+    // Unimate time: ~70% through fasting window
+    const unimateTime = addHours(fastingStart, Math.round(fastHours * 0.7));
+    // Snack time: midpoint of eating window
+    const snackTime = addHours(eatingStart, Math.round(eatHours / 2));
 
     return {
       fastingStart,
@@ -467,9 +512,11 @@ export default function FastingCalculator() {
       unimateTime,
       snackTime,
       eatingEnd,
+      fastHours,
+      eatHours,
       times: [fastingStart, unimateTime, eatingStart, snackTime, eatingEnd],
     };
-  }, [dinnerTime]);
+  }, [dinnerTime, fastHours, eatHours]);
 
   // ============ Live Countdown Timer ============
   const computeCountdown = useCallback(() => {
@@ -691,6 +738,11 @@ export default function FastingCalculator() {
           <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
             {t.pageTitle}
           </h1>
+          {showResults && schedule && (
+            <div className="inline-block px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 mb-2">
+              <span className="text-amber-400 font-bold text-lg">{fastingRatio}</span>
+            </div>
+          )}
           <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
             {t.pageSubtitle}
           </p>
@@ -716,6 +768,37 @@ export default function FastingCalculator() {
                 onChange={(e) => setDinnerTime(e.target.value)}
                 className="w-full px-6 py-4 rounded-xl bg-slate-900/80 border border-slate-600 text-white text-center text-2xl font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
               />
+
+              {/* Fasting Ratio Selector */}
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-white/70 mb-3 text-center">
+                  {t.ratioLabel}
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {t.ratioOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setFastingRatio(option.value)}
+                      className={`relative px-3 py-3 rounded-xl border-2 transition-all duration-200 text-center active:scale-[0.97] ${
+                        fastingRatio === option.value
+                          ? "border-amber-500 bg-amber-500/10 shadow-lg shadow-amber-500/20"
+                          : "border-slate-600 bg-slate-900/50 hover:border-slate-500"
+                      }`}
+                    >
+                      <span className={`block text-lg font-bold ${fastingRatio === option.value ? "text-amber-400" : "text-white"}`}>
+                        {option.label}
+                      </span>
+                      <span className="block text-[10px] text-white/50 mt-0.5">{option.desc}</span>
+                      {option.value === "16:8" && (
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-amber-500 text-black text-[9px] font-bold rounded-full">
+                          ★
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <button
                 onClick={handleCalculate}
                 disabled={!dinnerTime}
@@ -801,7 +884,7 @@ export default function FastingCalculator() {
                 <div className="bg-indigo-900/40 border border-indigo-500/30 rounded-xl p-4 text-center">
                   <Moon className="w-6 h-6 text-indigo-400 mx-auto mb-2" />
                   <p className="text-sm text-indigo-300">{t.fastingWindow}</p>
-                  <p className="text-2xl font-bold text-white">16 {t.hours}</p>
+                  <p className="text-2xl font-bold text-white">{schedule.fastHours} {t.hours}</p>
                   <p className="text-xs text-white/50 mt-1">
                     {formatTime12(schedule.fastingStart, lang)} → {formatTime12(schedule.eatingStart, lang)}
                   </p>
@@ -809,7 +892,7 @@ export default function FastingCalculator() {
                 <div className="bg-emerald-900/40 border border-emerald-500/30 rounded-xl p-4 text-center">
                   <Sun className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
                   <p className="text-sm text-emerald-300">{t.eatingWindow}</p>
-                  <p className="text-2xl font-bold text-white">8 {t.hours}</p>
+                  <p className="text-2xl font-bold text-white">{schedule.eatHours} {t.hours}</p>
                   <p className="text-xs text-white/50 mt-1">
                     {formatTime12(schedule.eatingStart, lang)} → {formatTime12(schedule.eatingEnd, lang)}
                   </p>
