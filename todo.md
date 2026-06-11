@@ -1001,3 +1001,8 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add shareable fasting results and WhatsApp consultation CTA to the fasting calculator
 - [x] Add fasting calculator route, SEO metadata, sitemap entry, and homepage/navigation CTA
 - [x] Run tests and save checkpoint for the fasting calculator release
+
+## Fasting Calculator Enhancements
+- [x] Add PNG export feature (save schedule as image for Instagram/WhatsApp sharing) using html2canvas
+- [x] Add Lead Capture form (name + phone/WhatsApp) before showing results, wire to leads system
+- [x] Add fasting success stories section (before/after) below results to build trust
