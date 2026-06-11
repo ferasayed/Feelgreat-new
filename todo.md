@@ -1006,3 +1006,8 @@ Strategic hierarchy: Feras → Sustainable Health → Behavioral Nutrition → L
 - [x] Add PNG export feature (save schedule as image for Instagram/WhatsApp sharing) using html2canvas
 - [x] Add Lead Capture form (name + phone/WhatsApp) before showing results, wire to leads system
 - [x] Add fasting success stories section (before/after) below results to build trust
+
+## Fasting Calculator - Notifications & Countdown
+- [x] Add live countdown timer showing time remaining until next fasting event (break fast / start fast)
+- [x] Implement push notification reminders for fasting schedule times (using Web Push API + VAPID keys)
+- [x] Add "Enable Reminders" button that requests notification permission and schedules daily reminders

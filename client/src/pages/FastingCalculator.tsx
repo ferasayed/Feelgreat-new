@@ -1,7 +1,7 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
-import { Clock, Utensils, Moon, Sun, Coffee, Apple, Salad, AlertTriangle, CheckCircle, ArrowRight, Phone, Share2, Droplets, Download, User, Star } from "lucide-react";
+import { Clock, Utensils, Moon, Sun, Coffee, Apple, Salad, AlertTriangle, CheckCircle, ArrowRight, Phone, Share2, Droplets, Download, User, Star, Bell, Timer } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import ShareButtons from "@/components/ShareButtons";
@@ -39,6 +39,8 @@ const i18n: Record<string, {
   savingImage: string;
   leadCapture: { title: string; subtitle: string; nameLabel: string; namePlaceholder: string; phonePlaceholder: string; phoneLabel: string; submitBtn: string; skip: string; privacy: string };
   successStories: { title: string; subtitle: string; viewAll: string };
+  countdown: { title: string; fasting: string; eating: string; until: string; hours: string; minutes: string; seconds: string; currentlyFasting: string; currentlyEating: string };
+  reminders: { enable: string; enabled: string; denied: string; unsupported: string; description: string; reminderSet: string; disableBtn: string };
 }> = {
   ar: {
     pageTitle: "حاسبة مواعيد الصيام المتقطع 16:8",
@@ -127,6 +129,8 @@ const i18n: Record<string, {
       subtitle: "قصص نجاح من مشتركين في برنامج الصحة المستدامة",
       viewAll: "شاهد جميع القصص",
     },
+    countdown: { title: "العداد التنازلي", fasting: "صيام", eating: "أكل", until: "المتبقي حتى", hours: "ساعة", minutes: "دقيقة", seconds: "ثانية", currentlyFasting: "أنت في فترة الصيام الآن", currentlyEating: "أنت في فترة الأكل الآن" },
+    reminders: { enable: "تفعيل تذكير الصيام", enabled: "التذكيرات مفعّلة", denied: "الإشعارات محظورة", unsupported: "غير مدعوم", description: "احصل على تذكير يومي بمواعيد الصيام والأكل", reminderSet: "سيتم تذكيرك يومياً بمواعيد صيامك", disableBtn: "إيقاف التذكيرات" },
   },
   en: {
     pageTitle: "16:8 Intermittent Fasting Schedule Calculator",
@@ -215,6 +219,8 @@ const i18n: Record<string, {
       subtitle: "Success stories from Sustainable Health Program members",
       viewAll: "View All Stories",
     },
+    countdown: { title: "Live Countdown", fasting: "Fasting", eating: "Eating", until: "Time remaining until", hours: "hours", minutes: "min", seconds: "sec", currentlyFasting: "You are currently fasting", currentlyEating: "You are in your eating window" },
+    reminders: { enable: "Enable Fasting Reminders", enabled: "Reminders Enabled", denied: "Notifications Blocked", unsupported: "Not Supported", description: "Get daily reminders for your fasting and eating times", reminderSet: "You'll be reminded daily of your fasting schedule", disableBtn: "Disable Reminders" },
   },
   fr: {
     pageTitle: "Calculateur de Jeûne Intermittent 16:8",
@@ -253,6 +259,8 @@ const i18n: Record<string, {
     savingImage: "Enregistrement...",
     leadCapture: { title: "Entrez vos coordonnées pour voir votre programme", subtitle: "Nous vous enverrons des conseils supplémentaires via WhatsApp", nameLabel: "Nom", namePlaceholder: "Votre nom", phoneLabel: "Numéro WhatsApp", phonePlaceholder: "+33 X XX XX XX XX", submitBtn: "Voir mon programme", skip: "Passer", privacy: "Vos données sont protégées et jamais partagées" },
     successStories: { title: "Résultats réels avec le jeûne intermittent", subtitle: "Histoires de réussite des membres du Programme de Santé Durable", viewAll: "Voir toutes les histoires" },
+    countdown: { title: "Compte à rebours", fasting: "Jeûne", eating: "Repas", until: "Temps restant jusqu'à", hours: "heures", minutes: "min", seconds: "sec", currentlyFasting: "Vous êtes en période de jeûne", currentlyEating: "Vous êtes en période de repas" },
+    reminders: { enable: "Activer les rappels", enabled: "Rappels activés", denied: "Notifications bloquées", unsupported: "Non supporté", description: "Recevez des rappels quotidiens pour vos heures de jeûne", reminderSet: "Vous serez rappelé quotidiennement", disableBtn: "Désactiver" },
   },
   es: {
     pageTitle: "Calculadora de Ayuno Intermitente 16:8",
@@ -291,6 +299,8 @@ const i18n: Record<string, {
     savingImage: "Guardando...",
     leadCapture: { title: "Ingresa tus datos para ver tu horario", subtitle: "Te enviaremos consejos adicionales por WhatsApp", nameLabel: "Nombre", namePlaceholder: "Tu nombre", phoneLabel: "Número de WhatsApp", phonePlaceholder: "+34 XXX XXX XXX", submitBtn: "Ver mi horario", skip: "Omitir", privacy: "Tus datos están protegidos y nunca se comparten" },
     successStories: { title: "Resultados reales con el ayuno intermitente", subtitle: "Historias de éxito de miembros del Programa de Salud Sostenible", viewAll: "Ver todas las historias" },
+    countdown: { title: "Cuenta regresiva", fasting: "Ayuno", eating: "Comida", until: "Tiempo restante hasta", hours: "horas", minutes: "min", seconds: "seg", currentlyFasting: "Estás en período de ayuno", currentlyEating: "Estás en tu ventana de comida" },
+    reminders: { enable: "Activar recordatorios", enabled: "Recordatorios activados", denied: "Notificaciones bloqueadas", unsupported: "No soportado", description: "Recibe recordatorios diarios de tus horarios de ayuno", reminderSet: "Se te recordará diariamente", disableBtn: "Desactivar" },
   },
   de: {
     pageTitle: "16:8 Intervallfasten Zeitplan-Rechner",
@@ -329,6 +339,8 @@ const i18n: Record<string, {
     savingImage: "Wird gespeichert...",
     leadCapture: { title: "Geben Sie Ihre Daten ein, um Ihren Zeitplan zu sehen", subtitle: "Wir senden Ihnen zusätzliche Tipps über WhatsApp", nameLabel: "Name", namePlaceholder: "Ihr Name", phoneLabel: "WhatsApp-Nummer", phonePlaceholder: "+49 XXX XXXXXXX", submitBtn: "Meinen Zeitplan anzeigen", skip: "Überspringen", privacy: "Ihre Daten sind geschützt und werden nie weitergegeben" },
     successStories: { title: "Echte Ergebnisse mit Intervallfasten", subtitle: "Erfolgsgeschichten von Mitgliedern des Nachhaltigen Gesundheitsprogramms", viewAll: "Alle Geschichten ansehen" },
+    countdown: { title: "Countdown", fasting: "Fasten", eating: "Essen", until: "Verbleibende Zeit bis", hours: "Std", minutes: "Min", seconds: "Sek", currentlyFasting: "Sie fasten gerade", currentlyEating: "Sie sind in Ihrer Essensphase" },
+    reminders: { enable: "Erinnerungen aktivieren", enabled: "Erinnerungen aktiv", denied: "Benachrichtigungen blockiert", unsupported: "Nicht unterstützt", description: "Tägliche Erinnerungen an Ihre Fastenzeiten", reminderSet: "Sie werden täglich erinnert", disableBtn: "Deaktivieren" },
   },
   tr: {
     pageTitle: "16:8 Aralıklı Oruç Programı Hesaplayıcı",
@@ -367,6 +379,8 @@ const i18n: Record<string, {
     savingImage: "Kaydediliyor...",
     leadCapture: { title: "Programınızı görmek için bilgilerinizi girin", subtitle: "WhatsApp üzerinden ek ipuçları göndereceğiz", nameLabel: "İsim", namePlaceholder: "Adınız", phoneLabel: "WhatsApp numarası", phonePlaceholder: "+90 XXX XXX XX XX", submitBtn: "Programımı Göster", skip: "Atla", privacy: "Verileriniz korunur ve asla paylaşılmaz" },
     successStories: { title: "Aralıklı Oruç ile Gerçek Sonuçlar", subtitle: "Sürdürülebilir Sağlık Programı üyelerinden başarı hikayeleri", viewAll: "Tüm hikayeleri gör" },
+    countdown: { title: "Geri Sayım", fasting: "Oruç", eating: "Yemek", until: "Kalan süre", hours: "saat", minutes: "dk", seconds: "sn", currentlyFasting: "Şu anda oruç tutuyorsunuz", currentlyEating: "Yemek pencerenizdesiniz" },
+    reminders: { enable: "Hatırlatıcıları Etkinleştir", enabled: "Hatırlatıcılar Etkin", denied: "Bildirimler Engellendi", unsupported: "Desteklenmiyor", description: "Oruç saatleriniz için günlük hatırlatmalar alın", reminderSet: "Günlük olarak hatırlatılacaksınız", disableBtn: "Devre Dışı Bırak" },
   },
 };
 
@@ -400,6 +414,18 @@ function getIconComponent(iconName: string) {
   }
 }
 
+// ============ Helper: Convert base64url to Uint8Array for VAPID ============
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 // ============ Success Stories Data (weight-loss before-after) ============
 const FASTING_STORIES = PARTNER_STORIES
   .filter(s => s.type === "before-after" && s.category === "weight-loss")
@@ -419,9 +445,12 @@ export default function FastingCalculator() {
   const [leadName, setLeadName] = useState("");
   const [leadPhone, setLeadPhone] = useState("");
   const [savingImage, setSavingImage] = useState(false);
+  const [countdownState, setCountdownState] = useState<{ isFasting: boolean; hoursLeft: number; minutesLeft: number; secondsLeft: number; nextEvent: string } | null>(null);
+  const [reminderState, setReminderState] = useState<"default" | "granted" | "denied" | "unsupported">("default");
   const scheduleRef = useRef<HTMLDivElement>(null);
 
   const registerLead = trpc.leads.register.useMutation();
+  const subscribeMutation = trpc.push.subscribe.useMutation();
 
   // Calculate schedule based on dinner time
   const schedule = useMemo(() => {
@@ -441,6 +470,147 @@ export default function FastingCalculator() {
       times: [fastingStart, unimateTime, eatingStart, snackTime, eatingEnd],
     };
   }, [dinnerTime]);
+
+  // ============ Live Countdown Timer ============
+  const computeCountdown = useCallback(() => {
+    if (!schedule) return null;
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const currentSeconds = now.getSeconds();
+
+    const [fastH, fastM] = schedule.fastingStart.split(":").map(Number);
+    const [eatH, eatM] = schedule.eatingStart.split(":").map(Number);
+    const fastingStartMin = fastH * 60 + fastM;
+    const eatingStartMin = eatH * 60 + eatM;
+
+    // Determine if currently fasting or eating
+    let isFasting: boolean;
+    let targetMin: number;
+    let nextEvent: string;
+
+    if (eatingStartMin > fastingStartMin) {
+      // Eating window is same day after fasting start (e.g. fasting 20:00 -> eating 12:00 next day)
+      // Actually if dinner is at 20:00, fasting starts at 20:00, eating starts at 12:00 next day
+      // So fasting: 20:00 -> 12:00, eating: 12:00 -> 20:00
+      if (currentMinutes >= fastingStartMin || currentMinutes < eatingStartMin) {
+        isFasting = true;
+        targetMin = eatingStartMin;
+        nextEvent = t.countdown.eating;
+      } else {
+        isFasting = false;
+        targetMin = fastingStartMin;
+        nextEvent = t.countdown.fasting;
+      }
+    } else {
+      // Eating window wraps around midnight
+      if (currentMinutes >= eatingStartMin && currentMinutes < fastingStartMin) {
+        isFasting = false;
+        targetMin = fastingStartMin;
+        nextEvent = t.countdown.fasting;
+      } else {
+        isFasting = true;
+        targetMin = eatingStartMin;
+        nextEvent = t.countdown.eating;
+      }
+    }
+
+    // Calculate time difference
+    let diffMinutes = targetMin - currentMinutes;
+    if (diffMinutes <= 0) diffMinutes += 24 * 60;
+    let totalSeconds = diffMinutes * 60 - currentSeconds;
+    if (totalSeconds < 0) totalSeconds += 24 * 60 * 60;
+
+    const hoursLeft = Math.floor(totalSeconds / 3600);
+    const minutesLeft = Math.floor((totalSeconds % 3600) / 60);
+    const secondsLeft = totalSeconds % 60;
+
+    return { isFasting, hoursLeft, minutesLeft, secondsLeft, nextEvent };
+  }, [schedule, t.countdown.eating, t.countdown.fasting]);
+
+  useEffect(() => {
+    if (!showResults || !schedule) return;
+    const update = () => setCountdownState(computeCountdown());
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [showResults, schedule, computeCountdown]);
+
+  // ============ Notification Permission Check ============
+  useEffect(() => {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+      setReminderState("unsupported");
+      return;
+    }
+    if (Notification.permission === "granted") {
+      navigator.serviceWorker.ready.then((reg) => {
+        reg.pushManager.getSubscription().then((sub) => {
+          setReminderState(sub ? "granted" : "default");
+        });
+      });
+    } else if (Notification.permission === "denied") {
+      setReminderState("denied");
+    }
+  }, []);
+
+  const handleEnableReminders = async () => {
+    if (reminderState !== "default") return;
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      await navigator.serviceWorker.ready;
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        setReminderState("denied");
+        return;
+      }
+      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      if (!vapidKey) {
+        toast.error("Push configuration error");
+        return;
+      }
+      const applicationServerKey = urlBase64ToUint8Array(vapidKey);
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey as unknown as ArrayBuffer,
+      });
+      const subJson = subscription.toJSON();
+      await subscribeMutation.mutateAsync({
+        endpoint: subJson.endpoint!,
+        p256dh: subJson.keys!.p256dh!,
+        auth: subJson.keys!.auth!,
+        language: lang,
+      });
+      // Send fasting schedule to the service worker for periodic reminders
+      if (schedule) {
+        localStorage.setItem("fasting_schedule", JSON.stringify({
+          fastingStart: schedule.fastingStart,
+          eatingStart: schedule.eatingStart,
+          eatingEnd: schedule.eatingEnd,
+        }));
+        const reg = await navigator.serviceWorker.ready;
+        reg.active?.postMessage({
+          type: "SET_FASTING_SCHEDULE",
+          schedule: {
+            fastingStart: schedule.fastingStart,
+            eatingStart: schedule.eatingStart,
+            eatingEnd: schedule.eatingEnd,
+          },
+        });
+        // Try to register periodic sync (Chrome 80+)
+        if ("periodicSync" in reg) {
+          try {
+            await (reg as any).periodicSync.register("fasting-reminder-check", {
+              minInterval: 60 * 60 * 1000, // 1 hour
+            });
+          } catch { /* Periodic sync not granted */ }
+        }
+      }
+      setReminderState("granted");
+      toast.success(t.reminders.reminderSet);
+    } catch (error) {
+      console.error("[Fasting Reminder] Error:", error);
+      toast.error(lang === "ar" ? "حدث خطأ. حاول مرة أخرى." : "An error occurred. Please try again.");
+    }
+  };
 
   const handleCalculate = () => {
     if (!dinnerTime) return;
@@ -680,7 +850,7 @@ export default function FastingCalculator() {
             </div>
 
             {/* Save as Image Button */}
-            <div className="flex justify-center">
+            <div className="flex justify-center gap-3 flex-wrap">
               <button
                 onClick={handleSaveAsImage}
                 disabled={savingImage}
@@ -690,6 +860,78 @@ export default function FastingCalculator() {
                 {savingImage ? t.savingImage : t.saveAsImage}
               </button>
             </div>
+
+            {/* Live Countdown Timer */}
+            {countdownState && (
+              <div className={`rounded-2xl p-6 md:p-8 border backdrop-blur-sm shadow-2xl ${
+                countdownState.isFasting
+                  ? 'bg-indigo-900/30 border-indigo-500/30'
+                  : 'bg-emerald-900/30 border-emerald-500/30'
+              }`}>
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <Timer className={`w-6 h-6 ${countdownState.isFasting ? 'text-indigo-400' : 'text-emerald-400'}`} />
+                  <h2 className="text-xl md:text-2xl font-bold">{t.countdown.title}</h2>
+                </div>
+                <p className={`text-center text-sm mb-4 ${countdownState.isFasting ? 'text-indigo-300' : 'text-emerald-300'}`}>
+                  {countdownState.isFasting ? t.countdown.currentlyFasting : t.countdown.currentlyEating}
+                </p>
+                <div className="flex items-center justify-center gap-4 md:gap-6">
+                  <div className="text-center">
+                    <div className={`text-4xl md:text-5xl font-mono font-bold ${countdownState.isFasting ? 'text-indigo-300' : 'text-emerald-300'}`}>
+                      {String(countdownState.hoursLeft).padStart(2, '0')}
+                    </div>
+                    <p className="text-white/50 text-xs mt-1">{t.countdown.hours}</p>
+                  </div>
+                  <span className="text-white/30 text-3xl font-light">:</span>
+                  <div className="text-center">
+                    <div className={`text-4xl md:text-5xl font-mono font-bold ${countdownState.isFasting ? 'text-indigo-300' : 'text-emerald-300'}`}>
+                      {String(countdownState.minutesLeft).padStart(2, '0')}
+                    </div>
+                    <p className="text-white/50 text-xs mt-1">{t.countdown.minutes}</p>
+                  </div>
+                  <span className="text-white/30 text-3xl font-light">:</span>
+                  <div className="text-center">
+                    <div className={`text-4xl md:text-5xl font-mono font-bold ${countdownState.isFasting ? 'text-indigo-300' : 'text-emerald-300'}`}>
+                      {String(countdownState.secondsLeft).padStart(2, '0')}
+                    </div>
+                    <p className="text-white/50 text-xs mt-1">{t.countdown.seconds}</p>
+                  </div>
+                </div>
+                <p className="text-center text-white/60 text-sm mt-4">
+                  {t.countdown.until} <span className="font-semibold text-white">{countdownState.nextEvent}</span>
+                </p>
+              </div>
+            )}
+
+            {/* Fasting Reminder Notification */}
+            {reminderState !== "unsupported" && (
+              <div className="bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
+                  <Bell className="w-6 h-6 text-amber-400" />
+                </div>
+                <div className="flex-1 text-center sm:text-start">
+                  <p className="text-white font-medium">{reminderState === "granted" ? t.reminders.enabled : t.reminders.enable}</p>
+                  <p className="text-white/50 text-sm">{reminderState === "granted" ? t.reminders.reminderSet : t.reminders.description}</p>
+                </div>
+                {reminderState === "default" && (
+                  <button
+                    onClick={handleEnableReminders}
+                    className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition-all active:scale-[0.97] whitespace-nowrap"
+                  >
+                    {t.reminders.enable}
+                  </button>
+                )}
+                {reminderState === "granted" && (
+                  <div className="flex items-center gap-2 text-emerald-400">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="text-sm font-medium">{t.reminders.enabled}</span>
+                  </div>
+                )}
+                {reminderState === "denied" && (
+                  <span className="text-red-400 text-sm">{t.reminders.denied}</span>
+                )}
+              </div>
+            )}
 
             {/* Nutrition Guidelines */}
             <div className="bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 md:p-8">

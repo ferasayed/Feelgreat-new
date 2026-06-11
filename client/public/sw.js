@@ -156,6 +156,59 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
+// ============ Fasting Schedule Local Reminders ============
+let fastingScheduleData = null;
+
+// Periodic sync for fasting reminders (if supported)
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "fasting-reminder-check") {
+    event.waitUntil(checkFastingReminder());
+  }
+});
+
+async function checkFastingReminder() {
+  try {
+    const cache = await caches.open("fasting-data");
+    const response = await cache.match("/fasting-schedule");
+    if (!response) return;
+    const schedule = await response.json();
+    if (!schedule) return;
+
+    const now = new Date();
+    const currentMin = now.getHours() * 60 + now.getMinutes();
+    const [fastH, fastM] = schedule.fastingStart.split(":").map(Number);
+    const [eatH, eatM] = schedule.eatingStart.split(":").map(Number);
+    const fastingStartMin = fastH * 60 + fastM;
+    const eatingStartMin = eatH * 60 + eatM;
+
+    // Notify 5 minutes before events
+    const diff1 = Math.abs(currentMin - (fastingStartMin - 5 + 1440) % 1440);
+    const diff2 = Math.abs(currentMin - (eatingStartMin - 5 + 1440) % 1440);
+
+    if (diff1 <= 2) {
+      await self.registration.showNotification("🌙 وقت الصيام", {
+        body: "حان وقت بدء الصيام! استعد لـ 16 ساعة من الصيام المتقطع.",
+        icon: "/manus-storage/icon-192x192_71b75f5f.png",
+        badge: "/manus-storage/icon-72x72_e44851ff.png",
+        tag: "fasting-start-reminder",
+        data: { url: "/fasting-calculator" },
+        vibrate: [200, 100, 200],
+      });
+    } else if (diff2 <= 2) {
+      await self.registration.showNotification("☀️ وقت كسر الصيام", {
+        body: "أحسنت! يمكنك الآن كسر صيامك. ابدأ بوجبة صحية متوازنة.",
+        icon: "/manus-storage/icon-192x192_71b75f5f.png",
+        badge: "/manus-storage/icon-72x72_e44851ff.png",
+        tag: "fasting-break-reminder",
+        data: { url: "/fasting-calculator" },
+        vibrate: [200, 100, 200],
+      });
+    }
+  } catch (e) {
+    console.error("[SW] Fasting reminder check error:", e);
+  }
+}
+
 // Handle notification close
 self.addEventListener("notificationclose", (event) => {
   // Analytics tracking could go here
@@ -169,6 +222,13 @@ self.addEventListener("message", (event) => {
   if (event.data === "clearCache") {
     caches.keys().then((names) => {
       names.forEach((name) => caches.delete(name));
+    });
+  }
+  // Fasting schedule data from the calculator page
+  if (event.data && event.data.type === "SET_FASTING_SCHEDULE") {
+    fastingScheduleData = event.data.schedule;
+    caches.open("fasting-data").then((cache) => {
+      cache.put("/fasting-schedule", new Response(JSON.stringify(fastingScheduleData)));
     });
   }
 });
