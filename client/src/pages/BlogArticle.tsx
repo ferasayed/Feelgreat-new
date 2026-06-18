@@ -482,6 +482,9 @@ export default function BlogArticle() {
         </div>
       </div>
 
+      {/* Author Bio Box - E-E-A-T Enhancement */}
+      <AuthorBioBox isAr={isAr} lang={lang} />
+
       {/* Comments Section */}
       <div className="container max-w-3xl pb-8">
         <ArticleComments articleId={article.id} />
@@ -783,6 +786,115 @@ function RelatedSuccessStories({ category, isAr, lang }: { category: string; isA
         </div>
       </div>
     </div>
+  );
+}
+
+// ============================================================
+// Author Bio Box Component (E-E-A-T SEO Enhancement)
+// ============================================================
+function AuthorBioBox({ isAr, lang }: { isAr: boolean; lang: string }) {
+  const authorBio = {
+    ar: {
+      name: "فراس العايد",
+      title: "أخصائي التغذية العلاجية والسلوكية",
+      credentials: ["مدرج في PDR (المرجع الطبي الأمريكي)", "50+ دراسة سريرية", "12+ سنة خبرة", "حائز على Presidential Sapphire"],
+      description: "فراس العايد هو خبير في الصحة المستدامة والتغذية السلوكية، يساعد الناس على تحويل صحتهم وعقليتهم وحياتهم في أكثر من 30 دولة حول العالم.",
+      cta: "تعرّف أكثر على فراس"
+    },
+    en: {
+      name: "Feras Alayed",
+      title: "Therapeutic & Behavioral Nutrition Specialist",
+      credentials: ["Listed in PDR (Physicians' Desk Reference)", "50+ Clinical Studies", "12+ Years Experience", "Presidential Sapphire Award"],
+      description: "Feras Alayed is a Global Health & Performance Strategist, helping people transform their health, mindset, and life across 30+ countries with science-backed behavioral nutrition.",
+      cta: "Learn more about Feras"
+    },
+    fr: {
+      name: "Feras Alayed",
+      title: "Spécialiste en Nutrition Thérapeutique",
+      credentials: ["Référencé dans le PDR américain", "50+ études cliniques", "12+ années d'expérience"],
+      description: "Feras Alayed est un stratège mondial de la santé, aidant les gens à transformer leur santé et leur vie.",
+      cta: "En savoir plus sur Feras"
+    },
+    es: {
+      name: "Feras Alayed",
+      title: "Especialista en Nutrición Terapéutica",
+      credentials: ["Listado en el PDR estadounidense", "50+ estudios clínicos", "12+ años de experiencia"],
+      description: "Feras Alayed es un estratega global de salud, ayudando a las personas a transformar su salud y vida.",
+      cta: "Más información sobre Feras"
+    },
+    de: {
+      name: "Feras Alayed",
+      title: "Ernährungsspezialist",
+      credentials: ["Im PDR (US-Arzneimittelverzeichnis) gelistet", "50+ klinische Studien", "12+ Jahre Erfahrung"],
+      description: "Feras Alayed ist ein globaler Gesundheitsstratege, der Menschen hilft, ihre Gesundheit und ihr Leben zu transformieren.",
+      cta: "Mehr über Feras erfahren"
+    },
+    tr: {
+      name: "Feras Alayed",
+      title: "Terapötik Beslenme Uzmanı",
+      credentials: ["PDR'de listelenmiştir", "50+ klinik çalışma", "12+ yıl deneyim"],
+      description: "Feras Alayed, insanların sağlık ve yaşamlarını dönüştürmelerine yardımcı olan küresel bir sağlık stratejistidir.",
+      cta: "Feras hakkında daha fazla bilgi"
+    }
+  };
+
+  const bio = authorBio[lang as keyof typeof authorBio] || authorBio.en;
+
+  return (
+    <section className="bg-gradient-to-r from-primary/5 to-transparent border-y border-primary/10 py-8">
+      <div className="container max-w-5xl">
+        <div className="flex flex-col md:flex-row gap-6 items-start">
+          {/* Author Image */}
+          <div className="flex-shrink-0">
+            <img
+              src="/manus-storage/feras-professional.png"
+              alt={bio.name}
+              className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-primary/20 shadow-lg"
+              onError={(e) => {
+                e.currentTarget.src = "https://ui-avatars.com/api/?name=Feras+Alayed&background=1a365d&color=fff&size=128";
+              }}
+            />
+          </div>
+
+          {/* Author Info */}
+          <div className="flex-1">
+            <div className="mb-2">
+              <span className="text-xs font-medium text-primary uppercase tracking-wider">
+                {isAr ? "عن المؤلف" : "About the Author"}
+              </span>
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold mb-1">{bio.name}</h3>
+            <p className="text-primary font-medium text-sm md:text-base mb-3">{bio.title}</p>
+
+            {/* Credentials Badges */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {bio.credentials.map((cred, i) => (
+                <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  {cred}
+                </span>
+              ))}
+            </div>
+
+            <p className="text-muted-foreground text-sm md:text-base mb-4 leading-relaxed">
+              {bio.description}
+            </p>
+
+            <Link
+              href="/feras-alayed"
+              className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all text-sm"
+            >
+              {bio.cta}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
