@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import ArticleComments from "@/components/ArticleComments";
 import ShareButtons from "@/components/ShareButtons";
 import FloatingShareBar from "@/components/FloatingShareBar";
+import UnifiedCTA from "@/components/UnifiedCTA";
 
 // Helper to get multilingual article field
 function getField(article: any, field: string, lang: string): string {
@@ -411,7 +412,7 @@ export default function BlogArticle() {
             prose-strong:text-foreground
             prose-a:text-[#1a5276] prose-a:underline hover:prose-a:text-[#c8a951]
             prose-blockquote:border-[#c8a951] prose-blockquote:bg-muted/50 prose-blockquote:rounded-lg prose-blockquote:py-2 prose-blockquote:px-4
-            [&_.key-takeaways]:bg-gradient-to-r [&_.key-takeaways]:from-emerald-50 [&_.key-takeaways]:to-teal-50 [&_.key-takeaways]:dark:from-emerald-950/30 [&_.key-takeaways]:dark:to-teal-950/30 [&_.key-takeaways]:rounded-xl [&_.key-takeaways]:p-6 [&_.key-takeaways]:mb-8 [&_.key-takeaways]:border [&_.key-takeaways]:border-emerald-200 [&_.key-takeaways]:dark:border-emerald-800/40
+            [&_.key-takeaways]:bg-gradient-to-r [&_.key-takeaways]:from-emerald-50 [&_.key-takeaways]:to-teal-50 [&_.key-takeaways]:dark:from-emerald-950/30 [&_.key-takeaways]:dark:to-emerald-950/30 [&_.key-takeaways]:rounded-xl [&_.key-takeaways]:p-6 [&_.key-takeaways]:mb-8 [&_.key-takeaways]:border [&_.key-takeaways]:border-emerald-200 [&_.key-takeaways]:dark:border-emerald-800/40
             [&_.key-takeaways_h2]:text-lg [&_.key-takeaways_h2]:font-bold [&_.key-takeaways_h2]:text-emerald-800 [&_.key-takeaways_h2]:dark:text-emerald-300 [&_.key-takeaways_h2]:border-0 [&_.key-takeaways_h2]:mt-0 [&_.key-takeaways_h2]:mb-3 [&_.key-takeaways_h2]:pb-0
             [&_.key-takeaways_ul]:space-y-2 [&_.key-takeaways_ul]:list-none [&_.key-takeaways_ul]:pl-0
             [&_.key-takeaways_li]:text-sm [&_.key-takeaways_li]:text-emerald-900 [&_.key-takeaways_li]:dark:text-emerald-200 [&_.key-takeaways_li]:pl-5 [&_.key-takeaways_li]:relative [&_.key-takeaways_li]:before:content-['✓'] [&_.key-takeaways_li]:before:absolute [&_.key-takeaways_li]:before:left-0 [&_.key-takeaways_li]:before:text-emerald-600
@@ -439,6 +440,9 @@ export default function BlogArticle() {
           dangerouslySetInnerHTML={{ __html: content }}
         />
       </article>
+
+      {/* Unified CTA Section - Convert Readers to Clients */}
+      <UnifiedCTA isAr={isAr} lang={lang} />
 
       {/* Tags */}
       {article.tags && article.tags.length > 0 && (
