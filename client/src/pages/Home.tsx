@@ -376,7 +376,7 @@ function HeroSection() {
 
           {/* CTAs - Main Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up stagger-3">
-            <a href="/start">
+            <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-6 gradient-gold text-foreground font-bold border-0 hover:opacity-90 w-full sm:w-auto">
                 {c.cta1}
                 <ArrowUp className="w-5 h-5 ms-2 rotate-45" />

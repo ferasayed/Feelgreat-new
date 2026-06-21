@@ -258,16 +258,16 @@ export default function StartHere() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{c.ctaTitle}</h2>
           <p className="text-white/60 text-lg mb-8">{c.ctaDesc}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://wa.me/96877020770?text=أرغب بمعرفة المزيد عن منهج فراس العايد للتحول الصحي" target="_blank" rel="noopener noreferrer">
+            <a href="https://ufeelgreat.com/c/GBP556" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="gradient-gold text-foreground font-bold px-8 py-6 text-lg">
-                <MessageCircle className="w-5 h-5 me-2" />
-                {c.ctaWhatsApp}
+                <Rocket className="w-5 h-5 me-2" />
+                {lang === "ar" ? "سجّل كشريك الآن" : lang === "en" ? "Register as Partner" : c.ctaWhatsApp}
               </Button>
             </a>
-            <a href="https://wa.me/96877020770?text=أريد حجز مكالمة تعريفية مجانية" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/96877020770?text=أرغب بمعرفة المزيد عن منهج فراس العايد للتحول الصحي" target="_blank" rel="noopener noreferrer">
               <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 bg-transparent px-8 py-6 text-lg">
-                <Phone className="w-5 h-5 me-2" />
-                {c.ctaBtn}
+                <MessageCircle className="w-5 h-5 me-2" />
+                {c.ctaWhatsApp}
               </Button>
             </a>
           </div>

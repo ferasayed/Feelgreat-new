@@ -565,6 +565,15 @@ export default function SuccessStories() {
           <p className="text-slate-400 mb-6">{c.ctaDesc}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
+              href="https://ufeelgreat.com/c/GBP556"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-[#c8a951] text-slate-900 px-6 py-3 rounded-full font-bold hover:bg-[#d4b85c] transition-all"
+            >
+              <ExternalLink className="w-4 h-4" />
+              {c.ctaPartner}
+            </a>
+            <a
               href="https://wa.me/96877020770?text=I want to book a free health consultation"
               target="_blank"
               rel="noopener noreferrer"
@@ -579,13 +588,6 @@ export default function SuccessStories() {
             >
               <ClipboardCheck className="w-4 h-4" />
               {c.ctaAssess}
-            </Link>
-            <Link
-              href="/partner-with-feras"
-              className="inline-flex items-center justify-center gap-2 bg-[#c8a951]/20 text-[#c8a951] px-6 py-3 rounded-full font-medium hover:bg-[#c8a951]/30 transition-all border border-[#c8a951]/30"
-            >
-              <Users className="w-4 h-4" />
-              {c.ctaPartner}
             </Link>
           </div>
         </div>
