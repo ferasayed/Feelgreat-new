@@ -53,6 +53,7 @@ const GSCDashboard = lazy(() => import("./pages/GSCDashboard"));
 const KeywordLanding = lazy(() => import("./pages/KeywordLanding"));
 const NotificationPreferences = lazy(() => import("./pages/NotificationPreferences"));
 const StartHere = lazy(() => import("./pages/StartHere"));
+const LandingPage = lazy(() => import("./pages/LandingPage"));
 const AskExpert = lazy(() => import("./pages/AskExpert"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
@@ -118,6 +119,7 @@ function AppRoutes() {
         <Route path={"/glossary/:slug"} component={GlossaryDetail} />
         <Route path={"/notifications"} component={NotificationPreferences} />
         <Route path={"/start"} component={StartHere} />
+        <Route path={"/lp"} component={LandingPage} />
         <Route path={"/ask-expert"} component={AskExpert} />
         <Route path={"/privacy"} component={PrivacyPolicy} />
         <Route path={"/terms"} component={TermsOfUse} />
