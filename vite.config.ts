@@ -169,6 +169,16 @@ export default defineConfig({
     emptyOutDir: true,
     cssCodeSplit: true,
     minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
+        passes: 2,
+      },
+      format: {
+        comments: false, // Remove all comments
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks: {
@@ -177,7 +187,21 @@ export default defineConfig({
           router: ["wouter"],
           charts: ["recharts"],
         },
+        // Optimize chunk names for better caching
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash].[ext]",
       },
+    },
+    // Enable CSS minification
+    cssMinify: true,
+    // Generate sourcemaps only for debugging
+    sourcemap: false,
+    // Target modern browsers for smaller bundles
+    target: "es2020",
+    // Enable chunk splitting for better caching
+    modulePreload: {
+      polyfill: false,
     },
   },
   server: {
