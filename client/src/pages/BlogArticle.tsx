@@ -7,6 +7,7 @@ import ArticleComments from "@/components/ArticleComments";
 import ShareButtons from "@/components/ShareButtons";
 import FloatingShareBar from "@/components/FloatingShareBar";
 import UnifiedCTA from "@/components/UnifiedCTA";
+import RelatedArticles from "@/components/RelatedArticles";
 
 // Helper to get multilingual article field
 function getField(article: any, field: string, lang: string): string {
@@ -497,8 +498,8 @@ export default function BlogArticle() {
       {/* Related Success Stories */}
       <RelatedSuccessStories category={article.category} isAr={isAr} lang={lang} />
 
-      {/* Related Articles */}
-      <RelatedArticles category={article.category} currentSlug={article.slug} isAr={isAr} lang={lang} />
+      {/* Related Articles - Internal Linking for SEO */}
+      <RelatedArticles currentArticleId={article.id} category={article.category} limit={4} />
 
       {/* Floating Share Bar - appears on scroll */}
       <FloatingShareBar
