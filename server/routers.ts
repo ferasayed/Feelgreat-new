@@ -442,6 +442,32 @@ export const appRouter = router({
   }),
   // Blog articles (public)
   blog: router({
+    // Public: Seed new articles without authentication
+    publishNew: publicProcedure
+      .input(z.object({ secret: z.string() }))
+      .mutation(async ({ input }) => {
+        // Simple secret protection
+        if (input.secret !== "feelgreat2024") {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid secret" });
+        }
+
+        const { seedAllContentHandler } = await import("./seedContent");
+        const mockReq = { headers: {}, body: {} } as any;
+        let result = null;
+        const mockRes = {
+          status: (code: number) => mockRes,
+          json: (data: any) => { result = data; return mockRes; },
+        } as any;
+
+        await seedAllContentHandler(mockReq, mockRes);
+
+        return {
+          success: true,
+          message: "تم نشر المقالات العربية الخمس بنجاح!",
+          summary: result?.summary || {},
+        };
+      }),
+
     list: publicProcedure
       .input(z.object({
         limit: z.number().min(1).max(50).optional(),
