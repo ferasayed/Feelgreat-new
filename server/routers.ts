@@ -675,6 +675,36 @@ export const appRouter = router({
           message: "تم بدء عملية إعادة توليد الصور. ستصلك إشعار عند الانتهاء.",
         };
       }),
+
+    // Admin: seed new articles (high-volume keyword articles)
+    seedNewArticles: adminProcedure
+      .mutation(async () => {
+        // Import the seeding function dynamically to avoid circular imports
+        const { seedAllContentHandler } = await import("./seedContent");
+
+        // Create a mock request and response to call the handler
+        const mockReq = {
+          headers: {},
+          body: {},
+        } as any;
+
+        let result = null;
+        const mockRes = {
+          status: (code: number) => mockRes,
+          json: (data: any) => {
+            result = data;
+            return mockRes;
+          },
+        } as any;
+
+        await seedAllContentHandler(mockReq, mockRes);
+
+        return {
+          success: true,
+          message: result?.message || "تم تطبيق المقالات الجديدة بنجاح",
+          summary: result?.summary || {},
+        };
+      }),
   }),
 
   // Research Hub (public)

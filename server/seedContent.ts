@@ -7,7 +7,7 @@
  */
 
 import type { Request, Response } from "express";
-import { createBlogArticle, createResearchStudy, getArticlesCount, getResearchCount } from "../db";
+import { createBlogArticle, createResearchStudy, getArticlesCount, getResearchCount } from "./db";
 
 // ============================================================
 // 55 ARTICLES DATA

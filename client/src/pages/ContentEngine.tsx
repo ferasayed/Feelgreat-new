@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   FileText, TrendingUp, Image, Share2, BarChart3,
   Eye, EyeOff, Copy, ExternalLink, Calendar, Target,
-  Zap, Globe, BookOpen, Sparkles, Clock, Instagram, Send, Play, ImagePlus
+  Zap, Globe, BookOpen, Sparkles, Clock, Instagram, Send, Play, ImagePlus, RefreshCw
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -251,6 +251,38 @@ function ManualTriggerButton() {
   );
 }
 
+function SeedArticlesButton() {
+  const seedMutation = trpc.blog.seedNewArticles.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSeed = async () => {
+    setIsLoading(true);
+    try {
+      const result = await seedMutation.mutateAsync();
+      toast.success(result.message || "تم تطبيق المقالات الجديدة بنجاح", { duration: 5000 });
+      // Refresh the articles list
+      trpc.useUtils().blog.adminList.invalidate();
+    } catch (e: any) {
+      toast.error("فشل في تطبيق المقالات: " + (e.message || "خطأ غير معروف"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="default"
+      size="sm"
+      className="gap-1 bg-green-600 hover:bg-green-700 text-white"
+      onClick={handleSeed}
+      disabled={isLoading}
+    >
+      <RefreshCw className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`} />
+      {isLoading ? "جاري التطبيق..." : "إضافة مقالات SEO جديدة"}
+    </Button>
+  );
+}
+
 export default function ContentEngine() {
   useEffect(() => {
     document.title = "Content Engine | Feel Great";
@@ -307,6 +339,7 @@ export default function ContentEngine() {
           <p className="text-muted-foreground mt-1">نظام توليد ونشر المقالات الصحية الأوتوماتيكي</p>
         </div>
         <div className="flex items-center gap-2">
+          <SeedArticlesButton />
           <BatchImageRegenButton />
           <ManualTriggerButton />
           <Badge variant="outline" className="gap-1">
