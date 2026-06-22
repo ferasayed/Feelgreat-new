@@ -99,6 +99,17 @@ async function startServer() {
     }
   });
 
+  // Seed ALL articles including Arabic pillar articles - bypasses auth
+  app.post("/api/seed-all-articles", async (req, res) => {
+    try {
+      const { seedAllContentHandler } = await import("../seedContent");
+      return seedAllContentHandler(req, res);
+    } catch (error: any) {
+      console.error("[SeedAllArticles] Error:", error);
+      return res.status(500).json({ error: error.message || "Unknown error" });
+    }
+  });
+
   // Research discovery endpoint - discovers and summarizes new PubMed studies
   app.post("/api/scheduled/discoverResearch", async (req, res) => {
     try {
