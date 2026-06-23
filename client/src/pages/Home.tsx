@@ -11,6 +11,8 @@ import { Globe, ChevronDown, Zap, Heart, TrendingUp, Users, DollarSign, Clock, G
 import { Skeleton } from "@/components/ui/skeleton";
 import ChatWidget from "@/components/ChatWidget";
 import { NewsletterSection } from "@/components/NewsletterSection";
+import { SocialProofBar } from "@/components/SocialProofBar";
+import { PriceDisplay } from "@/components/PriceDisplay";
 
 function LanguageSwitcher() {
   const { lang, setLang, languages } = useLanguage();
@@ -2050,6 +2052,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <SchemaMarkup />
       <Navbar />
+      <SocialProofBar />
       <HeroSection />
       {/* Knowledge Platform Flow: Authority → Content → Research → Library → Problem → Solution → Partnership */}
       <TrustAuthoritySection />
@@ -2063,6 +2066,7 @@ export default function Home() {
       <TestimonialsSection />
       <HealthInvestorSection />
       <ProductsSection />
+      <PriceDisplay />
       <PartnershipSection />
       <NewsletterSection />
       <RegistrationForm />
