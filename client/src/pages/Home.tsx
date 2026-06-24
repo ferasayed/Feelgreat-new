@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { Globe, ChevronDown, Zap, Heart, TrendingUp, Users, DollarSign, Clock, GraduationCap, Star, MessageCircle, X, Send, ArrowUp, Shield, Brain, Moon, Activity, Leaf, Target, MapPin, Award, Phone, Play, Sparkles, BarChart3, Calendar, BookOpen, FlaskConical, Library, ArrowRight } from "lucide-react";
+import { Globe, ChevronDown, Zap, Heart, TrendingUp, Users, DollarSign, Clock, GraduationCap, Star, MessageCircle, X, Send, ArrowUp, Shield, Brain, Moon, Activity, Leaf, Target, MapPin, Award, Phone, Play, Sparkles, BarChart3, Calendar, BookOpen, FlaskConical, Library, ArrowRight, Briefcase } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import ChatWidget from "@/components/ChatWidget";
 import { NewsletterSection } from "@/components/NewsletterSection";
@@ -80,6 +80,7 @@ function Navbar() {
           <a href="/health-library" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.library}</a>
           <a href="/feras-alayed" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.knowledgeHub}</a>
           <a href="/comparison" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.compare}</a>
+          <a href="/business-opportunity" className="text-sm font-medium text-emerald-500 hover:text-emerald-400 transition-colors">{lang === "ar" ? "فرص الاستثمار" : "Business Opp."}</a>
           <a href="#partnership" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">{nav.opportunity}</a>
           <a href="/health-assessment" className="text-sm font-medium text-amber-500 hover:text-amber-400 transition-colors">{nav.quiz}</a>
           <a href="/fasting-calculator" className="text-sm font-medium text-emerald-500 hover:text-emerald-400 transition-colors">{nav.fasting}</a>
@@ -109,6 +110,7 @@ function Navbar() {
           <a href="/health-library" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.library}</a>
           <a href="/feras-alayed" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.knowledgeHub}</a>
           <a href="/comparison" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.compare}</a>
+          <a href="/business-opportunity" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-emerald-600">{lang === "ar" ? "فرص الاستثمار" : "Business Opportunities"}</a>
           <a href="#partnership" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium">{nav.opportunity}</a>
           <a href="/health-assessment" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-amber-600">{nav.quiz}</a>
           <a href="/fasting-calculator" onClick={() => setMobileOpen(false)} className="block py-2 text-sm font-medium text-emerald-600">{nav.fasting}</a>
@@ -125,8 +127,18 @@ function ContentButtons({ lang, cta5, cta6 }: { lang: string; cta5: string; cta6
   const articleCount = blogData?.total ?? 0;
   const researchCount = researchData?.total ?? 0;
 
+  // Business opportunity labels
+  const businessLabel = {
+    ar: "فرص الاستثمار",
+    en: "Business Opportunities",
+    fr: "Opportunités d'Affaires",
+    es: "Oportunidades de Negocio",
+    de: "Geschäftsmöglichkeiten",
+    tr: "İş Fırsatları",
+  }[lang] || "Business Opportunities";
+
   return (
-    <div className="flex flex-row gap-3 justify-center mt-3 animate-fade-in-up stagger-3">
+    <div className="flex flex-col sm:flex-row gap-3 justify-center mt-3 animate-fade-in-up stagger-3">
       <a href="/blog">
         <Button size="lg" variant="outline" className="text-base px-5 sm:px-8 py-5 border-blue-400/40 text-blue-300 hover:bg-blue-500/10 bg-transparent w-full sm:w-auto">
           <BookOpen className="w-5 h-5 me-2" />
@@ -137,6 +149,12 @@ function ContentButtons({ lang, cta5, cta6 }: { lang: string; cta5: string; cta6
         <Button size="lg" variant="outline" className="text-base px-5 sm:px-8 py-5 border-purple-400/40 text-purple-300 hover:bg-purple-500/10 bg-transparent w-full sm:w-auto">
           <FlaskConical className="w-5 h-5 me-2" />
           {cta6}{researchCount > 0 && ` (${researchCount})`}
+        </Button>
+      </a>
+      <a href="/business-opportunity">
+        <Button size="lg" variant="outline" className="text-base px-5 sm:px-8 py-5 border-emerald-400/40 text-emerald-300 hover:bg-emerald-500/10 bg-transparent w-full sm:w-auto">
+          <Briefcase className="w-5 h-5 me-2" />
+          {businessLabel}
         </Button>
       </a>
     </div>
