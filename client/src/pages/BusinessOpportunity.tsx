@@ -1,313 +1,140 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle, Play, DollarSign, Globe, Users, Clock, TrendingUp, Star, Award } from "lucide-react";
+import { ArrowRight, CheckCircle, DollarSign, Globe, Users, Clock, TrendingUp, Star, Award, TrendingDown, Shield, Zap, Target, BookOpen, Briefcase, BarChart3, PiggyBank, Building2, Crown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-type FunnelStep = "opportunity" | "video" | "application" | "booking";
+// Investment opportunity articles data
+const investmentArticles = [
+  {
+    slug: "health-investment-roi",
+    title: "Your Health Investment: The Best Investment You Can Make in 2024",
+    titleAr: "استثمارك في الصحة: أفضل استثمار يمكنك القيام به في 2024",
+    desc: "Discover why investing in your health delivers better returns than any stock market portfolio. Learn about the ROI of preventive health.",
+    descAr: "اكتشف لماذا يوفر الاستثمار في صحتك عوائد أفضل من أي محفظة أسهم. تعرف على العائد على الاستثمار في الوقاية الصحية.",
+    icon: TrendingUp,
+    color: "from-emerald-500 to-teal-500",
+  },
+  {
+    slug: "cost-of-diabetes-investment",
+    title: "The True Cost of Diabetes vs. Investing in Prevention",
+    titleAr: "التكلفة الحقيقية للسكري مقابل الاستثمار في الوقاية",
+    desc: "The average diabetic spends $9,600+ annually on medical costs. See why investing $30/month in prevention is the smartest financial decision.",
+    descAr: "يصل إنفاق المصاب بالسكري في المتوسط إلى أكثر من 9,600 دولار سنوياً على تكاليف طبية. اكتشف لماذا يعد استثمار 30 دولاراً شهرياً في الوقاية أذكى قرار مالي.",
+    icon: TrendingDown,
+    color: "from-red-500 to-orange-500",
+  },
+  {
+    slug: "unicity-business-investment",
+    title: "Why Unicity Is the Smart Business Investment for 2024",
+    titleAr: "لماذا يونيسيتي هو الاستثمار الذكي في الأعمال لعام 2024",
+    desc: "With 25+ years in business, $1B+ revenue, and products in 30+ countries, Unicity offers stability most startups can't match.",
+    descAr: "مع أكثر من 25 عاماً في الأعمال التجارية وأكثر من مليار دولار في الإيرادات ومنتجات في أكثر من 30 دولة، تقدم يونيسيتي استقراراً لا يمكن لمعظم الشركات الناشئة مطابقته.",
+    icon: Building2,
+    color: "from-blue-500 to-indigo-500",
+  },
+  {
+    slug: "centurion-investment-program",
+    title: "The Centurion Investment Program: Your Path to Financial Freedom",
+    titleAr: "برنامج سينشريون للاستثمار: طريقك إلى الحرية المالية",
+    desc: "Unicity's exclusive Centurion program offers guaranteed returns, leadership development, and priority commissions for serious builders.",
+    descAr: "يقدم برنامج سينشريون الحصري من يونيسيتي عوائد مضمونة وتطوير قيادي وأولوية العمولات للمطورين الجادين.",
+    icon: Crown,
+    color: "from-amber-500 to-yellow-500",
+  },
+  {
+    slug: "compensation-plan-explained",
+    title: "Unicity Compensation Plan Explained: How to Build Wealth",
+    titleAr: "خطة تعويضات يونيسيتي: كيف تبني ثروتك",
+    desc: "Detailed breakdown of Unicity's 7-income stream model: retail profit, override commissions, leadership bonuses, and more.",
+    descAr: "تفصيل شامل لنموذج يونيسيتي ذو 7 مصادر دخل: ربح التجزئة، عمولات التجاوز، مكافآت القيادة والمزيد.",
+    icon: BarChart3,
+    color: "from-purple-500 to-violet-500",
+  },
+  {
+    slug: "prevention-vs-treatment-investment",
+    title: "Prevention vs. Treatment: Why Investing in Health Pays Off",
+    titleAr: "الوقاية مقابل العلاج: لماذا يؤتي الاستثمار في الصحة ثماره",
+    desc: "Clinical data shows preventive health programs reduce chronic disease risk by 80%. See the math behind smart health investment.",
+    descAr: "تُظهر البيانات السريرية أن برامج الصحة الوقائية تقلل من خطر الأمراض المزمنة بنسبة 80%. شاهد الأرقام وراء الاستثمار الذكي في الصحة.",
+    icon: Shield,
+    color: "from-cyan-500 to-blue-500",
+  },
+  {
+    slug: "passive-income-unicity",
+    title: "How to Generate Passive Income with Unicity",
+    titleAr: "كيف تحقق دخلاً سلبياً مع يونيسيتي",
+    desc: "Build a health-focused business that generates recurring monthly income. Learn the exact system top earners use for residual income.",
+    descAr: "ابنِ عملاً يركز على الصحة يولد دخلاً شهرياً متكرراً. تعرف على النظام الدقيق الذي يستخدمه كبار earners للدخل المتبقي.",
+    icon: PiggyBank,
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    slug: "unicity-roi-calculation",
+    title: "Unicity ROI Calculation: Real Numbers That Matter",
+    titleAr: "حساب العائد على الاستثمار في يونيسيتي: أرقام حقيقية مهمة",
+    desc: "Real ROI calculations based on actual partner results. See how much you can earn with $99, $299, or $599 monthly investment levels.",
+    descAr: "حسابات حقيقية للعائد على الاستثمار بناءً على نتائج الشركاء الفعليين. شاهد كم يمكنك الربح بمستويات استثمارية شهرية بـ 99 دولار أو 299 دولار أو 599 دولار.",
+    icon: Target,
+    color: "from-pink-500 to-rose-500",
+  },
+];
+
+// Partner testimonials
+const testimonials = [
+  {
+    name: "Sarah M.",
+    location: "Toronto, Canada",
+    income: "$4,200/mo",
+    text: "Started 18 months ago as a side hustle. Now my Unicity business covers my mortgage payments every month.",
+  },
+  {
+    name: "Michael R.",
+    location: "London, UK",
+    income: "$8,500/mo",
+    text: "The training system is incredible. Feras helped me build a team of 200+ partners across Europe in just 2 years.",
+  },
+  {
+    name: "Jennifer L.",
+    location: "Los Angeles, USA",
+    income: "$12,000/mo",
+    text: "As a busy mom, I needed something flexible. This business grows while I sleep thanks to the automated system.",
+  },
+  {
+    name: "David K.",
+    location: "Berlin, Germany",
+    income: "$6,800/mo",
+    text: "The products sell themselves. I focus on connecting people and the commissions just keep rolling in.",
+  },
+];
 
 export default function BusinessOpportunity() {
   const { lang } = useLanguage();
   const isAr = lang === "ar";
-  const [step, setStep] = useState<FunnelStep>("opportunity");
+  const referralLink = "https://ufeelgreat.com/c/GBP556";
 
   useEffect(() => {
     document.title = isAr
-      ? "فرصة الشراكة التجارية | Feel Great"
-      : "Business Partnership Opportunity | Feel Great";
+      ? "فرص الاستثمار والأعمال | Feel Great - انضم كشريك"
+      : "Investment & Business Opportunities | Feel Great - Join as Partner";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", isAr
-      ? "اكتشف كيف تبني عملاً صحياً عالمياً مع Feel Great. انضم لأكثر من 10,000 شريك يكسبون دخلاً بينما يساعدون الآخرين."
-      : "Discover how to build a global health business with Feel Great. Join 10,000+ partners earning income while helping others achieve sustainable wellness.");
+      ? "اكتشف فرص الاستثمار في الصحة مع Feel Great. انضم كشريك/مسوق بالعمولة واكسب دخلاً سلبياً من 500$ إلى 50,000$+ شهرياً. متاح في أمريكا وكندا وأوروبا."
+      : "Discover health investment opportunities with Feel Great. Join as affiliate/partner and earn passive income from $500 to $50,000+ monthly. Available in USA, Canada & Europe.");
   }, [isAr]);
 
-  const renderOpportunity = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
-      <div className="container max-w-4xl mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-          <div className="inline-block px-4 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 text-sm font-medium mb-6">
-            {isAr ? "مواقع شراكة محدودة متاحة" : "Limited Partnership Positions Available"}
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            {isAr ? <>ابنِ عملاً صحياً عالمياً<br /><span className="text-amber-400">من أي مكان في العالم</span></> : <>Build a Global Health Business<br /><span className="text-amber-400">From Anywhere in the World</span></>}
-          </h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            {isAr ? "انضم لآلاف الشركاء الذين يبنون دخلاً ذا معنى بينما يساعدون الآخرين على تحقيق صحة مستدامة. لا مخزون، لا تكاليف ثابتة، لا حدود." : "Join thousands of partners who are building meaningful income while helping others achieve sustainable health. No inventory, no overhead, no limits."}
-          </p>
-        </div>
-
-        {/* Key Benefits */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {[
-            { icon: DollarSign, title: "Recurring Income", desc: "Build monthly recurring revenue from health product subscriptions" },
-            { icon: Globe, title: "Work From Anywhere", desc: "100% remote business model. Work from home, travel, or anywhere with internet" },
-            { icon: Clock, title: "Flexible Schedule", desc: "Build at your own pace. Part-time or full-time - you decide" },
-            { icon: Users, title: "Team Building", desc: "Earn from your team's success. Leadership bonuses reward mentorship" },
-            { icon: TrendingUp, title: "Scalable Growth", desc: "No ceiling on income. Top partners earn $10,000-$50,000+ monthly" },
-            { icon: Star, title: "Global Community", desc: "30+ countries. Supportive community of health-focused entrepreneurs" },
-          ].map((benefit, i) => (
-            <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-amber-400/30 transition-colors">
-              <benefit.icon className="w-8 h-8 text-amber-400 mb-4" />
-              <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
-              <p className="text-slate-400 text-sm">{benefit.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Income Levels */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 mb-16">
-          <h2 className="text-2xl font-bold text-center mb-8">Partner Income Levels</h2>
-          <div className="grid md:grid-cols-4 gap-4">
-            {[
-              { level: "Starter", income: "$500-$2,000/mo", time: "5-10 hrs/week", color: "border-slate-600" },
-              { level: "Builder", income: "$2,000-$5,000/mo", time: "10-15 hrs/week", color: "border-blue-500/50" },
-              { level: "Leader", income: "$5,000-$15,000/mo", time: "15-25 hrs/week", color: "border-purple-500/50" },
-              { level: "Executive", income: "$15,000-$50,000+/mo", time: "Full-time", color: "border-amber-400/50" },
-            ].map((tier, i) => (
-              <div key={i} className={`border ${tier.color} rounded-xl p-5 text-center`}>
-                <p className="text-sm text-slate-400 mb-1">{tier.level}</p>
-                <p className="text-xl font-bold text-amber-400 mb-2">{tier.income}</p>
-                <p className="text-xs text-slate-500">{tier.time}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-slate-500 text-xs mt-4">
-            *Income levels are illustrative and based on partner activity. Individual results vary.
-          </p>
-        </div>
-
-        {/* Social Proof */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 text-center">
-          <div>
-            <div className="text-3xl font-bold text-amber-400">10,000+</div>
-            <div className="text-sm text-slate-400">Active Partners</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-amber-400">30+</div>
-            <div className="text-sm text-slate-400">Countries</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-amber-400">$50M+</div>
-            <div className="text-sm text-slate-400">Paid to Partners</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-amber-400">25+ yrs</div>
-            <div className="text-sm text-slate-400">Company History</div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center">
-          <button
-            onClick={() => setStep("video")}
-            className="px-10 py-5 bg-amber-400 text-slate-900 font-bold text-lg rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center gap-3"
-          >
-            {isAr ? "شاهد فيديو الفرصة" : "Watch the Opportunity Video"} <Play className="w-5 h-5" />
-          </button>
-          <p className="text-slate-500 text-sm mt-4">{isAr ? "عرض مجاني 5 دقائق • بدون التزام" : "Free 5-minute presentation • No obligation"}</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderVideo = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
-      <div className="container max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center mb-10">
-          <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "نموذج عمل Feel Great" : "The Feel Great Business Model"}</h1>
-          <p className="text-slate-400">{isAr ? "شاهد هذا العرض لمدة 5 دقائق لفهم الفرصة" : "Watch this 5-minute overview to understand the opportunity"}</p>
-        </div>
-
-        {/* Video placeholder */}
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl aspect-video flex items-center justify-center mb-10">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-amber-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Play className="w-10 h-10 text-amber-400 ml-1" />
-            </div>
-            <p className="text-slate-400 mb-2">Business Opportunity Presentation</p>
-            <p className="text-slate-500 text-sm">5 minutes • How the Feel Great partner model works</p>
-          </div>
-        </div>
-
-        {/* Key takeaways */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 mb-10">
-          <h3 className="font-semibold text-lg mb-4">Key Takeaways:</h3>
-          <ul className="space-y-3">
-            {[
-              "Unicity International: 25+ year track record, publicly traded, $1B+ revenue",
-              "Feel Great: Fastest-growing product system in the company",
-              "Partner model: Earn from personal sales + team building + leadership bonuses",
-              "No inventory required: Products ship directly to customers",
-              "Full training and mentorship provided by Feras Al-Ayed (Presidential Sapphire)",
-              "Start with minimal investment: just your own product subscription",
-            ].map((point, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300">{point}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* CTA */}
-        <div className="text-center space-y-4">
-          <button
-            onClick={() => setStep("application")}
-            className="px-10 py-5 bg-amber-400 text-slate-900 font-bold text-lg rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center gap-3"
-          >
-            {isAr ? "قدّم لتصبح شريكاً" : "Apply to Become a Partner"} <ArrowRight className="w-5 h-5" />
-          </button>
-          <div>
-            <button onClick={() => setStep("opportunity")} className="text-slate-400 hover:text-white text-sm transition-colors">
-              {isAr ? "← العودة للنظرة العامة" : "← Back to overview"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderApplication = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
-      <div className="container max-w-2xl mx-auto px-4 py-16">
-        <div className="text-center mb-10">
-          <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "طلب الشراكة" : "Partner Application"}</h1>
-          <p className="text-slate-400">{isAr ? "أخبرنا عن نفسك لنحدد ما إذا كان هذا مناسباً لك" : "Tell us about yourself so we can determine if this is a good fit"}</p>
-        </div>
-
-        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
-          {/* Qualification questions */}
-          <div className="space-y-6 mb-8">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-              <Award className="w-5 h-5 text-amber-400" /> Quick Qualification Check
-            </h3>
-
-            {[
-              "Are you looking for an additional income stream?",
-              "Are you passionate about health and wellness?",
-              "Can you dedicate 5-10 hours per week to start?",
-              "Are you coachable and willing to follow a proven system?",
-              "Do you have a smartphone and internet access?",
-            ].map((q, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />
-                <span className="text-slate-300">{q}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="border-t border-slate-700 pt-6">
-            <p className="text-slate-300 mb-6">
-              If you answered yes to most of these questions, you're a great fit for the Feel Great partner program. The next step is to book a discovery call with Feras Al-Ayed.
-            </p>
-            <button
-              onClick={() => setStep("booking")}
-              className="w-full px-8 py-4 bg-amber-400 text-slate-900 font-bold rounded-xl hover:bg-amber-300 transition-colors flex items-center justify-center gap-2"
-            >
-              {isAr ? "احجز مكالمة الاكتشاف" : "Book Your Discovery Call"} <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <button onClick={() => setStep("video")} className="text-slate-400 hover:text-white text-sm transition-colors">
-            {isAr ? "← العودة للفيديو" : "← Back to video"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderBooking = () => (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
-      <div className="container max-w-2xl mx-auto px-4 py-16">
-        <div className="text-center mb-10">
-          <Link href="/" className="text-amber-400 font-bold text-xl mb-8 inline-block">Feel Great</Link>
-          <div className="w-16 h-16 bg-green-400/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-8 h-8 text-green-400" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{isAr ? "احجز مكالمة الاكتشاف" : "Book Your Discovery Call"}</h1>
-          <p className="text-slate-400 max-w-lg mx-auto">
-            {isAr ? "حدد موعداً لمكالمة 20 دقيقة مع فراس العايد لمناقشة فرصة الشراكة والإجابة على أسئلتك." : "Schedule a 20-minute call with Feras Al-Ayed to discuss the partnership opportunity and answer your questions."}
-          </p>
-        </div>
-
-        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8">
-          <h3 className="text-xl font-semibold mb-6">During Your Call, You'll Learn:</h3>
-          <ul className="space-y-4 mb-8">
-            {[
-              "Exactly how the compensation plan works",
-              "How to get started with minimal investment",
-              "The training and support system available to you",
-              "Real examples of partner success stories",
-              "Your personalized action plan for the first 30 days",
-            ].map((item, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="space-y-4">
-            <a
-              href="https://wa.me/96877020770?text=I%20watched%20the%20business%20opportunity%20video%20and%20would%20like%20to%20book%20a%20discovery%20call%20to%20learn%20more%20about%20becoming%20a%20Feel%20Great%20partner"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full px-8 py-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-colors flex items-center justify-center gap-2"
-            >
-              {isAr ? "احجز عبر واتساب" : "Book via WhatsApp"} <ArrowRight className="w-5 h-5" />
-            </a>
-            <a
-              href="https://www.instagram.com/use2lose"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full px-8 py-4 border border-slate-600 text-slate-300 font-medium rounded-xl hover:bg-slate-700/50 transition-colors flex items-center justify-center"
-            >
-              Follow @use2lose on Instagram
-            </a>
-          </div>
-        </div>
-
-        {/* Mentor info */}
-        <div className="mt-8 bg-slate-800/30 border border-slate-700/50 rounded-xl p-6 text-center">
-          <p className="text-slate-400 text-sm mb-2">Your Mentor:</p>
-          <p className="font-semibold text-xl">Feras Al-Ayed</p>
-          <p className="text-amber-400 text-sm mb-1">Presidential Sapphire</p>
-          <p className="text-slate-500 text-sm">Therapeutic & Behavioral Nutrition Specialist</p>
-          <p className="text-slate-500 text-sm">15+ years in health & wellness industry</p>
-          <div className="flex justify-center gap-4 mt-4">
-            <a href="https://www.instagram.com/use2lose" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors text-sm">
-              Instagram
-            </a>
-            <a href="https://www.tiktok.com/@feras.alayed" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors text-sm">
-              TikTok
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <>
-      {step === "opportunity" && renderOpportunity()}
-      {step === "video" && renderVideo()}
-      {step === "application" && renderApplication()}
-      {step === "booking" && renderBooking()}
-
-      {/* JSON-LD Schema */}
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white" dir={isAr ? "rtl" : "ltr"}>
+      {/* JSON-LD Schema for SEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            name: "Business Partnership Opportunity",
-            description: "Discover how to build a global health business with Feel Great. Join 10,000+ partners earning income while helping others.",
+            name: isAr ? "فرص الاستثمار والأعمال" : "Investment & Business Opportunities",
+            description: isAr
+              ? "اكتشف فرص الاستثمار في الصحة مع Feel Great. انضم كشريك ومسوق بالعمولة."
+              : "Discover health investment opportunities with Feel Great. Join as affiliate/partner.",
             url: "https://feelgreat.us.com/business-opportunity",
             isPartOf: { "@type": "WebSite", name: "Feel Great", url: "https://feelgreat.us.com" },
             author: {
@@ -315,9 +142,312 @@ export default function BusinessOpportunity() {
               name: "Feras Al-Ayed",
               jobTitle: "Therapeutic & Behavioral Nutrition Specialist",
             },
+            about: {
+              "@type": "Thing",
+              name: "Unicity Network Marketing Business Opportunity",
+            },
+            offers: {
+              "@type": "Offer",
+              price: "99",
+              priceCurrency: "USD",
+              description: isAr
+                ? "اشتراك شهري للبدء كشريك Unicity"
+                : "Monthly subscription to start as Unicity partner",
+            },
           }),
         }}
       />
-    </>
+
+      <div className="container max-w-6xl mx-auto px-4 py-12">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <Link href="/" className="text-amber-400 font-bold text-xl mb-6 inline-block">Feel Great</Link>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-sm font-medium mb-6">
+            <Zap className="w-4 h-4" />
+            {isAr ? "متاح في أمريكا، كندا، وأوروبا" : "Available in USA, Canada & Europe"}
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            {isAr ? <>فرص الاستثمار والأعمال<br /><span className="text-amber-400">في صناعة الصحة العالمية</span></> : <>Investment & Business Opportunities<br /><span className="text-amber-400">in the Global Health Industry</span></>}
+          </h1>
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
+            {isAr
+              ? "انضم لآلاف الشركاء الذين يبنون دخلاً ذا معنى بينما يساعدون الآخرين على تحقيق صحة مستدامة. فرصة مثالية للمسوقين بالعمولة، المؤثرين، ورواد الأعمال."
+              : "Join thousands of partners building meaningful income while helping others achieve sustainable health. Perfect for affiliates, influencers, and entrepreneurs."}
+          </p>
+
+          {/* Primary CTA */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href={referralLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-10 py-5 bg-amber-400 text-slate-900 font-bold text-lg rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center justify-center gap-3 shadow-lg shadow-amber-400/25"
+            >
+              {isAr ? "ابدأ الآن - اشترك كشريك" : "Start Now - Join as Partner"} <ArrowRight className="w-5 h-5" />
+            </a>
+            <a
+              href="#articles"
+              className="px-10 py-5 bg-slate-800 text-white font-medium text-lg rounded-xl hover:bg-slate-700 transition-colors border border-slate-700 inline-flex items-center justify-center gap-3"
+            >
+              {isAr ? "اقرأ مقالات الاستثمار" : "Read Investment Articles"} <BookOpen className="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+
+        {/* Why This Is Different */}
+        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            {isAr ? "لماذا هذه الفرصة مختلفة؟" : "Why This Opportunity Is Different"}
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: Briefcase, title: isAr ? "بدون مخزون" : "No Inventory", desc: isAr ? "لا حاجة لشراء أو تخزين المنتجات" : "No need to buy or store products" },
+              { icon: Globe, title: isAr ? "عمل من أي مكان" : "Work From Anywhere", desc: isAr ? "100% عن بُعد - أي مكان فيه إنترنت" : "100% remote - anywhere with internet" },
+              { icon: Clock, title: isAr ? "جدول مرن" : "Flexible Schedule", desc: isAr ? "جزء من الوقت أو كاملاً - قرارك" : "Part-time or full-time - your choice" },
+              { icon: Users, title: isAr ? "بناء فريق" : "Team Building", desc: isAr ? "اربح من نجاح فريقك وعمولات القيادة" : "Earn from team success & leadership bonuses" },
+            ].map((item, i) => (
+              <div key={i} className="text-center">
+                <div className="w-14 h-14 bg-amber-400/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-7 h-7 text-amber-400" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                <p className="text-slate-400 text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Investment Articles Section */}
+        <div id="articles" className="mb-16 scroll-mt-20">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold">
+                {isAr ? "مقالات فرص الاستثمار والأعمال" : "Investment & Business Opportunity Articles"}
+              </h2>
+              <p className="text-slate-400 mt-2">
+                {isAr ? "تعلم كيف تبني دخلاً سلبياً مع Feel Great" : "Learn how to build passive income with Feel Great"}
+              </p>
+            </div>
+            <a
+              href={referralLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex px-6 py-3 bg-emerald-500 text-white font-medium rounded-lg hover:bg-emerald-400 transition-colors items-center gap-2"
+            >
+              {isAr ? "انضم الآن" : "Join Now"} <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {investmentArticles.map((article) => (
+              <a
+                key={article.slug}
+                href={`/health/${article.slug}`}
+                className="group bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden hover:border-amber-400/30 transition-all hover:shadow-lg hover:shadow-amber-400/5"
+              >
+                <div className={`h-2 bg-gradient-to-r ${article.color}`} />
+                <div className="p-6">
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${article.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <article.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2 group-hover:text-amber-400 transition-colors">
+                    {isAr ? article.titleAr : article.title}
+                  </h3>
+                  <p className="text-slate-400 text-sm line-clamp-2">
+                    {isAr ? article.descAr : article.desc}
+                  </p>
+                  <div className="mt-4 text-amber-400 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                    {isAr ? "اقرأ المزيد" : "Read More"} <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Income Levels */}
+        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            {isAr ? "مستويات دخل الشركاء" : "Partner Income Levels"}
+          </h2>
+          <p className="text-slate-400 text-center mb-8 max-w-2xl mx-auto">
+            {isAr
+              ? "اربح من 500$ إلى 50,000$+ شهرياً حسب مستوى نشاطك واستثمارك. النتائج الفردية تختلف."
+              : "Earn from $500 to $50,000+ monthly based on your activity level and investment. Individual results vary."}
+          </p>
+          <div className="grid md:grid-cols-4 gap-4">
+            {[
+              { level: isAr ? "مبتدئ" : "Starter", income: "$500-$2,000", time: isAr ? "5-10 ساعات/أسبوع" : "5-10 hrs/week", color: "border-slate-600", bg: "bg-slate-700/30" },
+              { level: isAr ? "بناء" : "Builder", income: "$2,000-$5,000", time: isAr ? "10-15 ساعة/أسبوع" : "10-15 hrs/week", color: "border-blue-500/50", bg: "bg-blue-500/10" },
+              { level: isAr ? "قائد" : "Leader", income: "$5,000-$15,000", time: isAr ? "15-25 ساعة/أسبوع" : "15-25 hrs/week", color: "border-purple-500/50", bg: "bg-purple-500/10" },
+              { level: isAr ? "تنفيذي" : "Executive", income: "$15,000-$50,000+", time: isAr ? "دوام كامل" : "Full-time", color: "border-amber-400/50", bg: "bg-amber-400/10" },
+            ].map((tier, i) => (
+              <div key={i} className={`${tier.bg} border ${tier.color} rounded-xl p-5 text-center`}>
+                <p className="text-sm text-slate-400 mb-1">{tier.level}</p>
+                <p className="text-xl font-bold text-amber-400 mb-2">{tier.income}/mo</p>
+                <p className="text-xs text-slate-500">{tier.time}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-slate-500 text-xs mt-6">
+            *{isAr ? "مستويات الدخل توضيحية ومبنية على نشاط الشركاء. النتائج الفردية تختلف." : "Income levels are illustrative and based on partner activity. Individual results vary."}
+          </p>
+        </div>
+
+        {/* Key Benefits Grid */}
+        <div className="grid md:grid-cols-3 gap-6 mb-16">
+          {[
+            { icon: DollarSign, title: isAr ? "دخل متكرر" : "Recurring Income", desc: isAr ? "بناء إيرادات شهرية متكررة من اشتراكات منتجات الصحة" : "Build monthly recurring revenue from health product subscriptions" },
+            { icon: TrendingUp, title: isAr ? "نمو غير محدود" : "Unlimited Growth", desc: isAr ? "لا سقف للدخل. كبار الشركاء يكسبون 10,000$-50,000$+ شهرياً" : "No income ceiling. Top partners earn $10,000-$50,000+ monthly" },
+            { icon: Star, title: isAr ? "مجتمع عالمي" : "Global Community", desc: isAr ? "30+ دولة مع مجتمع داعم من رواد الأعمال الصحيين" : "30+ countries with supportive community of health entrepreneurs" },
+          ].map((benefit, i) => (
+            <div key={i} className="bg-gradient-to-br from-slate-800 to-slate-800/50 border border-slate-700 rounded-xl p-6 hover:border-amber-400/30 transition-colors">
+              <benefit.icon className="w-10 h-10 text-amber-400 mb-4" />
+              <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
+              <p className="text-slate-400 text-sm">{benefit.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Testimonials */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            {isAr ? "قصص نجاح الشركاء" : "Partner Success Stories"}
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {testimonials.map((testimonial, i) => (
+              <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-semibold">{testimonial.name}</p>
+                    <p className="text-slate-400 text-sm">{testimonial.location}</p>
+                    <p className="text-emerald-400 text-sm font-medium">{testimonial.income}</p>
+                  </div>
+                </div>
+                <p className="text-slate-300 italic">"{testimonial.text}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Social Proof Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 text-center">
+          {[
+            { value: "10,000+", label: isAr ? "شريك نشط" : "Active Partners" },
+            { value: "30+", label: isAr ? "دولة" : "Countries" },
+            { value: "$50M+", label: isAr ? "مدفوع للشركاء" : "Paid to Partners" },
+            { value: "25+ yrs", label: isAr ? "تاريخ الشركة" : "Company History" },
+          ].map((stat, i) => (
+            <div key={i} className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-6">
+              <div className="text-3xl font-bold text-amber-400">{stat.value}</div>
+              <div className="text-sm text-slate-400 mt-1">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Who Is This For */}
+        <div className="bg-gradient-to-r from-emerald-900/30 to-teal-900/30 border border-emerald-500/20 rounded-2xl p-8 mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            {isAr ? "لمن هذه الفرصة؟" : "Who Is This Opportunity For?"}
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              isAr ? "المؤثرون في مجال الصحة واللياقة" : "Health & fitness influencers",
+              isAr ? "المسوقون بالعمولة يبحثون عن منتجات عالية التحويل" : "Affiliates looking for high-converting products",
+              isAr ? "رواد الأعمال يبحثون عن عمل مرن من المنزل" : "Entrepreneurs looking for flexible home business",
+              isAr ? "أي شخص يريد دخلاً سلبياً إضافياً" : "Anyone wanting extra passive income",
+              isAr ? "خبراء التغذية والمعالجون" : "Nutritionists and wellness practitioners",
+              isAr ? "الأمهات والآباء الذين يحتاجون مرونة" : "Parents needing flexibility",
+              isAr ? "المحترفون الذين يبحثون عن تدفق دخل ثانٍ" : "Professionals seeking a second income stream",
+              isAr ? "المستثمرون على المدى الطويل" : "Long-term investors",
+              isAr ? "المتقاعدون الذين يريدون البقاء نشطين" : "Retirees wanting to stay active",
+            ].map((person, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                <span className="text-slate-300 text-sm">{person}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mentor Section */}
+        <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8 mb-16">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="w-32 h-32 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-5xl shrink-0">
+              F
+            </div>
+            <div className="text-center md:text-start">
+              <h2 className="text-2xl font-bold mb-2">{isAr ? "مرشدك في هذه الرحلة" : "Your Mentor on This Journey"}</h2>
+              <p className="text-2xl font-semibold text-amber-400 mb-1">Feras Al-Ayed</p>
+              <p className="text-slate-400 mb-2">Presidential Sapphire Leader</p>
+              <p className="text-slate-500 text-sm mb-4">
+                {isAr
+                  ? "أخصائي تغذية علاجية وسلوكية • 15+ سنوات في صناعة الصحة والعافية"
+                  : "Therapeutic & Behavioral Nutrition Specialist • 15+ years in health & wellness"}
+              </p>
+              <div className="flex justify-center md:justify-start gap-4">
+                <a href="https://www.instagram.com/use2lose" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1">
+                  Instagram
+                </a>
+                <a href="https://www.tiktok.com/@feras.alayed" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1">
+                  TikTok
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Final CTA */}
+        <div className="text-center bg-gradient-to-r from-amber-900/30 to-orange-900/30 border border-amber-500/20 rounded-2xl p-12">
+          <Award className="w-16 h-16 text-amber-400 mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            {isAr ? "هل أنت مستعد للبدء؟" : "Ready to Get Started?"}
+          </h2>
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
+            {isAr
+              ? "انضم اليوم واحصل على تدريب مجاني ودعم من فريق متخصص. لا حاجة لخبرة سابقة."
+              : "Join today and get free training and support from an experienced team. No prior experience needed."}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href={referralLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-12 py-5 bg-amber-400 text-slate-900 font-bold text-xl rounded-xl hover:bg-amber-300 transition-colors inline-flex items-center justify-center gap-3 shadow-lg shadow-amber-400/25"
+            >
+              {isAr ? "اشترك الآن - ابدأ بناء عملك" : "Join Now - Start Building Your Business"} <ArrowRight className="w-6 h-6" />
+            </a>
+          </div>
+          <p className="text-slate-500 text-sm mt-6">
+            {isAr
+              ? "✓ تسجيل مجاني  •  ✓ تدريب مجاني  •  ✓ لا حاجة لمخزون"
+              : "✓ Free signup  •  ✓ Free training  •  ✓ No inventory required"}
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-16 pt-8 border-t border-slate-800 text-center text-slate-500 text-sm">
+          <p>
+            {isAr
+              ? "© 2024 Feel Great by Feras Al-Ayed. جميع الحقوق محفوظة."
+              : "© 2024 Feel Great by Feras Al-Ayed. All rights reserved."}
+          </p>
+          <div className="flex justify-center gap-4 mt-4">
+            <Link href="/privacy" className="hover:text-slate-300 transition-colors">
+              {isAr ? "سياسة الخصوصية" : "Privacy Policy"}
+            </Link>
+            <Link href="/terms" className="hover:text-slate-300 transition-colors">
+              {isAr ? "شروط الاستخدام" : "Terms of Use"}
+            </Link>
+            <Link href="/contact" className="hover:text-slate-300 transition-colors">
+              {isAr ? "اتصل بنا" : "Contact"}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
