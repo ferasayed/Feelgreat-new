@@ -58,6 +58,9 @@ const AskExpert = lazy(() => import("./pages/AskExpert"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
 const FastingCalculator = lazy(() => import("./pages/FastingCalculator"));
+const AIPage = lazy(() => import("./pages/AIPage"));
+const ComparisonPages = lazy(() => import("./pages/ComparisonPages").then(m => ({ default: m.ComparisonPages })));
+const ComparisonList = lazy(() => import("./pages/ComparisonPages").then(m => ({ default: m.ComparisonList })));
 import HreflangTags from "./components/HreflangTags";
 
 function PageLoader() {
@@ -124,6 +127,10 @@ function AppRoutes() {
         <Route path={"/privacy"} component={PrivacyPolicy} />
         <Route path={"/terms"} component={TermsOfUse} />
         <Route path={"/fasting-calculator"} component={FastingCalculator} />
+        <Route path={"/ai"} component={AIPage} />
+        <Route path={"/ai-info"} component={AIPage} />
+        <Route path={"/compare"} component={ComparisonList} />
+        <Route path={"/compare/:slug"} component={ComparisonPages} />
         <Route path={"/admin/search-console"} component={GSCDashboard} />
         <Route path={"/reverse-insulin-resistance"} component={KeywordLanding} />
         <Route path={"/prediabetes-symptoms"} component={KeywordLanding} />

@@ -1,4 +1,5 @@
 # robots.txt for feelgreat.us.com
+# Optimized for both SEO and GEO (Generative Engine Optimization)
 
 User-agent: *
 Allow: /
@@ -6,10 +7,10 @@ Allow: /
 # Sitemap location
 Sitemap: https://feelgreat.us.com/sitemap.xml
 
-# Crawl-delay suggestion (optional, be nice to smaller sites)
+# Crawl-delay suggestion
 Crawl-delay: 1
 
-# Block access to admin or private areas (if any)
+# Block access to admin or private areas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /_next/
@@ -25,6 +26,69 @@ Allow: /
 User-agent: Slurp
 Allow: /
 
+# ============================================
+# AI CRAWLERS - GEO OPTIMIZATION
+# Allow ALL AI crawlers for maximum visibility
+# ============================================
+
+# ChatGPT (OpenAI)
+User-agent: GPTBot
+Allow: /
+
+# ChatGPT-User (OpenAI's plugin/web browsing)
+User-agent: ChatGPT-User
+Allow: /
+
+# Google AI (Gemini)
+User-agent: Google-Extended
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Anthropic AI (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+# Common Crawl
+User-agent: CCBot
+Allow: /
+
+# DuckDuckBot
+User-agent: DuckDuckBot
+Allow: /
+
+# Alexa/Amazon
+User-agent: ia_archiver
+Allow: /
+
 # Block common bot traps
 Disallow: /track/
 Disallow: /click/
+
+# ============================================
+# AI OPTIMIZATION
+# The following pages are specifically optimized
+# for AI visibility and citation
+# ============================================
+
+# AI Information Page - Key for GEO
+Allow: /ai
+Allow: /ai-info
+
+# Comparison Pages - AI-friendly structured content
+Allow: /compare
+Allow: /compare/
+
+# Health Information Pages
+Allow: /health
+Allow: /health/
+
+# Blog Articles
+Allow: /blog
+Allow: /blog/
+
+# Research Hub
+Allow: /research
+Allow: /research/
