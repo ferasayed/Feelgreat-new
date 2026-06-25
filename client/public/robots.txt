@@ -1,0 +1,30 @@
+# robots.txt for feelgreat.us.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://feelgreat.us.com/sitemap.xml
+
+# Crawl-delay suggestion (optional, be nice to smaller sites)
+Crawl-delay: 1
+
+# Block access to admin or private areas (if any)
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /private/
+
+# Allow search engines to access all public content
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# Block common bot traps
+Disallow: /track/
+Disallow: /click/
